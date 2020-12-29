@@ -3,6 +3,7 @@
 #include <chrono>
 #include <fstream>
 #include <string>
+#include <stdexcept>
 #include <vector>
 
 #include "DataStructures.hpp"
@@ -20,27 +21,24 @@ public:
         directories_ = vctr;
     }
 
+
+    
+
     bool generate() {
-        if (directories_.size() < 1) {
-            return false;
-        }
-
-        std::ofstream file(filename_);
-        if (!file || !file.is_open()) {
+        std::ofstream output(filename_);
+        if (!output || !output.is_open()) {
             return false;
         }
         
-        file << getHeader();
-        file << "File generation date: " << getDate();
+        output << getHeader();
+        output << "File generation date: " << getDate();
 
-        file << "\n\n";
-        file << "_____________________________________________\n";
-        file << "Table of contents:---------------------------\n";
-        for (const auto& record : directories_) {
-            file << "\t" << record << "\n";
-        }
+        output << "\n\n";
+        output << "_____________________________________________\n";
+        output << "Table of contents:---------------------------\n";
+        output << getDirectories();
         
-        file.close();
+        output.close();
         return true;
     }
 
@@ -57,6 +55,40 @@ private:
         return date;
     }
 
+
+    std::string getDirectories() {
+        return getDirectories(directories_);
+    }
+
+    std::string getDirectories(std::vector<FilePtr> directories, size_t tab=1) {
+        if (directories.size() < 1) {
+            throw std::logic_error("DocumentationGenerator::getDirectories()");
+        }
+        
+        std::string result = "";
+
+        for (const auto& file : directories) {
+            result += getTabs(tab);
+            result += file->name_;
+            
+            if (file->isCatalog()) {
+                result += "   [DIR]\n";
+                result += getDirectories(file->getFiles(), tab + 1);   
+                result += getTabs(tab);
+            }
+            result += "\n";
+        }
+        
+        return result;
+    }
+
+    std::string getTabs(size_t tab=1) {
+        std::string result = "\t";
+        for (size_t i = 1; i < tab; ++i) {
+            result += "|\t";
+        }
+        return result;
+    }
 
 };
 

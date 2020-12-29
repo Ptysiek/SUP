@@ -16,9 +16,5 @@ int main() {
 
     std::cout << dgenerator.generate();
 
-    for (const auto& record : getstuff) {
-        std::cout << record << "\n";
-    }
-
     return 0;
 }

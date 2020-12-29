@@ -7,7 +7,9 @@ struct File {
     explicit File(std::string& name): name_(name) {}
     
     const std::string name_;
-    virtual bool ifCatalog() const { return false; }
+    virtual bool isCatalog() const { return false; }
+    virtual std::vector<std::shared_ptr<File>> getFiles() { 
+        return std::vector<std::shared_ptr<File>>(); }
 };
 
 
@@ -16,7 +18,8 @@ struct Catalog : public File {
         File(name), files_(files) {}
 
     std::vector<std::shared_ptr<File>> files_;
-    bool ifCatalog() const override { return true; }
+    bool isCatalog() const override { return true; }
+    std::vector<std::shared_ptr<File>> getFiles() override { return files_; }
 };
 
 

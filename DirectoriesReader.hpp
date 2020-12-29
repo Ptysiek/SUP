@@ -50,11 +50,6 @@ public:
             auto tmpVctr = getDirectories(startpath + "/" + data);
             if (tmpVctr.size() > 0) {
                 result.push_back(std::make_shared<Catalog>(data, tmpVctr));
-                /*
-                for (const auto& record : tmpVctr) {
-                    result.push_back(data + "/" + record);
-                }
-                //*/
             }
             else {
                 result.push_back(std::make_shared<File>(data));
