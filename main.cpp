@@ -3,15 +3,17 @@
 #include <vector>
 
 #include "DirectoriesReader.hpp"
-
+#include "DocumentationGenerator.hpp"
 
 
 int main() {
 
-    DirectoriesReader dr;
+    DirectoriesReader dreader;
+    DocumentationGenerator dgenerator;
 
-    auto getstuff = dr.getDirectories("../");
-    
+    auto getstuff = dreader.getDirectories("../");
+    dgenerator.setDirectoriesVector(getstuff);
+
     for (const auto& record : getstuff) {
         std::cout << record << "\n";
     }
