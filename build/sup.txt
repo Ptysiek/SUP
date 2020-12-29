@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date: Tue Dec 29 17:11:55 2020
+File generation date: Tue Dec 29 19:26:12 2020
 
 
 _____________________________________________
@@ -10,3 +10,11 @@ Table of contents:   ------------------------
 	catch_main.cpp
 	main.cpp
 	tags
+
+
+/DataStructures.hpp
+/DirectoriesReader.hpp
+/DocumentationGenerator.hpp
+/catch_main.cpp
+/main.cpp
+/tags

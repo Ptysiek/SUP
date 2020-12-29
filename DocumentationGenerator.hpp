@@ -60,7 +60,14 @@ public:
         output << "_____________________________________________\n";
         output << "Table of contents:   ------------------------\n";
         output << getTableOfContents(directories_);
-        
+     
+        auto dirs = getDirectories(directories_);
+
+        output << "\n\n";
+        for (const auto& file : dirs) {
+            output << file << "\n";
+        }
+
         output.close();
         return true;
     }
@@ -112,6 +119,23 @@ private:
         }
         return result;
     }
+    
+    std::vector<std::string> getDirectories(const std::vector<File>& directories, const std::string& path="") {
+        std::vector<std::string> result;
+        
+        for (const auto& file : directories) {
+            if (file.isCatalog_) {
+                auto subFiles = getDirectories(file.files_, path + file.name_ + "/");
+                result.insert(result.end(), subFiles.begin(), subFiles.end() );
+            }
+            else {
+                result.push_back(path + file.name_);
+            }
+        }
+        
+        return result;
+    }
+
 
 };
 
