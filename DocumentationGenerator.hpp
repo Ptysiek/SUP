@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <chrono>
 #include <fstream>
 #include <string>
@@ -12,17 +13,39 @@
 class DocumentationGenerator {
 
     const std::string filename_{"sup.txt"};
-    std::vector<FilePtr> directories_;
+    std::vector<File> directories_;
 
 
 
 public:
-    void setDirectoriesVector(std::vector<FilePtr>& vctr) {
+    void setDirectoriesVector(std::vector<File>& vctr) {
         directories_ = vctr;
+        sortDirectories(directories_);
     }
 
+    void sortDirectories(std::vector<File>& directories) {
+        std::sort(directories.begin(), directories.end(), SortCriterion);
 
+        for (auto& subDir : directories) {
+            if (subDir.isCatalog_) {
+                sortDirectories(subDir.files_);
+            }
+        }
+    }
     
+    static bool SortCriterion(const File& f, const File& s) { 
+        int test = f.isCatalog_ + s.isCatalog_;
+        if (test % 2 == 0) {
+            return SecondSortCriterion_Alphabetical(f.name_, s.name_);
+        }
+        else {
+            return s.isCatalog_;
+        }
+    }
+    static bool SecondSortCriterion_Alphabetical(const std::string& f, const std::string& s) { 
+        return (f < s);
+    }
+
 
     bool generate() {
         std::ofstream output(filename_);
@@ -35,8 +58,8 @@ public:
 
         output << "\n\n";
         output << "_____________________________________________\n";
-        output << "Table of contents:---------------------------\n";
-        output << getDirectories();
+        output << "Table of contents:   ------------------------\n";
+        output << getTableOfContents(directories_);
         
         output.close();
         return true;
@@ -56,11 +79,7 @@ private:
     }
 
 
-    std::string getDirectories() {
-        return getDirectories(directories_);
-    }
-
-    std::string getDirectories(std::vector<FilePtr> directories, size_t tab=1) {
+    std::string getTableOfContents(std::vector<File> directories, size_t tab=1) {
         if (directories.size() < 1) {
             throw std::logic_error("DocumentationGenerator::getDirectories()");
         }
@@ -69,12 +88,16 @@ private:
 
         for (const auto& file : directories) {
             result += getTabs(tab);
-            result += file->name_;
             
-            if (file->isCatalog()) {
-                result += "   [DIR]\n";
-                result += getDirectories(file->getFiles(), tab + 1);   
+            if (file.isCatalog_) {
+                result += "[";
+                result += file.name_;
+                result += "]\n";
+                result += getTableOfContents(file.files_, tab + 1);   
                 result += getTabs(tab);
+            }
+            else {
+                result += file.name_;
             }
             result += "\n";
         }

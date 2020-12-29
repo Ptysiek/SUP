@@ -30,8 +30,8 @@ class DirectoriesReader {
 
 
 public:
-    std::vector<FilePtr> getDirectories(std::string startpath) {
-        std::vector<FilePtr> result;
+    std::vector<File> getDirectories(std::string startpath) {
+        std::vector<File> result;
 
         DIR* directory;
         directory = opendir(startpath.c_str());
@@ -49,10 +49,12 @@ public:
             }
             auto tmpVctr = getDirectories(startpath + "/" + data);
             if (tmpVctr.size() > 0) {
-                result.push_back(std::make_shared<Catalog>(data, tmpVctr));
+                File tmp(data, tmpVctr);
+                result.push_back(tmp);
             }
             else {
-                result.push_back(std::make_shared<File>(data));
+                File tmp(data);
+                result.push_back(tmp);
             }        
         }
 
