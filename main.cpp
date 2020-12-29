@@ -14,6 +14,8 @@ int main() {
     auto getstuff = dreader.getDirectories("../");
     dgenerator.setDirectoriesVector(getstuff);
 
+    std::cout << dgenerator.generate();
+
     for (const auto& record : getstuff) {
         std::cout << record << "\n";
     }

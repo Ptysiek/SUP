@@ -1,12 +1,11 @@
 #pragma once 
 
-
 #include <dirent.h>
-#include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
-
+#include "DataStructures.hpp"
 
 
 
@@ -15,6 +14,8 @@ class DirectoriesReader {
 
 
     std::vector<std::string> ignoreDirectories_ {
+        "\n",
+        "",
         ".",
         "..",
         ".git",
@@ -29,8 +30,8 @@ class DirectoriesReader {
 
 
 public:
-    std::vector<std::string> getDirectories(std::string startpath) {
-        std::vector<std::string> result;
+    std::vector<FilePtr> getDirectories(std::string startpath) {
+        std::vector<FilePtr> result;
 
         DIR* directory;
         directory = opendir(startpath.c_str());
@@ -43,18 +44,20 @@ public:
         while ((entry = readdir(directory)) != NULL) {
             std::string data = entry->d_name;
 
-            
             if (!CheckIgnoreDirectories(data)) {
                 continue;
             }
             auto tmpVctr = getDirectories(startpath + "/" + data);
             if (tmpVctr.size() > 0) {
+                result.push_back(std::make_shared<Catalog>(data, tmpVctr));
+                /*
                 for (const auto& record : tmpVctr) {
                     result.push_back(data + "/" + record);
                 }
+                //*/
             }
             else {
-                result.push_back(data);
+                result.push_back(std::make_shared<File>(data));
             }        
         }
 
