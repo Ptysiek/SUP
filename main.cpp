@@ -8,13 +8,15 @@
 
 int main() {
 
-    DirectoriesReader dreader;
-    DocumentationGenerator dgenerator;
+    const std::string startPath = "../"; 
 
-    auto getstuff = dreader.getDirectories("../");
+    DirectoriesReader dreader;
+    DocumentationGenerator dgenerator(startPath);
+
+    auto getstuff = dreader.getDirectories(startPath);
     dgenerator.setDirectoriesVector(getstuff);
 
-    std::cout << dgenerator.generate();
+    dgenerator.generate();
 
     return 0;
 }

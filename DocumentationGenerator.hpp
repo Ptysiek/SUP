@@ -3,21 +3,32 @@
 #include <algorithm>
 #include <chrono>
 #include <fstream>
+#include <map>
 #include <string>
 #include <stdexcept>
 #include <vector>
 
 #include "DataStructures.hpp"
+#include "StateMachine.hpp"
 
 
 class DocumentationGenerator {
+    //using FullName = std::string;
+    //using PartName = std::string;
+    using ProjectMap = std::vector<std::string>;
 
-    const std::string filename_{"sup.txt"};
+    const std::string startPath_;
+    const std::string filename_;
     std::vector<File> directories_;
 
 
 
 public:
+    DocumentationGenerator(const std::string& startPath):
+        startPath_(startPath),
+        filename_("sup.txt")
+    {}
+
     void setDirectoriesVector(std::vector<File>& vctr) {
         directories_ = vctr;
         sortDirectories(directories_);
@@ -48,31 +59,52 @@ public:
 
 
     bool generate() {
+        std::string data = "";
+
+        data += getHeader();
+        data += "File generation date: " + getDate();
+
+        data += "\n\n";
+        data += "_____________________________________________\n";
+        data += "Table of contents:   ------------------------\n";
+        data += getTableOfContents(directories_);
+
+        auto dirs = getDirectories(directories_);
+
+        std::map<std::string,std::vector<std::string>> allFilesData;
+        for (const auto& file : dirs) {
+            allFilesData[file] = readFromFile(startPath_ + file);
+        }
+        StateMachine sm;
+        sm.ProcessNewFile(allFilesData);
+
         std::ofstream output(filename_);
         if (!output || !output.is_open()) {
             return false;
         }
-        
-        output << getHeader();
-        output << "File generation date: " << getDate();
-
-        output << "\n\n";
-        output << "_____________________________________________\n";
-        output << "Table of contents:   ------------------------\n";
-        output << getTableOfContents(directories_);
-     
-        auto dirs = getDirectories(directories_);
-
-        output << "\n\n";
-        for (const auto& file : dirs) {
-            output << file << "\n";
-        }
+        output << data;
 
         output.close();
         return true;
     }
 
 private:
+    std::vector<std::string> readFromFile(const std::string& path) {
+        std::vector<std::string> fileData;
+        fileData.reserve(500);
+
+        std::ifstream readFile(path);
+        while (readFile) {
+            std::string tmp;
+            readFile >> tmp;
+            fileData.push_back(tmp);
+        }
+        readFile.close();
+        
+        return fileData;
+    }
+
+
     std::string getHeader() {
         return "Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]\n";
     }
@@ -88,11 +120,10 @@ private:
 
     std::string getTableOfContents(std::vector<File> directories, size_t tab=1) {
         if (directories.size() < 1) {
-            throw std::logic_error("DocumentationGenerator::getDirectories()");
+            throw std::logic_error("DocumentationGenerator::getTableOfContents()");
         }
         
         std::string result = "";
-
         for (const auto& file : directories) {
             result += getTabs(tab);
             
@@ -108,7 +139,6 @@ private:
             }
             result += "\n";
         }
-        
         return result;
     }
 
@@ -132,7 +162,6 @@ private:
                 result.push_back(path + file.name_);
             }
         }
-        
         return result;
     }
 

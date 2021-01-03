@@ -24,6 +24,7 @@ class DirectoriesReader {
         "notes",
         "build",
         "tools",
+        "tags",
         "README.md",
         "CMakeLists.txt"
     };
