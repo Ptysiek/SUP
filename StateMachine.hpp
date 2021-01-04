@@ -35,7 +35,6 @@ class StateMachine {
 
 
 public:
-
     std::string Process(const std::map<std::string,std::string> allFilesData) {
         std::string result = "";
         for (const auto& [fileName, fileData] : allFilesData) {
@@ -65,9 +64,12 @@ private:
             std::string oneLine = ReadOneLine();
         
             oneLine = StripFromComments(oneLine);
-            
+     
+            oneLine = StripFromExtraWhiteSpaces(oneLine);
+
+
             if (oneLine != "" && oneLine != "\n") {
-                result += oneLine + "\n";
+                result += oneLine + ' ';
             }
         }
 
@@ -91,6 +93,24 @@ private:
         }
         return result;
     }
+    
+    std::string StripFromExtraWhiteSpaces(const std::string& oneLine) {
+        std::string result = "";
+
+        size_t i = 0;
+        for ( ; i < oneLine.size(); ++i) {
+            if (oneLine[i] != ' ' && oneLine[i] != '\n' && oneLine[i] != '\t') {
+                break;
+            }
+        }
+
+        for ( ; i < oneLine.size(); ++i) {
+            result += oneLine[i];
+        }
+
+        return result;
+    }
+
 
     std::string StripFromComments(const std::string& oneLine) {
         std::string result = "";
@@ -123,6 +143,5 @@ private:
         }
         return result;
     }
-
 };
 
