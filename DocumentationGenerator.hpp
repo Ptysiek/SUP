@@ -71,12 +71,15 @@ public:
 
         auto dirs = getDirectories(directories_);
 
-        std::map<std::string,std::vector<std::string>> allFilesData;
+        std::map<std::string,std::string> allFilesData;
         for (const auto& file : dirs) {
-            allFilesData[file] = readFromFile(startPath_ + file);
+            auto fileData_tmp = readFromFile(startPath_ + file);
+            allFilesData[file] = fileData_tmp; 
+            //data += fileData_tmp;
+            //data += "\n\n";
         }
         StateMachine sm;
-        sm.ProcessNewFile(allFilesData);
+        data += sm.Process(allFilesData);
 
         std::ofstream output(filename_);
         if (!output || !output.is_open()) {
@@ -89,16 +92,29 @@ public:
     }
 
 private:
-    std::vector<std::string> readFromFile(const std::string& path) {
-        std::vector<std::string> fileData;
-        fileData.reserve(500);
+    std::string readFromFile(const std::string& path) {
+        //std::vector<std::string> fileData;
+        //fileData.reserve(500);
+        std::string fileData = "";
 
         std::ifstream readFile(path);
+        std::string tmp;
+        while (std::getline(readFile, tmp)) {
+            if (tmp == "\n" || tmp == "") {
+                continue;
+            }
+            fileData += tmp;
+            fileData += "\n";
+        }
+        /*
         while (readFile) {
             std::string tmp;
             readFile >> tmp;
-            fileData.push_back(tmp);
+            //fileData.push_back(tmp);
+            fileData += tmp;
+            fileData += ' ';
         }
+        //*/
         readFile.close();
         
         return fileData;

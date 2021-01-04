@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date: Tue Dec 29 20:30:40 2020
+File generation date: Mon Jan  4 14:33:45 2021
 
 
 _____________________________________________
@@ -7,6 +7,368 @@ Table of contents:   ------------------------
 	DataStructures.hpp
 	DirectoriesReader.hpp
 	DocumentationGenerator.hpp
+	StateMachine.hpp
 	catch_main.cpp
 	main.cpp
-../DataStructures.hpp../DirectoriesReader.hpp../DocumentationGenerator.hpp../catch_main.cpp../main.cpp
+#pragma once
+#include <vector>
+struct File {
+    explicit File(std::string& name): 
+        isCatalog_(false),
+        name_(name)
+    {}
+    explicit File(std::string& name, std::vector<File>& files):
+        isCatalog_(true),
+        name_(name),
+        files_(files)
+    {}
+    bool isCatalog_;
+    std::string name_;
+    std::vector<File> files_; 
+    
+};
+
+
+#pragma once 
+#include <dirent.h>
+#include <memory>
+#include <string>
+#include <vector>
+#include "DataStructures.hpp"
+class DirectoriesReader {
+    std::vector<std::string> ignoreDirectories_ {
+        "\n",
+        "",
+        ".",
+        "..",
+        ".git",
+        ".gitignore",
+        ".notes",
+        "notes",
+        "build",
+        "tools",
+        "tags",
+        "README.md",
+        "CMakeLists.txt"
+    };
+public:
+    std::vector<File> getDirectories(std::string startpath) {
+        std::vector<File> result;
+        DIR* directory;
+        directory = opendir(startpath.c_str());
+        if (!directory) {
+            return result;
+        }
+        struct dirent* entry;
+        while ((entry = readdir(directory)) != NULL) {
+            std::string data = entry->d_name;
+            if (!CheckIgnoreDirectories(data)) {
+                continue;
+            }
+            auto tmpVctr = getDirectories(startpath + "/" + data);
+            if (tmpVctr.size() > 0) {
+                File tmp(data, tmpVctr);
+                result.push_back(tmp);
+            }
+            else {
+                File tmp(data);
+                result.push_back(tmp);
+            }        
+        }
+        closedir(directory);
+        return result;
+    }
+private:
+    bool CheckIgnoreDirectories(std::string data) {
+        for (const auto& record : ignoreDirectories_) {
+            if (data == record) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+
+#pragma once
+#include <algorithm>
+#include <chrono>
+#include <fstream>
+#include <map>
+#include <string>
+#include <stdexcept>
+#include <vector>
+#include "DataStructures.hpp"
+#include "StateMachine.hpp"
+class DocumentationGenerator {
+    
+    
+    using ProjectMap = std::vector<std::string>;
+    const std::string startPath_;
+    const std::string filename_;
+    std::vector<File> directories_;
+public:
+    DocumentationGenerator(const std::string& startPath):
+        startPath_(startPath),
+        filename_("sup.txt")
+    {}
+    void setDirectoriesVector(std::vector<File>& vctr) {
+        directories_ = vctr;
+        sortDirectories(directories_);
+    }
+    void sortDirectories(std::vector<File>& directories) {
+        std::sort(directories.begin(), directories.end(), SortCriterion);
+        for (auto& subDir : directories) {
+            if (subDir.isCatalog_) {
+                sortDirectories(subDir.files_);
+            }
+        }
+    }
+    
+    static bool SortCriterion(const File& f, const File& s) { 
+        int test = f.isCatalog_ + s.isCatalog_;
+        if (test % 2 == 0) {
+            return SecondSortCriterion_Alphabetical(f.name_, s.name_);
+        }
+        else {
+            return s.isCatalog_;
+        }
+    }
+    static bool SecondSortCriterion_Alphabetical(const std::string& f, const std::string& s) { 
+        return (f < s);
+    }
+    bool generate() {
+        std::string data = "";
+        data += getHeader();
+        data += "File generation date: " + getDate();
+        data += "\n\n";
+        data += "_____________________________________________\n";
+        data += "Table of contents:   ------------------------\n";
+        data += getTableOfContents(directories_);
+        auto dirs = getDirectories(directories_);
+        std::map<std::string,std::string> allFilesData;
+        for (const auto& file : dirs) {
+            auto fileData_tmp = readFromFile(startPath_ + file);
+            allFilesData[file] = fileData_tmp; 
+            
+            
+        }
+        StateMachine sm;
+        data += sm.Process(allFilesData);
+        std::ofstream output(filename_);
+        if (!output || !output.is_open()) {
+            return false;
+        }
+        output << data;
+        output.close();
+        return true;
+    }
+private:
+    std::string readFromFile(const std::string& path) {
+        
+        
+        std::string fileData = "";
+        std::ifstream readFile(path);
+        std::string tmp;
+        while (std::getline(readFile, tmp)) {
+            if (tmp == "\n" || tmp == "") {
+                continue;
+            }
+            fileData += tmp;
+            fileData += "\n";
+        }
+        
+        readFile.close();
+        
+        return fileData;
+    }
+    std::string getHeader() {
+        return "Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https:
+    }
+    std::string getDate() {
+        using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
+        TimePoint thisPoint = std::chrono::system_clock::now();
+        std::time_t t = std::chrono::system_clock::to_time_t(thisPoint);
+        std::string date = std::ctime(&t);
+        return date;
+    }
+    std::string getTableOfContents(std::vector<File> directories, size_t tab=1) {
+        if (directories.size() < 1) {
+            throw std::logic_error("DocumentationGenerator::getTableOfContents()");
+        }
+        
+        std::string result = "";
+        for (const auto& file : directories) {
+            result += getTabs(tab);
+            
+            if (file.isCatalog_) {
+                result += "[";
+                result += file.name_;
+                result += "]\n";
+                result += getTableOfContents(file.files_, tab + 1);   
+                result += getTabs(tab);
+            }
+            else {
+                result += file.name_;
+            }
+            result += "\n";
+        }
+        return result;
+    }
+    std::string getTabs(size_t tab=1) {
+        std::string result = "\t";
+        for (size_t i = 1; i < tab; ++i) {
+            result += "|\t";
+        }
+        return result;
+    }
+    
+    std::vector<std::string> getDirectories(const std::vector<File>& directories, const std::string& path="") {
+        std::vector<std::string> result;
+        
+        for (const auto& file : directories) {
+            if (file.isCatalog_) {
+                auto subFiles = getDirectories(file.files_, path + file.name_ + "/");
+                result.insert(result.end(), subFiles.begin(), subFiles.end() );
+            }
+            else {
+                result.push_back(path + file.name_);
+            }
+        }
+        return result;
+    }
+};
+
+
+#pragma once
+#include <memory>
+#include <stack>
+#include <string>
+#include <vector>
+struct Node {
+    explicit Node(
+        const std::string& originFile, 
+        const std::string& name,
+        const std::string& fullName) :
+        originFile_(originFile),
+        name_(name),
+        fullName_(fullName)
+    {}
+    const std::string originFile_;
+    const std::string name_;
+    const std::string fullName_;
+    std::string type_;
+    std::vector<std::shared_ptr<Node>> nodes_;
+};
+class StateMachine {
+    std::vector<Node> collectiveData;
+    
+    size_t index_;
+    std::string processedFileData_;
+    bool is_multilineComment_;
+public:
+    std::string Process(const std::map<std::string,std::string> allFilesData) {
+        std::string result = "";
+        for (const auto& [fileName, fileData] : allFilesData) {
+            result += ProcessNewFile(fileName, fileData);
+            result += "\n\n";
+        }
+        return result;
+    }
+private:
+    void initMachine(std::string fileData) {
+        index_ = 0;
+        processedFileData_ = fileData;
+        is_multilineComment_ = false;
+    }
+    std::string ProcessNewFile(const std::string& fileName, const std::string& fileData) {
+        initMachine(fileData);
+        
+        std::string result = "";
+        std::string fullNameEntry = "";
+        Node test (fileName, "class", fullNameEntry + "class");
+        while (index_ < processedFileData_.size()) {
+            std::string oneLine = ReadOneLine();
+        
+            oneLine = StripFromComments(oneLine);
+            
+            if (oneLine != "" && oneLine != "\n") {
+                result += oneLine + "\n";
+            }
+        }
+        for (const auto& character : fileData) {
+            if (character != ' ') {
+            }
+        }
+        return result;
+    }
+    
+    std::string ReadOneLine() {
+        std::string result = "";
+        for ( ; index_ < processedFileData_.size(); ++index_) {
+            const char character = processedFileData_[index_];
+            if (character == '\n') {
+                ++index_;
+                return result;
+            }
+            result += character;
+        }
+        return result;
+    }
+    std::string StripFromComments(const std::string& oneLine) {
+        std::string result = "";
+        bool lastCharacter = true;
+        size_t i = 1;
+        while (i < oneLine.size()) {
+            if (is_multilineComment_) {
+                if (oneLine[i-1] == '*' && oneLine[i] == '/') {
+                    is_multilineComment_ = false;
+                    lastCharacter = false;
+                }
+            }
+            else {
+                if (oneLine[i-1] == '/' && oneLine[i] == '/') {
+                    return result;
+                }
+                if (oneLine[i-1] == '/' && oneLine[i] == '*') {
+                    is_multilineComment_ = true;
+                    ++i;
+                    continue;
+                }
+                lastCharacter = true;
+                if (oneLine[i-1] != '\t' && oneLine[i-1] != '\n') {
+                    result += oneLine[i-1];
+                }
+            }
+            ++i;
+        }
+        if (!is_multilineComment_ && lastCharacter && i == oneLine.size()) {
+            if (oneLine[i-1] != '\t' && oneLine[i-1] != '\n') {
+                result += oneLine[i-1];
+            }
+        }
+        return result;
+    }
+};
+
+
+#define CATCH_CONFIG_MAIN
+#include "tools/catch.hpp"
+
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include "DirectoriesReader.hpp"
+#include "DocumentationGenerator.hpp"
+int main() {
+    const std::string startPath = "../"; 
+    DirectoriesReader dreader;
+    DocumentationGenerator dgenerator(startPath);
+    auto getstuff = dreader.getDirectories(startPath);
+    dgenerator.setDirectoriesVector(getstuff);
+    dgenerator.generate();
+    return 0;
+}
+
+
