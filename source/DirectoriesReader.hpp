@@ -9,29 +9,14 @@
 
 
 
-
 class DirectoriesReader {
+    const static std::vector<std::string> ignoreDirectories_;
 
-
-    std::vector<std::string> ignoreDirectories_ {
-        "\n",
-        "",
-        ".",
-        "..",
-        ".git",
-        ".gitignore",
-        ".notes",
-        "notes",
-        "build",
-        "tools",
-        "tags",
-        "README.md",
-        "CMakeLists.txt"
-    };
+    explicit DirectoriesReader() { }
 
 
 public:
-    std::vector<File> getDirectories(std::string startpath) {
+    static std::vector<File> getDirectories(std::string startpath) {
         std::vector<File> result;
 
         DIR* directory;
@@ -58,12 +43,12 @@ public:
                 result.push_back(tmp);
             }        
         }
-
         closedir(directory);
         return result;
     }
+
 private:
-    bool CheckIgnoreDirectories(std::string data) {
+    static bool CheckIgnoreDirectories(std::string data) {
         for (const auto& record : ignoreDirectories_) {
             if (data == record) {
                 return false;
@@ -71,9 +56,24 @@ private:
         }
         return true;
     }
-
 };
 
+
+const std::vector<std::string> DirectoriesReader::ignoreDirectories_ {
+    "\n",
+    "",
+    ".",
+    "..",
+    ".git",
+    ".gitignore",
+    ".notes",
+    "notes",
+    "build",
+    "tools",
+    "tags",
+    "README.md",
+    "CMakeLists.txt"
+};
 
 
 

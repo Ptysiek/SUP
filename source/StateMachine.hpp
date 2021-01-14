@@ -32,13 +32,20 @@ class StateMachine {
     size_t index_;
     std::string processedFileData_;
     bool is_multilineComment_;
+    std::vector<std::string> connectedDirs_;
 
 
 public:
     std::string Process(const std::map<std::string,std::string> allFilesData) {
         std::string result = "";
         for (const auto& [fileName, fileData] : allFilesData) {
+            result += "\n\n";
             result += ProcessNewFile(fileName, fileData);
+            result += "------------------------\n";
+            for (const auto& record : connectedDirs_) {
+                result += record + "\n";
+            }
+            result += "------------------------\n";
             result += "\n\n";
         }
         return result;
@@ -50,6 +57,7 @@ private:
         index_ = 0;
         processedFileData_ = fileData;
         is_multilineComment_ = false;
+        connectedDirs_.clear();
     }
 
     std::string ProcessNewFile(const std::string& fileName, const std::string& fileData) {
@@ -64,12 +72,13 @@ private:
             std::string oneLine = ReadOneLine();
         
             oneLine = StripFromComments(oneLine);
-     
             oneLine = StripFromExtraWhiteSpaces(oneLine);
+            oneLine = StripFromDirectives(oneLine);
 
 
+            
             if (oneLine != "" && oneLine != "\n") {
-                result += oneLine + ' ';
+                result += oneLine + '\n';
             }
         }
 
@@ -94,6 +103,40 @@ private:
         return result;
     }
     
+    std::string StripFromDirectives(const std::string& oneLine) {
+
+        if (oneLine[0] != '#') {
+            return oneLine;
+        }
+        size_t k = 0;
+        const std::string code = "include";
+
+        size_t i = 1;
+        for ( ; i < oneLine.size() && k < code.size(); ++i) {
+            if (oneLine[i] != code[k] && oneLine[i] != ' ') {
+                return "";
+            }
+            else if (oneLine[i] == code[k]) {
+                ++k;
+            }
+        }
+        ++i;
+        for ( ; i < oneLine.size(); ++i) {
+            if (oneLine[i] != '"' && oneLine[i] != '\"' && oneLine[i] != '<' && oneLine[i] != ' ') {
+                return "";
+            }
+        }
+        std::string directory = "sup";
+        for ( ; i < oneLine.size(); ++i) {
+            if (oneLine[i] == '"' && oneLine[i] == '\"' && oneLine[i] == '>') {
+                break;
+            }
+            directory += oneLine[i];
+        }
+        connectedDirs_.push_back(directory);
+        return "";
+    }
+
     std::string StripFromExtraWhiteSpaces(const std::string& oneLine) {
         std::string result = "";
 

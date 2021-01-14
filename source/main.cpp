@@ -10,10 +10,10 @@ int main() {
 
     const std::string startPath = "../"; 
 
-    DirectoriesReader dreader;
+    // DirectoriesReader dreader;
     DocumentationGenerator dgenerator(startPath);
 
-    auto getstuff = dreader.getDirectories(startPath);
+    auto getstuff = DirectoriesReader::getDirectories(startPath);
     dgenerator.setDirectoriesVector(getstuff);
 
     dgenerator.generate();
