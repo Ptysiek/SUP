@@ -1,41 +1,88 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date: Mon Jan  4 16:13:10 2021
+File generation date: Thu Jan 14 19:36:56 2021
 
 
 _____________________________________________
 Table of contents:   ------------------------
-	DataStructures.hpp
-	DirectoriesReader.hpp
-	DocumentationGenerator.hpp
-	StateMachine.hpp
-	catch_main.cpp
-	main.cpp
-
-
-struct File {
-explicit File(std::string& name): 
-isCatalog_(false),
-name_(name)
-{}
-explicit File(std::string& name, std::vector<File>& files):
-isCatalog_(true),
-name_(name),
-files_(files)
-{}
-bool isCatalog_;
-std::string name_;
-std::vector<File> files_; 
-};
-------------------------
-------------------------
-
-
+	[source]
+	|	DirectoriesReader.hpp
+	|	DocumentationGenerator.hpp
+	|	File.hpp
+	|	StateMachine.hpp
+	|	catch_main.cpp
+	|	main.cpp
+	
 
 
 class DirectoriesReader {
-std::vector<std::string> ignoreDirectories_ {
+const static std::set<std::string> ignoreDirectories_;
+explicit DirectoriesReader() { }
+public:
+static std::vector<File> getDirectories(const std::string& startpath) {
+return GetDirectoriesRecursive(startpath);
+}
+private:
+static std::vector<File> GetDirectoriesRecursive(std::string startpath) {
+startpath = ConditionalSlashAppend(startpath);
+auto directoryNames = ReadDirectories(startpath);
+auto files = MakeFiles(directoryNames, startpath);
+for (auto& file : files) {
+auto subdirectories = GetDirectoriesRecursive(startpath + file.name_);
+if (subdirectories.size() > 0) {
+file.isCatalog_ = true;
+file.files_ = subdirectories;
+}
+}
+return files;
+}
+static std::vector<File> MakeFiles(
+const std::vector<std::string>& directoryNames, 
+const std::string& startpath) 
+{
+std::vector<File> files;
+for (const auto& dirname : directoryNames) {
+files.push_back(File(dirname, ConditionalSlashAppend(startpath))); 
+}
+return files;
+}
+static std::string ConditionalSlashAppend(const std::string& startpath) {
+if (size_t size = startpath.size(); size > 0) {
+return (startpath[size-1] == '/')? startpath : startpath + '/';
+}
+return "";
+}
+static std::vector<std::string> ReadDirectories(const std::string& path) {
+std::vector<std::string> directoryNames;
+DIR* directory;
+directory = opendir(path.c_str());
+if (!directory) {
+return directoryNames;
+}
+struct dirent* entry;
+while ((entry = readdir(directory)) != NULL) {
+std::string data = entry->d_name;
+if (IgnoreListContains(data)) {
+continue;
+}
+directoryNames.push_back(data);
+}
+closedir(directory);
+return directoryNames;
+}
+static bool IgnoreListContains(const std::string& data) {
+return (ignoreDirectories_.find(data) != ignoreDirectories_.end());
+for (const auto& record : ignoreDirectories_) {
+if (data == record) {
+return false;
+}
+}
+return true;
+}
+};
+const std::set<std::string> DirectoriesReader::ignoreDirectories_ {
 "\n",
 "",
+" ",
 ".",
 "..",
 ".git",
@@ -47,43 +94,6 @@ std::vector<std::string> ignoreDirectories_ {
 "tags",
 "README.md",
 "CMakeLists.txt"
-};
-public:
-std::vector<File> getDirectories(std::string startpath) {
-std::vector<File> result;
-DIR* directory;
-directory = opendir(startpath.c_str());
-if (!directory) {
-return result;
-}
-struct dirent* entry;
-while ((entry = readdir(directory)) != NULL) {
-std::string data = entry->d_name;
-if (!CheckIgnoreDirectories(data)) {
-continue;
-}
-auto tmpVctr = getDirectories(startpath + "/" + data);
-if (tmpVctr.size() > 0) {
-File tmp(data, tmpVctr);
-result.push_back(tmp);
-}
-else {
-File tmp(data);
-result.push_back(tmp);
-}        
-}
-closedir(directory);
-return result;
-}
-private:
-bool CheckIgnoreDirectories(std::string data) {
-for (const auto& record : ignoreDirectories_) {
-if (data == record) {
-return false;
-}
-}
-return true;
-}
 };
 ------------------------
 ------------------------
@@ -215,6 +225,25 @@ result.push_back(path + file.name_);
 }
 return result;
 }
+};
+------------------------
+------------------------
+
+
+
+
+struct File {
+bool isCatalog_;
+std::string name_;
+std::string path_;
+std::string fullname_;
+std::vector<File> files_; 
+explicit File(const std::string& name, const std::string& path): 
+isCatalog_(false),
+name_(name),
+path_(path),
+fullname_(name+path)
+{}
 };
 ------------------------
 ------------------------
@@ -386,9 +415,8 @@ return result;
 
 int main() {
 const std::string startPath = "../"; 
-DirectoriesReader dreader;
 DocumentationGenerator dgenerator(startPath);
-auto getstuff = dreader.getDirectories(startPath);
+auto getstuff = DirectoriesReader::getDirectories(startPath);
 dgenerator.setDirectoriesVector(getstuff);
 dgenerator.generate();
 return 0;
