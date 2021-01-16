@@ -7,26 +7,27 @@
 
 
 struct Node {
-    explicit Node(
-        const std::string& originFile, 
-        const std::string& name,
-        const std::string& fullName) :
-        originFile_(originFile),
-        name_(name),
-        fullName_(fullName)
-    {}
     const std::string originFile_;
     const std::string name_;
     const std::string fullName_;
-    std::string type_;
-
+    //std::string type_;
     std::vector<std::shared_ptr<Node>> nodes_;
+    
+    explicit Node(
+            const std::string& originFile, 
+            const std::string& name,
+            const std::string& fullName):
+        originFile_(originFile),
+        name_(name),
+        fullName_(fullName),
+        nodes_()
+    {}
 };
 
 
 class StateMachine {
 
-    std::vector<Node> collectiveData;
+    std::vector<Node> collectiveData_;
 
     
     size_t index_;
@@ -36,6 +37,14 @@ class StateMachine {
 
 
 public:
+    explicit StateMachine():
+        collectiveData_(),
+        index_(),
+        processedFileData_(),
+        is_multilineComment_(),
+        connectedDirs_()
+    { }
+
     std::string Process(const std::map<std::string,std::string> allFilesData) {
         std::string result = "";
         for (const auto& [fileName, fileData] : allFilesData) {

@@ -12,13 +12,14 @@ project(SUP)
 set(THIS_PROJECT_SRC_DIRECTORIES
 )
 set(THIS_PROJECT_TESTS_DIRECTORIES
+    source/DirectoriesReader.ut.cpp
 )
 
 # set flags
 set(THIS_PROJECT_FLAGS
     -Wall
     -Werror 
-    #-Weffc++   #TooMuch
+    -Weffc++   #TooMuch
     -Wextra
     -pedantic
     -Wconversion 

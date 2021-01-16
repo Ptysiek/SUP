@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <dirent.h>
+#include <exception>
 #include <memory>
 #include <set>
 #include <string>
@@ -12,7 +13,7 @@
 
 class DirectoriesReader {
 protected:
-    const static std::set<std::string> ignoreDirectories_;
+    static std::set<std::string> ignoreDirectories_;
 
     explicit DirectoriesReader() { }
 
@@ -40,26 +41,6 @@ private:
         return files;
     }
 
-    static std::vector<File> MakeFiles(
-        const std::vector<std::string>& directoryNames, 
-        const std::string& startpath) 
-    {
-        std::vector<File> files;
-
-        for (const auto& dirname : directoryNames) {
-            files.push_back(File(dirname, ConditionalSlashAppend(startpath))); 
-        }
-
-        return files;
-    }
-
-    static std::string ConditionalSlashAppend(const std::string& startpath) {
-        if (size_t size = startpath.size(); size > 0) {
-            return (startpath[size-1] == '/')? startpath : startpath + '/';
-        }
-        return "";
-    }
-
     static std::vector<std::string> ReadDirectories(const std::string& path) {
         std::vector<std::string> directoryNames;
 
@@ -83,18 +64,37 @@ private:
         return directoryNames;
     }
 
+
+protected:
+    static std::string ConditionalSlashAppend(const std::string& startpath) {
+        if (size_t size = startpath.size(); size > 0) {
+            return (startpath[size-1] == '/')? startpath : startpath + '/';
+        }
+        throw std::logic_error("DirectoriesReader::ConditionalSlashAppend() startpath is empty");
+    }
+
     static bool IgnoreListContains(const std::string& data) {
         return (ignoreDirectories_.find(data) != ignoreDirectories_.end());
-        for (const auto& record : ignoreDirectories_) {
-            if (data == record) {
-                return false;
-            }
+    }
+
+    static File MakeFile(const std::string& dirname, const std::string& startpath) {
+        return File(dirname, ConditionalSlashAppend(startpath));
+    }
+
+    static std::vector<File> MakeFiles(
+            const std::vector<std::string>& directoryNames, 
+            const std::string& startpath) 
+    {
+        std::vector<File> files;
+
+        for (const auto& dirname : directoryNames) {
+            files.push_back(MakeFile(dirname, startpath)); 
         }
-        return true;
+        return files;
     }
 };
 
-const std::set<std::string> DirectoriesReader::ignoreDirectories_ {
+std::set<std::string> DirectoriesReader::ignoreDirectories_ {
     "\n",
     "",
     " ",

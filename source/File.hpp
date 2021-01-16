@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-
+#include <iostream>
 
 struct File {
     bool isCatalog_;
@@ -15,8 +15,16 @@ struct File {
         isCatalog_(false),
         name_(name),
         path_(path),
-        fullname_(name+path)
-    {}
+        fullname_(name+path),
+        files_()
+    { }
+
+    std::string to_string() {
+        return "(" 
+            + name_ + ", "
+            + path_ + ", "
+            + fullname_ + ")";
+    }
 
 
     /*

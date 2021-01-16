@@ -8,6 +8,7 @@
 
 int main() {
 
+    //  const std::string startPath = ""; 
     const std::string startPath = "../"; 
 
     // DirectoriesReader dreader;

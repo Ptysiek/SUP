@@ -26,7 +26,8 @@ class DocumentationGenerator {
 public:
     DocumentationGenerator(const std::string& startPath):
         startPath_(startPath),
-        filename_("sup.txt")
+        filename_("sup.txt"),
+        directories_()
     {}
 
     void setDirectoriesVector(std::vector<File>& vctr) {
