@@ -4,6 +4,8 @@
 
 #include "DirectoriesReader.hpp"
 #include "DocumentationGenerator.hpp"
+#include "IgnoreFileReader.hpp"
+
 
 
 int main() {
@@ -11,10 +13,14 @@ int main() {
     //  const std::string startPath = ""; 
     const std::string startPath = "../"; 
 
-    // DirectoriesReader dreader;
+    DirectoriesReader dreader;
+       
     DocumentationGenerator dgenerator(startPath);
 
-    auto getstuff = DirectoriesReader::getDirectories(startPath);
+    const auto ignoreDirectories = IgnoreFileReader::getFilesToIgnore();
+
+
+    auto getstuff = dreader.getDirectories(startPath, ignoreDirectories);
     dgenerator.setDirectoriesVector(getstuff);
 
     dgenerator.generate();

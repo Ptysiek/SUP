@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date: Sat Jan 16 06:50:16 2021
+File generation date: Mon Jan 18 05:17:46 2021
 
 
 _____________________________________________
@@ -10,6 +10,7 @@ Table of contents:   ------------------------
 	|	DirectoriesReader.ut.hpp
 	|	DocumentationGenerator.hpp
 	|	File.hpp
+	|	IgnoreFileReader.hpp
 	|	StateMachine.hpp
 	|	catch_main.cpp
 	|	main.cpp
@@ -18,14 +19,20 @@ Table of contents:   ------------------------
 
 class DirectoriesReader {
 protected:
-static std::set<std::string> ignoreDirectories_;
-explicit DirectoriesReader() { }
+std::set<std::string> ignoreDirectories_;
 public:
-static std::vector<File> getDirectories(const std::string& startpath) {
+explicit DirectoriesReader(): ignoreDirectories_() { }
+explicit DirectoriesReader(const std::set<std::string>& ignoreDirs): ignoreDirectories_(ignoreDirs) { }
+std::vector<File> getDirectories(const std::string& startpath) {
 return GetDirectoriesRecursive(startpath);
 }
+std::vector<File> getDirectories(const std::string& startpath, const std::set<std::string>& ignoreDirs) {
+setIgnoreDirectories(ignoreDirs);
+return GetDirectoriesRecursive(startpath);
+}
+void setIgnoreDirectories(const std::set<std::string>& ignoreDirs) { ignoreDirectories_ = ignoreDirs; }
 private:
-static std::vector<File> GetDirectoriesRecursive(std::string startpath) {
+std::vector<File> GetDirectoriesRecursive(std::string startpath) {
 startpath = ConditionalSlashAppend(startpath);
 auto directoryNames = ReadDirectories(startpath);
 auto files = MakeFiles(directoryNames, startpath);
@@ -38,7 +45,7 @@ file.files_ = subdirectories;
 }
 return files;
 }
-static std::vector<std::string> ReadDirectories(const std::string& path) {
+std::vector<std::string> ReadDirectories(const std::string& path) {
 std::vector<std::string> directoryNames;
 DIR* directory;
 directory = opendir(path.c_str());
@@ -57,19 +64,48 @@ closedir(directory);
 return directoryNames;
 }
 protected:
-static std::string ConditionalSlashAppend(const std::string& startpath) {
+std::string ConditionalSlashAppend(const std::string& startpath) {
 if (size_t size = startpath.size(); size > 0) {
 return (startpath[size-1] == '/')? startpath : startpath + '/';
 }
 throw std::logic_error("DirectoriesReader::ConditionalSlashAppend() startpath is empty");
 }
-static bool IgnoreListContains(const std::string& data) {
+std::string RemoveSlashOnEnd(const std::string& dirname) {
+if (dirname.size() == 0) {
+return dirname;
+}
+std::string directoryName = "";
+size_t dirname_size = dirname.size()-1;
+for (size_t i = 0; i < dirname_size; ++i) {
+directoryName += dirname[i];
+}
+if (dirname[dirname_size] != '/') {
+directoryName += dirname[dirname_size];
+}
+return directoryName;
+}
+bool IgnoreListContains(const std::string& data) {
 return (ignoreDirectories_.find(data) != ignoreDirectories_.end());
 }
-static File MakeFile(const std::string& dirname, const std::string& startpath) {
-return File(dirname, ConditionalSlashAppend(startpath));
+File MakeFile(const std::string& dirname, const std::string& startpath) {
+const std::string directoryName = RemoveSlashOnEnd(dirname);
+TestDirname(directoryName);
+return File(directoryName, ConditionalSlashAppend(startpath));
 }
-static std::vector<File> MakeFiles(
+void TestDirname(const std::string& dirname) {
+if (dirname.empty()) {
+throw std::logic_error("DirectoriesReader::MakeFile()::TestDirname() directoryName is empty");
+}
+for (size_t i = 1; i < dirname.size(); ++i) {
+if (dirname[i - 1] == '/' && dirname[i] == '/') {
+throw std::logic_error("DirectoriesReader::MakeFile()::TestDirname() double slash");
+}
+}
+if (dirname == ".." || dirname == "../" || dirname == "." || dirname == "./") {
+throw std::logic_error("DirectoriesReader::MakeFile()::TestDirname() given navigation directory");
+}
+}
+std::vector<File> MakeFiles(
 const std::vector<std::string>& directoryNames, 
 const std::string& startpath) 
 {
@@ -80,31 +116,14 @@ files.push_back(MakeFile(dirname, startpath));
 return files;
 }
 };
-std::set<std::string> DirectoriesReader::ignoreDirectories_ {
-"\n",
-"",
-" ",
-".",
-"..",
-".git",
-".gitignore",
-".notes",
-"notes",
-"build",
-"tools",
-"tags",
-"README.md",
-"CMakeLists.txt"
-};
 ------------------------
 ------------------------
 
 
 
 
-TEST_CASE("DirectoriesReader: Helper Functions", "[conditionalSlashAppend]") {
+TEST_CASE("DirectoriesReader: Helper Functions", "[conditionalSlashAppend], [removeSlashOnEnd]") {
 WHEN("Testing the conditionalSlashAppend() operation") {
-DirectoriesReader_test testedClass;
 struct test {
 const std::string startpath_;
 const std::string result_;
@@ -136,6 +155,7 @@ const std::initializer_list<test> tests = {
 {".", "./"},
 {"./", "./"}
 };
+DirectoriesReader_test testedClass;
 for (const auto& test : tests) {
 THEN(test.log()) {
 std::string first_result;
@@ -162,6 +182,34 @@ REQUIRE_THROWS(testedClass.conditionalSlashAppend(test.startpath_));
 }
 }
 }
+WHEN("Testing the removeSlashOnEnd() operation") {
+struct test {
+const std::string dirname_;
+const std::string result_directoryName_;
+std::string log() const {
+return 
+"{ (\"" + dirname_  
++ "\") == \"" + result_directoryName_
++ "\" }";
+}
+};
+const std::initializer_list<test> tests = {
+{"abcd", "abcd"},
+{"abcd/", "abcd"},
+{"a", "a"},
+{"a/", "a"},
+{"", ""},
+{"/", ""},
+{std::string(), std::string()}
+};
+DirectoriesReader_test testedClass;
+for (const auto& test : tests) {
+THEN(test.log()) {
+REQUIRE_NOTHROW(testedClass.removeSlashOnEnd(test.dirname_));
+REQUIRE(testedClass.removeSlashOnEnd(test.dirname_) == test.result_directoryName_);
+}
+}
+}
 }
 TEST_CASE("DirectoriesReader: IgnoreList Functions", "[setIgnoreList], [ignoreListContains]") {
 const std::initializer_list<std::string> set_list_data = {
@@ -177,15 +225,16 @@ const std::initializer_list<std::string> set_list_data = {
 "README.md",
 "CMakeLists.txt"
 };
-DirectoriesReader_test testedClass;
 WHEN("Testing the setIgnoreList() operation") {
-REQUIRE_NOTHROW(testedClass.setIgnoreList(set_list_data));
+DirectoriesReader_test testedClass;
+REQUIRE_NOTHROW(testedClass.setIgnoreDirectories(set_list_data));
 REQUIRE(testedClass.getIgnoreListSize() == set_list_data.size());
-testedClass.setIgnoreList(set_list_data);
+testedClass.setIgnoreDirectories(set_list_data);
 REQUIRE(testedClass.getIgnoreList() == std::set<std::string>(set_list_data));
 }
 WHEN("Testing the ignoreListContains() operation") {
-testedClass.setIgnoreList(set_list_data);
+DirectoriesReader_test testedClass;
+testedClass.setIgnoreDirectories(set_list_data);
 for (const auto& directory : set_list_data) {
 REQUIRE_NOTHROW(testedClass.ignoreListContains(directory));
 REQUIRE(testedClass.ignoreListContains(directory) == true);
@@ -199,6 +248,8 @@ REQUIRE(testedClass.ignoreListContains(directory + character) == false);
 }
 }
 }
+}
+WHEN("Testing the ignoreListContains() operation with general data") {
 struct test {
 const std::string directory_;
 const bool result_;
@@ -213,6 +264,8 @@ const std::initializer_list<test> tests = {
 {"", true},
 {std::string(), true}
 };
+DirectoriesReader_test testedClass;
+testedClass.setIgnoreDirectories(set_list_data);
 for (const auto& test : tests) {
 THEN(test.log()) {
 REQUIRE_NOTHROW(testedClass.ignoreListContains(test.directory_));
@@ -221,7 +274,8 @@ REQUIRE(testedClass.ignoreListContains(test.directory_) == test.result_);
 }
 }
 }
-TEST_CASE("DirectoriesReader: MakeFile Functions", "[makeFile], [makeFiles]") {
+TEST_CASE("DirectoriesReader: MakeFile Functions", "[makeFile]") {
+WHEN("Testing the makeFile() operation") {
 struct test {
 const std::string dirName_;
 const std::string startpath_;
@@ -230,20 +284,70 @@ const std::string result_path_;
 const std::string result_fullname_;
 std::string log() const {
 return 
+"{ (\"" + dirName_ + 
+"\", \"" + startpath_ +
+"\") == (\"" + result_name_ +
+"\", \"" + result_path_ +
+"\", \"" + result_fullname_ +
+"\") }"; 
+} 
+};
+const std::initializer_list<test> tests = {
+{"abcd", "efg/",    "abcd", "efg/", "efg/abcd"},
+{"abcd", "efg",     "abcd", "efg/", "efg/abcd"},
+{"a", "a/",         "a", "a/", "a/a"},
+{"a", "a",          "a", "a/", "a/a"},
+{"abcd/", "efg/",   "abcd", "efg/", "efg/abcd"},
+{"abcd/", "efg",    "abcd", "efg/", "efg/abcd"},
+{"a/", "a/",        "a", "a/", "a/a"},
+{"a/", "a",         "a", "a/", "a/a"},
+{"ab/cd", "ab/cd/",     "ab/cd", "ab/cd/", "ab/cd/ab/cd"},
+{"ab/cd/", "ab/cd/",    "ab/cd", "ab/cd/", "ab/cd/ab/cd"}
+};
+DirectoriesReader_test testedClass;
+for (const auto& test : tests) {
+THEN(test.log()) {
+REQUIRE_NOTHROW(testedClass.makeFile(test.dirName_, test.startpath_));
+auto file = testedClass.makeFile(test.dirName_, test.startpath_);
+REQUIRE(file.name_ == test.result_name_);
+REQUIRE(file.path_ == test.result_path_);
+REQUIRE(file.fullname_ == test.result_fullname_);
+}
+}
+}
+WHEN("Testing the makeFile() operation, throw cases") {
+struct test {
+const std::string dirName_;
+const std::string startpath_;
+std::string log() const {
+return 
 "{ (" + dirName_ + 
 ", " + startpath_ +
-") == (" + result_name_ +
-", " + result_path_ +
-", " + result_fullname_ +
 ") }";
 }
 };
-const std::initializer_list<test> tests = {
-{"abcd", "abcdefg",   "abcd", "dsf", "asdf"}
+const std::initializer_list<test> bad_tests = {
+{"abcd", ""},
+{"", "abcd"},
+{"", ""},
+{std::string(), std::string()},
+{"/", "abcd"},
+{"ab
+{"ab
+{"
+{"
+{"ab
+{"ab
+{"
+{"
+{"ab/cd
 };
-WHEN("Testing the makeFile() operation") {
+DirectoriesReader_test testedClass;
+for (const auto& test : bad_tests) {
+THEN(test.log()) {
+REQUIRE_THROWS(testedClass.makeFile(test.dirName_, test.startpath_));
 }
-WHEN("Testing the makeFiles() operation") {
+}
 }
 }
 ------------------------
@@ -257,11 +361,11 @@ public:
 std::string conditionalSlashAppend(const std::string& startpath) {
 return DirectoriesReader::ConditionalSlashAppend(startpath);
 }
+std::string removeSlashOnEnd (const std::string& dirname) {
+return DirectoriesReader::RemoveSlashOnEnd(dirname);
+}
 bool ignoreListContains(const std::string& data) {
 return IgnoreListContains(data);
-}
-void setIgnoreList(const std::initializer_list<std::string>& data) {
-DirectoriesReader::ignoreDirectories_ = data;
 }
 size_t getIgnoreListSize() const { return DirectoriesReader::ignoreDirectories_.size(); }
 const std::set<std::string>& getIgnoreList() const { return DirectoriesReader::ignoreDirectories_; }
@@ -423,7 +527,7 @@ explicit File(const std::string& name, const std::string& path):
 isCatalog_(false),
 name_(name),
 path_(path),
-fullname_(name+path),
+fullname_(path+name),
 files_()
 { }
 std::string to_string() {
@@ -432,6 +536,65 @@ return "("
 + path_ + ", "
 + fullname_ + ")";
 }
+};
+------------------------
+------------------------
+
+
+
+
+class IgnoreFileReader {
+protected:
+const static std::set<std::string> defaultIgnores_;
+const static std::string filename_;
+explicit IgnoreFileReader() { }
+public:
+static std::set<std::string> getFilesToIgnore() {
+std::ifstream readFile(filename_);
+if (!readFile || !readFile.is_open()) {
+GenerateDefaultFile();
+return defaultIgnores_;
+}
+std::set<std::string> fileData;
+std::string record;
+while (std::getline(readFile, record)) {
+if (record == "\n" || record == "") {
+continue;
+}
+fileData.insert(record);
+}
+readFile.close();   
+return fileData;
+}
+private: 
+static void GenerateDefaultFile() {
+std::ofstream output(filename_);
+if (!output || !output.is_open()) {
+throw std::logic_error("IgnoreFileReader::getFilesToIgnore() Failed to generate");
+}
+for (const auto& record : defaultIgnores_) {
+output << record << "\n";
+}
+output.close();
+}
+};
+const std::string IgnoreFileReader::filename_ = ".supignore";
+const std::set<std::string> IgnoreFileReader::defaultIgnores_ {
+"\n",
+"",
+" ",
+".",
+"..",
+".git",
+".gitignore",
+".notes",
+".sup",
+"notes",
+"build",
+"tools",
+"tags",
+"README.md",
+"CMakeLists.txt"
 };
 ------------------------
 ------------------------
@@ -610,8 +773,10 @@ return result;
 
 int main() {
 const std::string startPath = "../"; 
+DirectoriesReader dreader;
 DocumentationGenerator dgenerator(startPath);
-auto getstuff = DirectoriesReader::getDirectories(startPath);
+const auto ignoreDirectories = IgnoreFileReader::getFilesToIgnore();
+auto getstuff = dreader.getDirectories(startPath, ignoreDirectories);
 dgenerator.setDirectoriesVector(getstuff);
 dgenerator.generate();
 return 0;

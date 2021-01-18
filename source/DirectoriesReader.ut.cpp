@@ -135,10 +135,10 @@ TEST_CASE("DirectoriesReader: IgnoreList Functions", "[setIgnoreList], [ignoreLi
     // ------------------------------------------------------------------------------------------------------
     WHEN("Testing the setIgnoreList() operation") {
         DirectoriesReader_test testedClass;
-        REQUIRE_NOTHROW(testedClass.setIgnoreList(set_list_data));
+        REQUIRE_NOTHROW(testedClass.setIgnoreDirectories(set_list_data));
         REQUIRE(testedClass.getIgnoreListSize() == set_list_data.size());
 
-        testedClass.setIgnoreList(set_list_data);
+        testedClass.setIgnoreDirectories(set_list_data);
         REQUIRE(testedClass.getIgnoreList() == std::set<std::string>(set_list_data));
     }
 
@@ -146,7 +146,7 @@ TEST_CASE("DirectoriesReader: IgnoreList Functions", "[setIgnoreList], [ignoreLi
     // ------------------------------------------------------------------------------------------------------
     WHEN("Testing the ignoreListContains() operation") {
         DirectoriesReader_test testedClass;
-        testedClass.setIgnoreList(set_list_data);
+        testedClass.setIgnoreDirectories(set_list_data);
         
         for (const auto& directory : set_list_data) {
             REQUIRE_NOTHROW(testedClass.ignoreListContains(directory));
@@ -185,7 +185,7 @@ TEST_CASE("DirectoriesReader: IgnoreList Functions", "[setIgnoreList], [ignoreLi
         };
         
         DirectoriesReader_test testedClass;
-        testedClass.setIgnoreList(set_list_data);
+        testedClass.setIgnoreDirectories(set_list_data);
         
         for (const auto& test : tests) {
             THEN(test.log()) {

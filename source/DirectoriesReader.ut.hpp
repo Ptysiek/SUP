@@ -19,10 +19,6 @@ public:
         return IgnoreListContains(data);
     }
 
-    void setIgnoreList(const std::initializer_list<std::string>& data) {
-        DirectoriesReader::ignoreDirectories_ = data;
-    }
-    
     size_t getIgnoreListSize() const { return DirectoriesReader::ignoreDirectories_.size(); }
     const std::set<std::string>& getIgnoreList() const { return DirectoriesReader::ignoreDirectories_; }
 
