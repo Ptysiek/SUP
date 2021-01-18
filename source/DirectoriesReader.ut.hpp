@@ -11,6 +11,10 @@ public:
         return DirectoriesReader::ConditionalSlashAppend(startpath);
     }
 
+    std::string removeSlashOnEnd (const std::string& dirname) {
+        return DirectoriesReader::RemoveSlashOnEnd(dirname);
+    }
+
     bool ignoreListContains(const std::string& data) {
         return IgnoreListContains(data);
     }

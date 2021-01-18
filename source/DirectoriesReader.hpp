@@ -73,12 +73,46 @@ protected:
         throw std::logic_error("DirectoriesReader::ConditionalSlashAppend() startpath is empty");
     }
 
+    static std::string RemoveSlashOnEnd(const std::string& dirname) {
+        if (dirname.size() == 0) {
+            return dirname;
+        }
+        
+        std::string directoryName = "";
+        size_t dirname_size = dirname.size()-1;
+        
+        for (size_t i = 0; i < dirname_size; ++i) {
+            directoryName += dirname[i];
+        }
+        if (dirname[dirname_size] != '/') {
+            directoryName += dirname[dirname_size];
+        }
+
+        return directoryName;
+    }
+
     static bool IgnoreListContains(const std::string& data) {
         return (ignoreDirectories_.find(data) != ignoreDirectories_.end());
     }
 
     static File MakeFile(const std::string& dirname, const std::string& startpath) {
-        return File(dirname, ConditionalSlashAppend(startpath));
+        const std::string directoryName = RemoveSlashOnEnd(dirname);
+        TestDirname(directoryName);
+        return File(directoryName, ConditionalSlashAppend(startpath));
+    }
+    static void TestDirname(const std::string& dirname) {
+        if (dirname.empty()) {
+            throw std::logic_error("DirectoriesReader::MakeFile()::TestDirname() directoryName is empty");
+        }
+
+        for (size_t i = 1; i < dirname.size(); ++i) {
+            if (dirname[i - 1] == '/' && dirname[i] == '/') {
+                throw std::logic_error("DirectoriesReader::MakeFile()::TestDirname() double slash");
+            }
+        }
+        if (dirname == ".." || dirname == "../" || dirname == "." || dirname == "./") {
+            throw std::logic_error("DirectoriesReader::MakeFile()::TestDirname() given navigation directory");
+        }
     }
 
     static std::vector<File> MakeFiles(

@@ -15,7 +15,7 @@ struct File {
         isCatalog_(false),
         name_(name),
         path_(path),
-        fullname_(name+path),
+        fullname_(path+name),
         files_()
     { }
 
