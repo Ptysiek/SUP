@@ -12,7 +12,7 @@ project(SUP)
 set(THIS_PROJECT_SRC_DIRECTORIES
 )
 set(THIS_PROJECT_TESTS_DIRECTORIES
-    source/DirectoriesReader.ut.cpp
+    source/FileReaders/DirectoriesReader.ut.cpp
 )
 
 # set flags

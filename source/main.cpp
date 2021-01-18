@@ -1,27 +1,22 @@
 #include <string>
 #include <vector>
 
-#include "DefaultFileReader.hpp"
-#include "DirectoriesReader.hpp"
 #include "DocumentationGenerator.hpp"
-#include "IgnoreFileReader.hpp"
+#include "FileReaders/DefaultFileReader.hpp"
+#include "FileReaders/DirectoriesReader.hpp"
+#include "FileReaders/IgnoreFileReader.hpp"
 
 
 int main() {
-
     const auto startPath = DefaultFileReader::getStartPath(); 
     const auto ignoreDirectories = IgnoreFileReader::getFilesToIgnore();
 
-    DirectoriesReader dreader;
+    DirectoriesReader dirReader;
+    auto directories = dirReader.getDirectories(startPath, ignoreDirectories);
        
-    DocumentationGenerator dgenerator(startPath);
+    DocumentationGenerator documGenerator(startPath);
+    documGenerator.setDirectoriesVector(directories);
 
-
-
-    auto directories = dreader.getDirectories(startPath, ignoreDirectories);
-    dgenerator.setDirectoriesVector(directories);
-
-    dgenerator.generate();
-
+    documGenerator.generate();
     return 0;
 }
