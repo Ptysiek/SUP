@@ -34,11 +34,6 @@ public:
             fileData.insert(record);
         }
         readFile.close();   
-        
-        //if (fileData.empty() || fileData.size() < 1) {
-        //    return defaultIgnores_;
-        //}
-        
         return fileData;
     }
 

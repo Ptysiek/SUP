@@ -1,27 +1,25 @@
-#include <iostream>
 #include <string>
 #include <vector>
 
+#include "DefaultFileReader.hpp"
 #include "DirectoriesReader.hpp"
 #include "DocumentationGenerator.hpp"
 #include "IgnoreFileReader.hpp"
 
 
-
 int main() {
 
-    //  const std::string startPath = ""; 
-    const std::string startPath = "../"; 
+    const auto startPath = DefaultFileReader::getStartPath(); 
+    const auto ignoreDirectories = IgnoreFileReader::getFilesToIgnore();
 
     DirectoriesReader dreader;
        
     DocumentationGenerator dgenerator(startPath);
 
-    const auto ignoreDirectories = IgnoreFileReader::getFilesToIgnore();
 
 
-    auto getstuff = dreader.getDirectories(startPath, ignoreDirectories);
-    dgenerator.setDirectoriesVector(getstuff);
+    auto directories = dreader.getDirectories(startPath, ignoreDirectories);
+    dgenerator.setDirectoriesVector(directories);
 
     dgenerator.generate();
 

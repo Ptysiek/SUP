@@ -1,10 +1,11 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date: Mon Jan 18 05:17:46 2021
+File generation date: Mon Jan 18 06:00:25 2021
 
 
 _____________________________________________
 Table of contents:   ------------------------
 	[source]
+	|	DefaultFileReader.hpp
 	|	DirectoriesReader.hpp
 	|	DirectoriesReader.ut.cpp
 	|	DirectoriesReader.ut.hpp
@@ -15,6 +16,44 @@ Table of contents:   ------------------------
 	|	catch_main.cpp
 	|	main.cpp
 	
+
+
+class DefaultFileReader {
+protected:
+const static std::string filename_;
+const static std::string defaultStartPath_;
+static std::string programStartPath_;
+explicit DefaultFileReader() { }
+public:
+static std::string getStartPath() {
+std::ifstream readFile(filename_);
+if (!readFile || !readFile.is_open()) {
+GenerateDefaultFile();
+return defaultStartPath_;
+}
+std::string record;
+std::getline(readFile, record);
+readFile.close();   
+programStartPath_ = record;
+return record;
+}
+private: 
+static void GenerateDefaultFile() {
+std::ofstream output(filename_);
+if (!output || !output.is_open()) {
+throw std::logic_error("DefaultFileReader::GenerateDefaultFile() Failed to generate");
+}
+output << programStartPath_;
+output.close();
+}
+};
+const std::string DefaultFileReader::filename_ = ".supDefaultPath";
+const std::string DefaultFileReader::defaultStartPath_ = "../";
+std::string DefaultFileReader::programStartPath_ = defaultStartPath_;
+------------------------
+------------------------
+
+
 
 
 class DirectoriesReader {
@@ -772,7 +811,7 @@ return result;
 
 
 int main() {
-const std::string startPath = "../"; 
+const std::string startPath = DefaultFileReader::getStartPath(); 
 DirectoriesReader dreader;
 DocumentationGenerator dgenerator(startPath);
 const auto ignoreDirectories = IgnoreFileReader::getFilesToIgnore();
