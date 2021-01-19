@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date: Tue Jan 19 17:43:11 2021
+File generation date: Tue Jan 19 18:40:50 2021
 
 
 _____________________________________________
@@ -28,14 +28,11 @@ const std::string startPath_;
 const std::string filename_;
 ProjectTree projTree_;
 public:
-explicit DocumentationGenerator(const std::string& startPath):
+explicit DocumentationGenerator(const std::string& startPath, const ProjectTree& projTree):
 startPath_(startPath),
 filename_("sup.txt"),
-projTree_()
+projTree_(projTree)
 {}
-void setProjectTree(const ProjectTree& projTree) {
-projTree_ = projTree;
-}
 bool generate() {
 std::string data = "";
 data += EntriesBuilder::getHeader();
@@ -630,23 +627,26 @@ class ProjectTree {
 std::vector<File> directories_;
 std::vector<std::string> directoriesPaths_;
 public:
-explicit ProjectTree(): directories_(), directoriesPaths_() {}
+explicit ProjectTree(): 
+directories_(), 
+directoriesPaths_() 
+{}
 std::vector<File> getDirectories() const { return directories_; }
 std::vector<std::string> getDirectoriesPaths() const { return directoriesPaths_; }
-void setDirectories(std::vector<File>& directories) {
+void setDirectories(const std::vector<File>& directories) {
 directories_ = directories;
-sortDirectories(directories_);
-setDirectoriesPaths(directories_);
+SortDirectories_Recursive(directories_);
+directoriesPaths_ = EnlistDirectoriesPaths_Recursive(directories_, "");  
 }
 private:
-void setDirectoriesPaths(const std::vector<File>& directories) {
-directoriesPaths_ = getPaths(directories, "");  
-}
-std::vector<std::string> getPaths(const std::vector<File>& directories, const std::string& path) const {
+static std::vector<std::string> EnlistDirectoriesPaths_Recursive(
+const std::vector<File>& directories, 
+const std::string& path)  
+{
 std::vector<std::string> result;
 for (const auto& file : directories) {
 if (file.isCatalog_) {
-auto subFiles = getPaths(file.files_, path + file.name_ + "/");
+auto subFiles = EnlistDirectoriesPaths_Recursive(file.files_, path + file.name_ + "/");
 result.insert(result.end(), subFiles.begin(), subFiles.end() );
 }
 else {
@@ -655,11 +655,11 @@ result.push_back(path + file.name_);
 }
 return result;
 }
-void sortDirectories(std::vector<File>& directories) {
+static void SortDirectories_Recursive(std::vector<File>& directories) {
 std::sort(directories.begin(), directories.end(), SortCriterion);
 for (auto& subDir : directories) {
 if (subDir.isCatalog_) {
-sortDirectories(subDir.files_);
+SortDirectories_Recursive(subDir.files_);
 }
 }
 }
@@ -854,12 +854,11 @@ return result;
 int main() {
 const auto startPath = DefaultFileReader::getStartPath(); 
 const auto ignoreDirectories = IgnoreFileReader::getFilesToIgnore();
-ProjectTree projTree;
 DirectoriesReader dirReader;
-auto directories = dirReader.getDirectories(startPath, ignoreDirectories);
+const auto directories = dirReader.getDirectories(startPath, ignoreDirectories);
+ProjectTree projTree;
 projTree.setDirectories(directories);
-DocumentationGenerator documGenerator(startPath);
-documGenerator.setProjectTree(projTree);
+DocumentationGenerator documGenerator(startPath, projTree);
 documGenerator.generate();
 return 0;
 }

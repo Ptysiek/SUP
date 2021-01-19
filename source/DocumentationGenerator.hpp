@@ -13,10 +13,6 @@
 
 
 class DocumentationGenerator {
-    //using FullName = std::string;
-    //using PartName = std::string;
-    using ProjectMap = std::vector<std::string>;
-
     const std::string startPath_;
     const std::string filename_;
 
@@ -25,16 +21,11 @@ class DocumentationGenerator {
 
 
 public:
-    explicit DocumentationGenerator(const std::string& startPath):
+    explicit DocumentationGenerator(const std::string& startPath, const ProjectTree& projTree):
         startPath_(startPath),
         filename_("sup.txt"),
-        projTree_()
+        projTree_(projTree)
     {}
-
-
-    void setProjectTree(const ProjectTree& projTree) {
-        projTree_ = projTree;
-    }
 
     bool generate() {
         std::string data = "";

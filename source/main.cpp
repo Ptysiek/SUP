@@ -12,17 +12,14 @@
 int main() {
     const auto startPath = DefaultFileReader::getStartPath(); 
     const auto ignoreDirectories = IgnoreFileReader::getFilesToIgnore();
-    ProjectTree projTree;
 
     DirectoriesReader dirReader;
-    auto directories = dirReader.getDirectories(startPath, ignoreDirectories);
+    const auto directories = dirReader.getDirectories(startPath, ignoreDirectories);
        
+    ProjectTree projTree;
     projTree.setDirectories(directories);
 
-
-    DocumentationGenerator documGenerator(startPath);
-    documGenerator.setProjectTree(projTree);
-
+    DocumentationGenerator documGenerator(startPath, projTree);
     documGenerator.generate();
     return 0;
 }
