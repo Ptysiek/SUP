@@ -19,44 +19,18 @@ class DocumentationGenerator {
 
     const std::string startPath_;
     const std::string filename_;
-    std::vector<File> directories_;
+
+    ProjectTree projTree_;
 
 
 
 public:
-    DocumentationGenerator(const std::string& startPath):
+    explicit DocumentationGenerator(const std::string& startPath):
         startPath_(startPath),
         filename_("sup.txt"),
         directories_()
     {}
 
-    void setDirectoriesVector(std::vector<File>& vctr) {
-        directories_ = vctr;
-        sortDirectories(directories_);
-    }
-
-    void sortDirectories(std::vector<File>& directories) {
-        std::sort(directories.begin(), directories.end(), SortCriterion);
-
-        for (auto& subDir : directories) {
-            if (subDir.isCatalog_) {
-                sortDirectories(subDir.files_);
-            }
-        }
-    }
-    
-    static bool SortCriterion(const File& f, const File& s) { 
-        int test = f.isCatalog_ + s.isCatalog_;
-        if (test % 2 == 0) {
-            return SecondSortCriterion_Alphabetical(f.name_, s.name_);
-        }
-        else {
-            return s.isCatalog_;
-        }
-    }
-    static bool SecondSortCriterion_Alphabetical(const std::string& f, const std::string& s) { 
-        return (f < s);
-    }
 
 
     bool generate() {
@@ -66,9 +40,7 @@ public:
         data += "File generation date: " + getDate();
 
         data += "\n\n";
-        data += "_____________________________________________\n";
-        data += "Table of contents:   ------------------------\n";
-        data += getTableOfContents(directories_);
+        data += getTableOfContents();
 
         auto dirs = getDirectories(directories_);
 
@@ -93,6 +65,17 @@ public:
     }
 
 private:
+    std::string geTableOfContents() {
+        std::string result = "";
+        result += "_____________________________________________\n";
+        result += "Table of contents:   ------------------------\n";
+        result += getTableOfContentsData(directories_);
+    
+        return result;
+    }
+
+
+
     std::string readFromFile(const std::string& path) {
         //std::vector<std::string> fileData;
         //fileData.reserve(500);
