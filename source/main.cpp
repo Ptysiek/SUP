@@ -1,25 +1,14 @@
 #include <string>
 #include <vector>
 
-#include "DocumentationGenerator.hpp"
-#include "FileReaders/DefaultFileReader.hpp"
-#include "FileReaders/DirectoriesReader.hpp"
-#include "FileReaders/IgnoreFileReader.hpp"
-#include "ProjectTree.hpp"
-
-
+#include "Program.hpp"
 
 int main() {
-    const auto startPath = DefaultFileReader::getStartPath(); 
-    const auto ignoreDirectories = IgnoreFileReader::getFilesToIgnore();
+    Program program;
 
-    DirectoriesReader dirReader;
-    const auto directories = dirReader.getDirectories(startPath, ignoreDirectories);
-       
-    ProjectTree projTree;
-    projTree.setDirectories(directories);
+    program.ReadConfigurationFiles();
+    program.BuildProjectTree();
+    program.GenerateDocumentation_TXT();
 
-    DocumentationGenerator documGenerator(startPath, projTree);
-    documGenerator.generate();
     return 0;
 }
