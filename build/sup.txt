@@ -1,12 +1,14 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date: Mon Jan 18 06:12:07 2021
+File generation date: Tue Jan 19 17:43:11 2021
 
 
 _____________________________________________
 Table of contents:   ------------------------
 	[source]
 	|	DocumentationGenerator.hpp
+	|	EntriesBuilder.hpp
 	|	File.hpp
+	|	ProjectTree.hpp
 	|	StateMachine.hpp
 	|	catch_main.cpp
 	|	main.cpp
@@ -24,46 +26,23 @@ class DocumentationGenerator {
 using ProjectMap = std::vector<std::string>;
 const std::string startPath_;
 const std::string filename_;
-std::vector<File> directories_;
+ProjectTree projTree_;
 public:
-DocumentationGenerator(const std::string& startPath):
+explicit DocumentationGenerator(const std::string& startPath):
 startPath_(startPath),
 filename_("sup.txt"),
-directories_()
+projTree_()
 {}
-void setDirectoriesVector(std::vector<File>& vctr) {
-directories_ = vctr;
-sortDirectories(directories_);
-}
-void sortDirectories(std::vector<File>& directories) {
-std::sort(directories.begin(), directories.end(), SortCriterion);
-for (auto& subDir : directories) {
-if (subDir.isCatalog_) {
-sortDirectories(subDir.files_);
-}
-}
-}
-static bool SortCriterion(const File& f, const File& s) { 
-int test = f.isCatalog_ + s.isCatalog_;
-if (test % 2 == 0) {
-return SecondSortCriterion_Alphabetical(f.name_, s.name_);
-}
-else {
-return s.isCatalog_;
-}
-}
-static bool SecondSortCriterion_Alphabetical(const std::string& f, const std::string& s) { 
-return (f < s);
+void setProjectTree(const ProjectTree& projTree) {
+projTree_ = projTree;
 }
 bool generate() {
 std::string data = "";
-data += getHeader();
-data += "File generation date: " + getDate();
+data += EntriesBuilder::getHeader();
+data += "File generation date: " + EntriesBuilder::getDate();
 data += "\n\n";
-data += "_____________________________________________\n";
-data += "Table of contents:   ------------------------\n";
-data += getTableOfContents(directories_);
-auto dirs = getDirectories(directories_);
+data += EntriesBuilder::getTableOfContents(projTree_);
+const auto& dirs = projTree_.getDirectoriesPaths();
 std::map<std::string,std::string> allFilesData;
 for (const auto& file : dirs) {
 auto fileData_tmp = readFromFile(startPath_ + file);
@@ -94,17 +73,34 @@ fileData += "\n";
 readFile.close();
 return fileData;
 }
-std::string getHeader() {
+};
+------------------------
+------------------------
+
+
+
+
+class EntriesBuilder {
+public:
+static std::string getHeader() {
 return "Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https:
 }
-std::string getDate() {
+static std::string getDate() {
 using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
 TimePoint thisPoint = std::chrono::system_clock::now();
 std::time_t t = std::chrono::system_clock::to_time_t(thisPoint);
 std::string date = std::ctime(&t);
 return date;
 }
-std::string getTableOfContents(std::vector<File> directories, size_t tab=1) {
+static std::string getTableOfContents(const ProjectTree& projTree) {
+std::string result = "";
+result += "_____________________________________________\n";
+result += "Table of contents:   ------------------------\n";
+result += getTableOfContentsData(projTree.getDirectories());
+return result;
+}
+private:
+static std::string getTableOfContentsData(const std::vector<File>& directories, size_t tab=1) {
 if (directories.size() < 1) {
 throw std::logic_error("DocumentationGenerator::getTableOfContents()");
 }
@@ -115,7 +111,7 @@ if (file.isCatalog_) {
 result += "[";
 result += file.name_;
 result += "]\n";
-result += getTableOfContents(file.files_, tab + 1);   
+result += getTableOfContentsData(file.files_, tab + 1);   
 result += getTabs(tab);
 }
 else {
@@ -125,23 +121,10 @@ result += "\n";
 }
 return result;
 }
-std::string getTabs(size_t tab=1) {
+static std::string getTabs(size_t tab=1) {
 std::string result = "\t";
 for (size_t i = 1; i < tab; ++i) {
 result += "|\t";
-}
-return result;
-}
-std::vector<std::string> getDirectories(const std::vector<File>& directories, const std::string& path="") {
-std::vector<std::string> result;
-for (const auto& file : directories) {
-if (file.isCatalog_) {
-auto subFiles = getDirectories(file.files_, path + file.name_ + "/");
-result.insert(result.end(), subFiles.begin(), subFiles.end() );
-}
-else {
-result.push_back(path + file.name_);
-}
 }
 return result;
 }
@@ -643,6 +626,62 @@ const std::set<std::string> IgnoreFileReader::defaultIgnores_ {
 
 
 
+class ProjectTree {
+std::vector<File> directories_;
+std::vector<std::string> directoriesPaths_;
+public:
+explicit ProjectTree(): directories_(), directoriesPaths_() {}
+std::vector<File> getDirectories() const { return directories_; }
+std::vector<std::string> getDirectoriesPaths() const { return directoriesPaths_; }
+void setDirectories(std::vector<File>& directories) {
+directories_ = directories;
+sortDirectories(directories_);
+setDirectoriesPaths(directories_);
+}
+private:
+void setDirectoriesPaths(const std::vector<File>& directories) {
+directoriesPaths_ = getPaths(directories, "");  
+}
+std::vector<std::string> getPaths(const std::vector<File>& directories, const std::string& path) const {
+std::vector<std::string> result;
+for (const auto& file : directories) {
+if (file.isCatalog_) {
+auto subFiles = getPaths(file.files_, path + file.name_ + "/");
+result.insert(result.end(), subFiles.begin(), subFiles.end() );
+}
+else {
+result.push_back(path + file.name_);
+}
+}
+return result;
+}
+void sortDirectories(std::vector<File>& directories) {
+std::sort(directories.begin(), directories.end(), SortCriterion);
+for (auto& subDir : directories) {
+if (subDir.isCatalog_) {
+sortDirectories(subDir.files_);
+}
+}
+}
+static bool SortCriterion(const File& f, const File& s) { 
+int test = f.isCatalog_ + s.isCatalog_;
+if (test % 2 == 0) {
+return SecondSortCriterion_Alphabetical(f.name_, s.name_);
+}
+else {
+return s.isCatalog_;
+}
+}
+static bool SecondSortCriterion_Alphabetical(const std::string& f, const std::string& s) { 
+return (f < s);
+}
+}; 
+------------------------
+------------------------
+
+
+
+
 struct Node {
 const std::string originFile_;
 const std::string name_;
@@ -815,10 +854,12 @@ return result;
 int main() {
 const auto startPath = DefaultFileReader::getStartPath(); 
 const auto ignoreDirectories = IgnoreFileReader::getFilesToIgnore();
+ProjectTree projTree;
 DirectoriesReader dirReader;
 auto directories = dirReader.getDirectories(startPath, ignoreDirectories);
+projTree.setDirectories(directories);
 DocumentationGenerator documGenerator(startPath);
-documGenerator.setDirectoriesVector(directories);
+documGenerator.setProjectTree(projTree);
 documGenerator.generate();
 return 0;
 }

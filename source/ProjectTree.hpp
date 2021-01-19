@@ -5,18 +5,45 @@
 
 
 class ProjectTree {
-
     std::vector<File> directories_;
+    std::vector<std::string> directoriesPaths_;
+
 
 public:
+    explicit ProjectTree(): directories_(), directoriesPaths_() {}
+    
     std::vector<File> getDirectories() const { return directories_; }
+    std::vector<std::string> getDirectoriesPaths() const { return directoriesPaths_; }
 
-    void setProjectTree(std::vector<File>& directories) {
+    void setDirectories(std::vector<File>& directories) {
         directories_ = directories;
         sortDirectories(directories_);
+        setDirectoriesPaths(directories_);
     }
 
+
 private:
+    void setDirectoriesPaths(const std::vector<File>& directories) {
+        directoriesPaths_ = getPaths(directories, "");  
+    }
+
+    std::vector<std::string> getPaths(const std::vector<File>& directories, const std::string& path) const {
+        std::vector<std::string> result;
+        
+        for (const auto& file : directories) {
+            if (file.isCatalog_) {
+                auto subFiles = getPaths(file.files_, path + file.name_ + "/");
+                result.insert(result.end(), subFiles.begin(), subFiles.end() );
+            }
+            else {
+                result.push_back(path + file.name_);
+            }
+        }
+        return result;
+    }
+
+
+
     void sortDirectories(std::vector<File>& directories) {
         std::sort(directories.begin(), directories.end(), SortCriterion);
 
