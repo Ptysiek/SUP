@@ -7,7 +7,7 @@
 #include "FileReaders/DirectoriesReader.hpp"
 #include "FileReaders/IgnoreFileReader.hpp"
 #include "ProjectTree.hpp"
-//#include "ProjectTree_Builder.hpp"
+#include "ProjectTreeBuilder.hpp"
 
 
 class Program {
@@ -22,6 +22,15 @@ public:
         projectTree_()
     {}
 
+    void execute() {
+        ReadConfigurationFiles();
+        BuildProjectTree();
+        GenerateDocumentation_TXT();
+    }
+
+
+private: 
+
     void ReadConfigurationFiles() {
         startPath_ = DefaultFileReader::getStartPath(); 
         ignoreDirectories_ = IgnoreFileReader::getFilesToIgnore();
@@ -30,6 +39,10 @@ public:
     void BuildProjectTree() {
         DirectoriesReader dirReader;
         const auto directories = dirReader.getDirectories(startPath_, ignoreDirectories_);
+
+        ProjectTreeBuilder projectBuilder(startPath_);
+        projectTree_ = projectBuilder.getProduct();
+
 
         projectTree_.setDirectories(directories);
     }

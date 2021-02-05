@@ -5,10 +5,7 @@
 
 int main() {
     Program program;
-
-    program.ReadConfigurationFiles();
-    program.BuildProjectTree();
-    program.GenerateDocumentation_TXT();
+    program.execute();
 
     return 0;
 }
