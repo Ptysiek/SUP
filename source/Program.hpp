@@ -1,21 +1,17 @@
 #pragma once
 
-#
 
 #include "FileIO.hpp"
 #include "PathInitializer.hpp"
 
-//#include "DataParser.hpp"
-//#include "Repairer.hpp"
-//#include "DataStructures.hpp"
 
 class Program {
 
-    const PathInitializer& targetPath_;
+    const std::string targetPath_;
 
 
 public:
-    explicit Program(const PathInitializer& target):
+    explicit Program(const std::string& target):
         targetPath_(target)
     {}
 

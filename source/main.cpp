@@ -7,7 +7,7 @@
 
 int main(int argc, char* argv[]) {
     PathInitializer target(argc, argv);
-    Program program(target);
+    Program program(target.getPath());
     program.execute();    
 
     std::cout << "\n\n";
