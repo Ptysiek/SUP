@@ -1,15 +1,35 @@
 #pragma once
 
+#include <dirent.h>
 #include <fstream>
 #include <string>
-
+#include <vector>
 
 
 class FileIO {
     FileIO() {}
 
 public:
-    static void ReadFile(const std::string& path) {
+    static std::vector<std::string> readPaths(const std::string& targetPath) {
+        DIR* directory;
+        directory = opendir(targetPath.c_str());
+
+        if (!directory) {
+            throw std::logic_error("Cannot start with given target: " + targetPath + "\n");
+        }
+
+        std::vector<std::string> result;
+        struct dirent* entry;
+        while ((entry = readdir(directory)) != NULL) {
+            const std::string data = entry->d_name;
+
+            result.push_back(data);
+        }
+        closedir(directory);
+        return result;
+    }
+
+    static void readFile(const std::string& path) {
         std::ifstream readFile(path);        
         if (!readFile || !readFile.is_open()) {
             readFile.close();
@@ -35,7 +55,7 @@ public:
         //return result;
     }
 
-    static void SaveToFile(const std::string& path) {
+    static void saveToFile(const std::string& path) {
         std::ofstream output(path);
         
         if (!output || !output.is_open()) {

@@ -35,7 +35,7 @@ public:
 private:
     std::string GenPath(const int& argc, const char* const * const argv) const {
         if (argc > 1) {
-            return argv[1];
+            return GenConditionalSlash(argv[1]);
         }
         return getDefaultPath();
     }
@@ -63,8 +63,9 @@ private:
         return fileFormat;
     }
 
-    std::string GenConditionalSlash(const std::string& str) {
-        return (str.at(str.size()-1) == '/')? str : str + '/';  
+    std::string GenConditionalSlash(std::string str) const {
+        str += (str.at(str.size()-1) == '/')? "" : "/";  
+        return str;
     }
 };
 
