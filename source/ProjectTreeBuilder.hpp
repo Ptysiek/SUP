@@ -14,7 +14,7 @@ class ProjectTreeBuilder {
     ProjectTree product_;
 
 public:
-    ProjectTreeBuilder(const std::string& initPath):
+    explicit ProjectTreeBuilder(const std::string& initPath):
         initPath_(initPath),
         product_(BuildProduct())
     {}
@@ -30,7 +30,6 @@ private:
         return Flaten(projectRoot);
     }
 
-
     std::vector<File> ReadRecursive(const std::string& targetPath) {
         auto paths = FileIO::readPaths(initPath_ + targetPath);
         std::vector<File> files;
@@ -44,35 +43,8 @@ private:
         std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);
         return files;
     }
-/*
-    std::vector<File> ReadRecursive(const std::string& targetPath) {
-        auto paths = FileIO::readPaths(targetPath);
-        std::vector<File> files;
-        std::vector<File> directories;
-        //std::cout << targetPath << " ";
 
-        for (const auto& path : paths) {
-            auto subFiles = ReadRecursive(targetPath +  path + '/');
-            auto file = ProcessData(targetPath, path, subFiles); 
-            
-            if (subFiles.empty()) {
-                files.push_back(file);
-                continue;
-            }
-            directories.push_back(file);
-            for (const auto& subFile : subFiles) {
-                directories.push_back(subFile);
-            }
-            //files.insert(files.end(), subFiles.begin(), subFiles.end());
-        }
-        for (const auto& subFile : files) {
-            directories.push_back(subFile);
-        }
-        return directories;
-    }
-*/
-
-    ProjectTree Flaten(const File& root) {
+    static ProjectTree Flaten(const File& root) {
         ProjectTree result;
         result.push_back(root);
         for (const auto& file : root.subFiles_) {
@@ -80,30 +52,7 @@ private:
             result.insert(result.end(), subResult.begin(), subResult.end());
         }
         return result;
-/*
-            result.push_back(file);
-            if (file.isCatalog()) {
-            }
-        }
-        return result;
-  */  }
-    
-    /*
-    ProjectTree Flaten(const ProjectTree& subdirectory) {
-        ProjectTree result;
-        for (const auto& file : subdirectory) {
-            result.push_back(file);
-            if (file.isCatalog()) {
-                auto subResult = Flaten(file.subFiles_);
-                result.insert(result.end(), subResult.begin(), subResult.end());
-            }
-        }
-        return result;
     }
-    */
-
-    //static File ProcessData(const std::string& targetPath, const std::string& path, std::vector<File>& subFiles) {
-    //}
 
     static bool SortCriterion_CatalogLast(const File& f, const File& s) { 
         int test = f.isCatalog() + s.isCatalog();
@@ -118,6 +67,7 @@ private:
     static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s) { 
         return (f < s);
     }
-
 };
+
+
 

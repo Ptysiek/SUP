@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-//#include "IgnoreFileReader.hpp"
+#include "IgnoreFiles.hpp"
 
 class FileIO {
     FileIO() {}
@@ -22,7 +22,7 @@ public:
         struct dirent* entry;
         while ((entry = readdir(directory)) != NULL) {
             const std::string data = entry->d_name;
-            if (data == "." || data == "..") {
+            if (IgnoreFiles::isIgnored(data)) {
                 continue;
             }
             result.push_back(data);
@@ -37,33 +37,22 @@ public:
             readFile.close();
             throw std::logic_error("Cannot read given file path: " + path + "\n");
         }
-        //FileData result;
-        //result.emplace_back();
-        //PackData* pack = &result.at(result.size()-1); 
-
         while (true) {
             std::string record;
             if (!std::getline(readFile, record)) {
                 break;
             }
-            //if (PatternFinder::SequenceBeginning(record, "<core:cityObjectMember>")) {
-                //result.emplace_back();
-                //pack = &result.at(result.size()-1); 
-            //}
-            //pack->emplace_back(record);
         }
-
         readFile.close();
         //return result;
     }
 
-    static void saveToFile(const std::string& path) {
+    static void saveToFile(const std::string& path, const std::string& data) {
         std::ofstream output(path);
-        
         if (!output || !output.is_open()) {
             throw std::logic_error("Cannot save to file: " + path + "\n");
         }
-
+        output << data;
         output.close();
     }
 };

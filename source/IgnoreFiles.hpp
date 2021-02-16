@@ -7,16 +7,16 @@
 
 
 
-class IgnoreFileReader {
+class IgnoreFiles {
 protected:
     static std::set<std::string> defaultIgnores_;
     const static std::string filename_;
 
-    explicit IgnoreFileReader() { }
+    explicit IgnoreFiles() { }
 
 
 public:
-    static bool isIgnored(const std::string& value) const { return (defaultIgnores_.find(value) == defaultIgnores_.end()); }
+    static bool isIgnored(const std::string& value) { return (defaultIgnores_.find(value) != defaultIgnores_.end()); }
 /*
     static std::set<std::string> readFilesToIgnore() {
         std::ifstream readFile(filename_);
@@ -55,9 +55,9 @@ private:
     }
 };
 
-const std::string IgnoreFileReader::filename_ = ".supignore";
+const std::string IgnoreFiles::filename_ = ".supignore";
 
-std::set<std::string> IgnoreFileReader::defaultIgnores_ {
+std::set<std::string> IgnoreFiles::defaultIgnores_ {
     "\n",
     "",
     " ",
