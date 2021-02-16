@@ -6,13 +6,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # set the project name
-project(SUP)
+project(sup)
 
 # set executables
 set(THIS_PROJECT_SRC_DIRECTORIES
 )
 set(THIS_PROJECT_TESTS_DIRECTORIES
-    source/FileReaders/DirectoriesReader.ut.cpp
 )
 
 # set flags

@@ -19,11 +19,11 @@ public:
         format_()
     { }
 
-    PathInitializer(const std::string path):
+    PathInitializer(const std::string& path, const std::string& fullName):
         index_(0),
-        path_(path),
-        name_(GenName()),
-        format_(GenFormat())
+        path_(GenConditionalSlash(path)),
+        name_(GenName(fullName)),
+        format_(GenFormat(fullName))
     { }
 
     std::string getPath() const { return path_; }
@@ -40,31 +40,41 @@ private:
         return getDefaultPath();
     }
 
-    std::string GenName() {
+    std::string GenName(const std::string& fullName) {
+        if (fullName == "./" || fullName == "../") {
+            return fullName;
+        }
         std::string fileName = "";
-        const size_t size = path_.size();
+        const size_t size = fullName.size();
         
         for ( ; index_ < size; ++index_) {
-            if (path_[index_] == '.') {
-                break;
+            if (fullName[index_] == '.') {
+                if (index_ != 0) {
+                    break;
+                }
             }
-            fileName += path_[index_];
+            fileName += fullName[index_];
         }
         return fileName;
     }
 
-    std::string GenFormat() {
+    std::string GenFormat(const std::string& fullName) {
+        if (fullName == "./" || fullName == "../") {
+            return "";
+        }
         std::string fileFormat = "";
-        const size_t size = path_.size();
+        const size_t size = fullName.size();
 
         for ( ; index_ < size; ++index_) {
-            fileFormat += path_[index_];
+            fileFormat += fullName[index_];
         }
         return fileFormat;
     }
 
     std::string GenConditionalSlash(std::string str) const {
-        str += (str.at(str.size()-1) == '/')? "" : "/";  
+        if (!str.empty()) {
+            str += (str.at(str.size()-1) == '/')? "" : "/";  
+        }
         return str;
     }
 };

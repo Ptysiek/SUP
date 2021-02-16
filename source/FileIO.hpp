@@ -5,24 +5,26 @@
 #include <string>
 #include <vector>
 
+//#include "IgnoreFileReader.hpp"
 
 class FileIO {
     FileIO() {}
 
 public:
     static std::vector<std::string> readPaths(const std::string& targetPath) {
+        std::vector<std::string> result;
         DIR* directory;
         directory = opendir(targetPath.c_str());
 
         if (!directory) {
-            throw std::logic_error("Cannot start with given target: " + targetPath + "\n");
+            return result;
         }
-
-        std::vector<std::string> result;
         struct dirent* entry;
         while ((entry = readdir(directory)) != NULL) {
             const std::string data = entry->d_name;
-
+            if (data == "." || data == "..") {
+                continue;
+            }
             result.push_back(data);
         }
         closedir(directory);
