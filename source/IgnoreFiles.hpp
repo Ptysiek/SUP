@@ -1,7 +1,6 @@
 #pragma once 
 
 #include <exception>
-#include <fstream>
 #include <set>
 #include <string>
 
@@ -11,14 +10,27 @@ class IgnoreFiles {
 protected:
     const static std::string filename_;
     const static std::set<std::string> alwaysIgnores_;
+    const static std::set<std::string> formatIgnores_;
     static std::set<std::string> defaultIgnores_;
+    static std::set<std::string> ignores_;
 
     explicit IgnoreFiles() { }
 
 
 public:
-    static bool isIgnored(const std::string& value) { 
-        if (alwaysIgnores_.find(value) != alwaysIgnores_.end()) {
+    static std::string getIgnoreFileName() { return filename_; }
+
+    static bool isAlwaysIgnored(const std::string& value) {
+        return (alwaysIgnores_.find(value) != alwaysIgnores_.end());
+    }
+    static bool isFormatIgnored(const std::string& format) {
+        return (formatIgnores_.find(format) != formatIgnores_.end());
+    }
+    static bool isIgnored(const std::string& value) {
+        if (isAlwaysIgnored(value)) {
+            return true;
+        }
+        if (isFormatIgnored(value)) {
             return true;
         }
         return (defaultIgnores_.find(value) != defaultIgnores_.end());
@@ -45,9 +57,9 @@ public:
         defaultIgnores_ = fileData;
         return fileData;
     }
-*/
 
 private: 
+
     static void GenerateDefaultFile() {
         std::ofstream output(filename_);
         if (!output || !output.is_open()) {
@@ -59,9 +71,15 @@ private:
         }
         output.close();
     }
+    */
 };
 
 const std::string IgnoreFiles::filename_ = ".supignore";
+
+const std::set<std::string> IgnoreFiles::formatIgnores_ {
+    ".ut.cpp",
+    ".ut.hpp"
+};
 
 const std::set<std::string> IgnoreFiles::alwaysIgnores_ {
     "\n",

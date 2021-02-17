@@ -11,6 +11,15 @@ class FileIO {
     FileIO() {}
 
 public:
+    static bool fileExist(const std::string& path) {
+        std::ifstream readFile(path);        
+        if (!readFile || !readFile.is_open()) {
+            return false;
+        }
+        readFile.close();
+        return true;
+    }
+
     static std::vector<std::string> readPaths(const std::string& targetPath) {
         std::vector<std::string> result;
         DIR* directory;
@@ -30,6 +39,7 @@ public:
         closedir(directory);
         return result;
     }
+
 
     static void readFile(const std::string& path) {
         std::ifstream readFile(path);        

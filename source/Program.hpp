@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include "File.hpp"
+#include "FileIO.hpp"
+#include "IgnoreFiles.hpp"
 #include "ProjectTreeBuilder.hpp"
 
 
@@ -30,5 +32,11 @@ public:
     }
 
 private:
+    void initializeIgnoreFiles() {
+        if (FileIO::fileExist(IgnoreFiles::getIgnoreFileName())) {
+        }
+    }
+
+
 };
 

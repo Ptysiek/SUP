@@ -17,9 +17,6 @@ int main(int argc, char* argv[]) {
 
 
 /* TODO:
-    - file.hpp
-    przerobić na klasę. Napisz getery do rzeczy
-
     - IgnoreFiles.hpp
     napisz set niezmiennych ignorów
     napisz set domyślnych ignorów
