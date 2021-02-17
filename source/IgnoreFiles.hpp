@@ -9,14 +9,20 @@
 
 class IgnoreFiles {
 protected:
-    static std::set<std::string> defaultIgnores_;
     const static std::string filename_;
+    const static std::set<std::string> alwaysIgnores_;
+    static std::set<std::string> defaultIgnores_;
 
     explicit IgnoreFiles() { }
 
 
 public:
-    static bool isIgnored(const std::string& value) { return (defaultIgnores_.find(value) != defaultIgnores_.end()); }
+    static bool isIgnored(const std::string& value) { 
+        if (alwaysIgnores_.find(value) != alwaysIgnores_.end()) {
+            return true;
+        }
+        return (defaultIgnores_.find(value) != defaultIgnores_.end());
+    }
 /*
     static std::set<std::string> readFilesToIgnore() {
         std::ifstream readFile(filename_);
@@ -57,12 +63,16 @@ private:
 
 const std::string IgnoreFiles::filename_ = ".supignore";
 
-std::set<std::string> IgnoreFiles::defaultIgnores_ {
+const std::set<std::string> IgnoreFiles::alwaysIgnores_ {
     "\n",
     "",
-    " ",
     ".",
     "..",
+    "./",
+    "../"
+};
+
+std::set<std::string> IgnoreFiles::defaultIgnores_ {
     ".git",
     ".gitignore",
     ".notes",
