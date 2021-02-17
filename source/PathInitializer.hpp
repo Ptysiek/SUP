@@ -1,6 +1,5 @@
 #pragma once
 
-#include <exception>
 #include <string>
 
 #include "IgnoreFiles.hpp"
@@ -13,17 +12,17 @@ class PathInitializer {
 
 
 public:
-    PathInitializer(const int& argc, const char* const * const argv):
+    explicit PathInitializer(const int& argc, const char* const * const argv):
         path_(GenPath(argc, argv)),
         name_(),
         format_()
-    { }
+    {}
 
-    PathInitializer(const std::string& path, const std::string& fullName):
+    explicit PathInitializer(const std::string& path, const std::string& fullName):
         path_(AppendConditionalSlash(path)),
         name_(CutoutName(fullName)),
         format_(CutoutFormat(fullName))
-    { }
+    {}
 
     std::string getPath() const { return path_; }
     std::string getName() const { return name_; }

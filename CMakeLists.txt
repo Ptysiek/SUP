@@ -12,13 +12,14 @@ project(sup)
 set(THIS_PROJECT_SRC_DIRECTORIES
 )
 set(THIS_PROJECT_TESTS_DIRECTORIES
+    source/PathInitializer.ut.cpp
 )
 
 # set flags
 set(THIS_PROJECT_FLAGS
     -Wall
     -Werror 
-    -Weffc++   #TooMuch
+    -Weffc++
     -Wextra
     -pedantic
     -Wconversion 
@@ -45,3 +46,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 # link ncurses static lib
 target_link_libraries(${PROJECT_NAME} ncurses)
 
+# ctest
+# ctest -V
+enable_testing()
+add_test(NAME ${PROJECT_NAME}-ut COMMAND ${PROJECT_NAME}-ut)
