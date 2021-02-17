@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "File.hpp"
-#include "FileBuilder.hpp"
 #include "ProjectTreeBuilder.hpp"
 
 
@@ -22,7 +21,9 @@ public:
         data_ = builder.getProduct();
         
         for (const auto& file : data_) {
-            std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "  " << file.subFiles_.size()<< "\n";
+            std::cout << file.getPath() << "  " 
+                << file.getName() << "  " 
+                << file.getFormat() << "  " << file.getSubFiles().size()<< "\n";
             //std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "\n";
             //std::cout << file.path_ << file.name_ << file.format_ << "\n";
         }

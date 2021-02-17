@@ -24,9 +24,7 @@ public:
 private:
     ProjectTree BuildProduct() {
         auto subFiles = ReadRecursive("");
-        PathInitializer initializer("", initPath_);
-        FileBuilder builder(initializer, subFiles);
-        auto projectRoot = builder.getProduct();
+        File projectRoot(initPath_, subFiles);
         return Flaten(projectRoot);
     }
 
@@ -37,8 +35,7 @@ private:
         for (const auto& path : paths) {
             auto subFiles = ReadRecursive(targetPath + path + '/');
             PathInitializer initializer(targetPath, path);
-            FileBuilder builder(initializer, subFiles);
-            files.push_back(builder.getProduct());
+            files.push_back(File(initializer, subFiles));
         }
         std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);
         return files;
@@ -47,7 +44,7 @@ private:
     static ProjectTree Flaten(const File& root) {
         ProjectTree result;
         result.push_back(root);
-        for (const auto& file : root.subFiles_) {
+        for (const auto& file : root.getSubFiles()) {
             auto subResult = Flaten(file);
             result.insert(result.end(), subResult.begin(), subResult.end());
         }
@@ -57,7 +54,7 @@ private:
     static bool SortCriterion_CatalogLast(const File& f, const File& s) { 
         int test = f.isCatalog() + s.isCatalog();
         if (test % 2 == 0) {
-            return SortCriterion_Alphabetical(f.name_, s.name_);
+            return SortCriterion_Alphabetical(f.getName(), s.getName());
         }
         else {
             return s.isCatalog();
