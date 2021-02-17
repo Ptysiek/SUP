@@ -2,10 +2,12 @@
 
 #include <exception>
 #include <string>
+//#include 
 
 
 class PathInitializer {
     size_t index_;
+    //const std::string init_;
     const std::string path_;
     const std::string name_;
     const std::string format_;
@@ -30,7 +32,9 @@ public:
     std::string getName() const { return name_; }
     std::string getFormat() const { return format_; }
     std::string getDefaultPath() const { return "../"; }
-
+    std::string getFullName() const { return (name_ + format_); }
+    std::string getFullPath() const { return (path_ + getFullName()); }
+    //std::string getRelativePath() const { return
 
 private:
     std::string GenPath(const int& argc, const char* const * const argv) const {
@@ -62,12 +66,9 @@ private:
         if (fullName == "./" || fullName == "../") {
             return "";
         }
-        std::string fileFormat = "";
-        const size_t size = fullName.size();
-
-        for ( ; index_ < size; ++index_) {
-            fileFormat += fullName[index_];
-        }
+        auto index = fullName.find('.', 1);
+        std::string fileFormat;// = "  ";
+        fileFormat.insert(fileFormat.begin(), fullName.begin()+index, fullName.end());
         return fileFormat;
     }
 

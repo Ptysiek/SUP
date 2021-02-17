@@ -10,7 +10,6 @@ struct File {
     std::string name_;
     std::string path_;
     std::string format_;
-
     std::vector<File> subFiles_;
 
     explicit File(const PathInitializer& target, const std::vector<File>& subFiles):

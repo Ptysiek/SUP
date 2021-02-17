@@ -18,12 +18,12 @@ public:
     {}
 
     void execute() {
-        //std::cout << targetPath_;
         ProjectTreeBuilder builder(targetPath_);
         data_ = builder.getProduct();
         
         for (const auto& file : data_) {
-            std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "\n";
+            std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "  " << file.subFiles_.size()<< "\n";
+            //std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "\n";
             //std::cout << file.path_ << file.name_ << file.format_ << "\n";
         }
     }
