@@ -3,8 +3,7 @@
 #include <algorithm>
 #include <string>
 
-#include "Tools.hpp"
-//#include "FileIO.hpp"
+#include "Tools"
 #include "PathInitializer.hpp"
 
 
@@ -22,6 +21,7 @@ public:
 
     ProjectTree getProduct() const { return product_; }
     
+
 private:
     ProjectTree BuildProduct() {
         auto subFiles = ReadRecursive("");
@@ -42,7 +42,9 @@ private:
         return files;
     }
 
-    static ProjectTree Flaten(const File& root) {
+
+protected:
+    ProjectTree Flaten(const File& root) const {
         ProjectTree result;
         result.push_back(root);
         for (const auto& file : root.getSubFiles()) {

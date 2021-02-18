@@ -6,8 +6,8 @@
 
 
 
+namespace Tools {
 class IgnoreFiles {
-protected:
     const static std::string filename_;
     const static std::set<std::string> alwaysIgnores_;
     const static std::set<std::string> formatIgnores_;
@@ -102,7 +102,7 @@ std::set<std::string> IgnoreFiles::defaultIgnores_ {
     "README.md",
     "CMakeLists.txt"
 };
-
+} // namespace Tools
 
 
 

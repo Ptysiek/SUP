@@ -1,12 +1,10 @@
 #pragma once
 
 #include "tools/FileIO.hpp"
-
+#include "tools/IgnoreFiles.hpp"
 
 
 namespace Tools {
-    //using Tools::FileIO = class FileIO; 
     class FileIO;
-
-
+    class IgnoreFiles;
 }

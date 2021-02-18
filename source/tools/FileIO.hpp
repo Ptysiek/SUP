@@ -5,11 +5,13 @@
 #include <string>
 #include <vector>
 
-#include "../IgnoreFiles.hpp"
+#include "IgnoreFiles.hpp"
+
 
 namespace Tools {
 class FileIO {
     FileIO() {}
+
 
 public:
     static bool fileExist(const std::string& path) {
@@ -41,11 +43,9 @@ public:
         return result;
     }
 
-
     static void readFile(const std::string& path) {
         std::ifstream readFile(path);        
         if (!readFile || !readFile.is_open()) {
-            readFile.close();
             throw std::logic_error("Cannot read given file path: " + path + "\n");
         }
         while (true) {
@@ -67,7 +67,7 @@ public:
         output.close();
     }
 };
-}
+} // namespace Tools
 
 
 

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "IgnoreFiles.hpp"
+#include "Tools"
 
 
 class PathInitializer {
@@ -41,7 +41,7 @@ private:
 
 protected:
     static std::string CutoutName(const std::string& str) {
-        if (IgnoreFiles::isIgnored(str)) {
+        if (Tools::IgnoreFiles::isIgnored(str)) {
             return str;
         }
         auto index = str.find('.', 1);
@@ -55,7 +55,7 @@ protected:
     }
 
     static std::string CutoutFormat(const std::string& str) {
-        if (IgnoreFiles::isIgnored(str)) {
+        if (Tools::IgnoreFiles::isIgnored(str)) {
             return "";
         }
         auto index = str.find('.', 1);
