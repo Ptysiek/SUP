@@ -97,7 +97,7 @@ std::set<std::string> IgnoreFiles::defaultIgnores_ {
     ".sup",
     "notes",
     "build",
-    "tools",
+    "plugins",
     "tags",
     "README.md",
     "CMakeLists.txt"

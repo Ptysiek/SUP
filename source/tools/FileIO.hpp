@@ -5,8 +5,9 @@
 #include <string>
 #include <vector>
 
-#include "IgnoreFiles.hpp"
+#include "../IgnoreFiles.hpp"
 
+namespace Tools {
 class FileIO {
     FileIO() {}
 
@@ -66,7 +67,7 @@ public:
         output.close();
     }
 };
-
+}
 
 
 
