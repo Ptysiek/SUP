@@ -1,0 +1,10 @@
+.git
+.gitignore
+.notes
+.sup
+CMakeLists.txt
+README.md
+build
+notes
+plugins
+tags

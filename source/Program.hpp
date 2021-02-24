@@ -4,6 +4,7 @@
 
 #include "File.hpp"
 #include "Tools"
+#include "ParsedFile.hpp"
 #include "ProjectTreeBuilder.hpp"
 
 
@@ -25,7 +26,7 @@ public:
         for (const auto& file : data_) {
             std::cout << file.getPath() << "  " 
                 << file.getName() << "  " 
-                << file.getFormat() << "  " << file.getSubFiles().size()<< "\n";
+                << file.getFormat() << "  " << file.getSubFiles().size() << "\n";
             //std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "\n";
             //std::cout << file.path_ << file.name_ << file.format_ << "\n";
         }
@@ -42,7 +43,6 @@ private:
         if (FileIO::fileExist(fileName)) {
             auto data = FileIO::readFile(fileName);      
             data = IgnoreFiles::pickoutAlwaysIgnored(data);
-            std::cout << "sup?" << std::endl;
             IgnoreFiles::setIgnoreFiles(Converter::to_set(data));
         }
         else {
