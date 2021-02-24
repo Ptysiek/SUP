@@ -1,6 +1,7 @@
 #pragma once
 
 #include <dirent.h>
+#include <exception>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -10,13 +11,14 @@
 
 namespace Tools {
 class FileIO {
-    FileIO() {}
+    explicit FileIO() {}
 
 
 public:
     static bool fileExist(const std::string& path) {
         std::ifstream readFile(path);        
         if (!readFile || !readFile.is_open()) {
+            readFile.close();
             return false;
         }
         readFile.close();

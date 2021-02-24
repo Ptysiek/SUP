@@ -1,10 +1,7 @@
 #pragma once 
 
-#include <algorithm>
-#include <exception>
 #include <set>
 #include <string>
-
 
 
 namespace Tools {
@@ -40,28 +37,12 @@ public:
         }
         return (defaultIgnores_.find(value) != defaultIgnores_.end());
     }
-    
     static std::vector<std::string> pickoutAlwaysIgnored(const std::vector<std::string>& vctr) {
         std::vector<std::string> result;
-        result.reserve(vctr.size());
+        result.resize(vctr.size());
         std::copy_if(vctr.begin(), vctr.end(), result.begin(), [](auto val){return !isAlwaysIgnored(val);});
         return result;
     }
-
-private: 
-/*
-    static void GenerateDefaultFile() {
-        std::ofstream output(filename_);
-        if (!output || !output.is_open()) {
-            throw std::logic_error("IgnoreFileReader::getFilesToIgnore() Failed to generate");
-        }
-        
-        for (const auto& record : defaultIgnores_) {
-            output << record << "\n";
-        }
-        output.close();
-    }
-    */
 };
 
 const std::string IgnoreFiles::filename_ = ".supignore";
@@ -70,7 +51,6 @@ const std::set<std::string> IgnoreFiles::formatIgnores_ {
     ".ut.cpp",
     ".ut.hpp"
 };
-
 const std::set<std::string> IgnoreFiles::alwaysIgnores_ {
     "\n",
     "",
@@ -79,7 +59,6 @@ const std::set<std::string> IgnoreFiles::alwaysIgnores_ {
     "./",
     "../"
 };
-
 std::set<std::string> IgnoreFiles::defaultIgnores_ {
     ".git",
     ".gitignore",

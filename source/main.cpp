@@ -17,14 +17,6 @@ int main(int argc, char* argv[]) {
 
 
 /* TODO:
-    - IgnoreFiles.hpp
-    napisz set niezmiennych ignorów
-    napisz set domyślnych ignorów
-    zrób obsługę plików
-    IgnoreFiles jest polem klasy FileIO
-
-    - otestuj wszystko
-
     - napisz obsługę flag. -md -markdown -txt -text
 */
 

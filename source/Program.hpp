@@ -42,6 +42,7 @@ private:
         if (FileIO::fileExist(fileName)) {
             auto data = FileIO::readFile(fileName);      
             data = IgnoreFiles::pickoutAlwaysIgnored(data);
+            std::cout << "sup?" << std::endl;
             IgnoreFiles::setIgnoreFiles(Converter::to_set(data));
         }
         else {
