@@ -1,10 +1,12 @@
 #pragma once
 
+#include "tools/Converter.hpp"
 #include "tools/FileIO.hpp"
 #include "tools/IgnoreFiles.hpp"
 
 
 namespace Tools {
+    class Converter;
     class FileIO;
     class IgnoreFiles;
 }

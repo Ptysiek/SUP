@@ -19,9 +19,7 @@ class IgnoreFiles {
 
 
 public:
-    static void setIgnoreFiles(const std::vector<std::string>& vctr) {
-        defaultIgnores_ = std::set<std::string>(vctr.begin(), vctr.end());
-    }
+    static void setIgnoreFiles(const std::set<std::string>& data) { defaultIgnores_ = data; }
     
     static std::string getIgnoreFileName() { return filename_; }
 
