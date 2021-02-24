@@ -18,6 +18,7 @@ public:
     {}
 
     void execute() {
+        //initializeIgnoreFiles();
         ProjectTreeBuilder builder(targetPath_);
         data_ = builder.getProduct();
         
@@ -30,12 +31,23 @@ public:
         }
     }
 
+
 private:
     void initializeIgnoreFiles() {
-        if (Tools::FileIO::fileExist(Tools::IgnoreFiles::getIgnoreFileName())) {
+        using Tools::FileIO; 
+        using Tools::IgnoreFiles; 
+
+        auto fileName = IgnoreFiles::getIgnoreFileName();
+        if (FileIO::fileExist(fileName)) {
+            auto data = FileIO::readFile(fileName);      
+            data = IgnoreFiles::pickoutAlwaysIgnored(data);
+            IgnoreFiles::setIgnoreFiles(data);
+        }
+        else {
+            auto data = IgnoreFiles::getDefaultIgnoreFiles();
+            //FileIO::saveToFile(fileName, data);
         }
     }
-
-
 };
+
 

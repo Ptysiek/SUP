@@ -43,19 +43,19 @@ public:
         return result;
     }
 
-    static void readFile(const std::string& path) {
+    static std::vector<std::string> readFile(const std::string& path) {
         std::ifstream readFile(path);        
         if (!readFile || !readFile.is_open()) {
             throw std::logic_error("Cannot read given file path: " + path + "\n");
         }
-        while (true) {
-            std::string record;
-            if (!std::getline(readFile, record)) {
-                break;
-            }
+
+        std::vector<std::string> result;
+        std::string record;
+        while (std::getline(readFile, record)) {
+            result.push_back(record);
         }
         readFile.close();
-        //return result;
+        return result;
     }
 
     static void saveToFile(const std::string& path, const std::string& data) {

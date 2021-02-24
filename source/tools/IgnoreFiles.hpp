@@ -1,5 +1,6 @@
 #pragma once 
 
+#include <algorithm>
 #include <exception>
 #include <set>
 #include <string>
@@ -12,13 +13,19 @@ class IgnoreFiles {
     const static std::set<std::string> alwaysIgnores_;
     const static std::set<std::string> formatIgnores_;
     static std::set<std::string> defaultIgnores_;
-    static std::set<std::string> ignores_;
+    static std::set<std::string> ignored_;
 
     explicit IgnoreFiles() { }
 
 
 public:
+    static void setIgnoreFiles(const std::vector<std::string>& vctr) {
+        defaultIgnores_ = std::set<std::string>(vctr.begin(), vctr.end());
+    }
+    
     static std::string getIgnoreFileName() { return filename_; }
+
+    static std::set<std::string> getDefaultIgnoreFiles() { return defaultIgnores_; }
 
     static bool isAlwaysIgnored(const std::string& value) {
         return (alwaysIgnores_.find(value) != alwaysIgnores_.end());
@@ -35,31 +42,16 @@ public:
         }
         return (defaultIgnores_.find(value) != defaultIgnores_.end());
     }
-/*
-    static std::set<std::string> readFilesToIgnore() {
-        std::ifstream readFile(filename_);
-        
-        if (!readFile || !readFile.is_open()) {
-            GenerateDefaultFile();
-            return defaultIgnores_;
-        }
-
-        std::set<std::string> fileData;
-        std::string record;
-
-        while (std::getline(readFile, record)) {
-            if (record == "\n" || record == "") {
-                continue;
-            }
-            fileData.insert(record);
-        }
-        readFile.close();   
-        defaultIgnores_ = fileData;
-        return fileData;
+    
+    static std::vector<std::string> pickoutAlwaysIgnored(const std::vector<std::string>& vctr) {
+        std::vector<std::string> result;
+        result.reserve(vctr.size());
+        std::copy_if(vctr.begin(), vctr.end(), result.begin(), [](auto val){return !isAlwaysIgnored(val);});
+        return result;
     }
 
 private: 
-
+/*
     static void GenerateDefaultFile() {
         std::ofstream output(filename_);
         if (!output || !output.is_open()) {
