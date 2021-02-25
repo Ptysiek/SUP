@@ -26,7 +26,8 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  
+############################################################################
+
 
 
 ############################################################################  source
@@ -35,7 +36,8 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  
+############################################################################
+
 
 
 ############################################################################  source/File.hpp
@@ -47,21 +49,13 @@ PathInitializer.hpp
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
-
+############################################################################
+#pragma once
 class File {
 std::string name_;
 std::string path_;
 std::string format_;
 std::vector<File> subFiles_;
-
-
 public:
 explicit File(const std::string& path, const std::vector<File>& subFiles):
 name_(path),
@@ -75,16 +69,13 @@ path_(target.getPath()),
 format_(target.getFormat()),
 subFiles_(subFiles)
 {}
-
 std::string getName() const { return name_; }
 std::string getPath() const { return path_; }
 std::string getFormat() const { return format_; }
 std::string getFile() const { return path_ + name_ + format_; }
 std::vector<File> getSubFiles() const { return subFiles_; }
-
 bool isCatalog() const { return !subFiles_.empty(); }
 };
-
 
 
 
@@ -97,40 +88,28 @@ Tools
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
+############################################################################
+#pragma once
 class FileParser {
 using Data = std::vector<std::string>;
 const std::string initPath_;
 const File rawFile_;
 const ParsedFile product_;
-
-
 public:
 FileParser(const std::string& initPath, const File& file):
 initPath_(initPath),
 rawFile_(file),
 product_(BuildProduct())
 {}
-
 ParsedFile getProduct() const { return product_; }
-
-
 private:
 ParsedFile BuildProduct() const {
 auto data = Tools::FileIO::readFile(initPath_+rawFile_.getFile());
 RemoveOnelineComments(data);
 RemoveMultilineComments(data);
 auto includes = CutoutIncludes(data);
-
 return ParsedFile(rawFile_, data, includes);
 }
-
 void RemoveOnelineComments(Data& data) const {
 for (auto& line : data) {
 auto i = line.find("
@@ -139,14 +118,8 @@ line = line.substr(0, i);
 }
 }
 }
-
 void RemoveMultilineComments(Data& data) const {
-
-
-
-
 bool isCommented = false;
-
 for (auto& line : data) {
 if (isCommented) {
 auto end = line.find("*/");
@@ -159,7 +132,6 @@ line = "";
 }
 }
 auto begin = line.find("
-
 ", begin);
 if (end != std::string::npos) {
 std::string tmp = line.substr(end + 2);
@@ -173,14 +145,12 @@ isCommented = true;
 }
 }
 }
-
 std::vector<std::string> CutoutIncludes(Data& data) const {
 std::vector<std::string> includes;
 for (auto& line : data) {
 if (Tools::Converter::removeWhitespaces(line)[0] != '#') {
 continue;
 }
-
 if (line.find("#include") != std::string::npos) {
 includes.push_back(line.substr(8));
 line = "";
@@ -192,7 +162,6 @@ return includes;
 
 
 
-
 ############################################################################  source/GeneratorTxt.hpp
 sstream
 
@@ -201,51 +170,36 @@ Tools
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
+############################################################################
+#pragma once
 class GeneratorTxt {
 using ParsedProjectTree = std::vector<ParsedFile>;
 const std::string initPath_;
 const ParsedProjectTree data_;
-
-
 public:
 explicit GeneratorTxt(const std::string& initPath, const ParsedProjectTree& data):
 initPath_(initPath),
 data_(data)
 {}
-
-
 std::string buildFile() {
 std::stringstream result;
-
 for (const auto& file : data_) {
 result << file.getPath() << " ";
 result << file.getName() << " ";
 result << file.getFormat() << "\t\t\t";
 result << std::to_string(file.getSubFiles().size()) << "\n";
 }
-
 for (const auto& file : data_) {
 result << "\n\n\n############################################################################ ";
 result << file.getFile() << "\n";
 result << Tools::Converter::to_string(file.getLibIncludes()) << "\n";
 result << Tools::Converter::to_string(file.getProjIncludes()) << "\n";
-result << "\n\n\n############################################################################ ";
+result << "\n\n\n############################################################################\n";
 result << file.getData();
 }
-
 return result.str();
 }
-
-
 };
-
 
 
 
@@ -260,24 +214,13 @@ Tools
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
-
-
-
+############################################################################
+#pragma once
 class ParsedFile : public File {
 using DataConteiner = std::vector<std::string>;
 DataConteiner data_;
 DataConteiner libIncludes_;
 DataConteiner projIncludes_;
-
-
-
 public:
 explicit ParsedFile(const File& base, const DataConteiner& data, const DataConteiner& includes):
 File(base),
@@ -287,14 +230,9 @@ projIncludes_()
 {
 BuildIncludes(includes);
 }
-
 std::string getData() const { return Tools::Converter::to_string(data_); }
-
 std::vector<std::string> getLibIncludes() const { return libIncludes_; }
-
 std::vector<std::string> getProjIncludes() const { return projIncludes_; }
-
-
 private:
 void BuildIncludes(const DataConteiner& includes) {
 for (auto str : includes) {
@@ -314,7 +252,6 @@ throw std::logic_error("ParsedFile::BuildIncludes(): wrong syntax \"" + str + "\
 
 
 
-
 ############################################################################  source/PathInitializer.ut.cpp
 
 plugins/catch.hpp
@@ -323,18 +260,12 @@ PathInitializer.ut.hpp
 
 
 
-############################################################################  
-
-
-
+############################################################################
 TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {
-
-
 WHEN("Testing the CutoutName()") {
 struct test {
 const PathInitializer_UnitTest object_;
 const std::string expectedValue_;
-
 std::string log() const {
 return
 "{ \"" + object_.getTestValue()
@@ -349,23 +280,19 @@ const std::initializer_list<test> tests = {
 { PathInitializer_UnitTest(".."), ".." },
 { PathInitializer_UnitTest("./"), "./" },
 { PathInitializer_UnitTest("../"), "../" },
-
 { PathInitializer_UnitTest("a."), "a" },
 { PathInitializer_UnitTest("a.abcd"), "a" },
 { PathInitializer_UnitTest("abcd."), "abcd" },
 { PathInitializer_UnitTest("abcd.abcd"), "abcd" },
-
 { PathInitializer_UnitTest(".a."), ".a" },
 { PathInitializer_UnitTest(".a.abcd"), ".a" },
 { PathInitializer_UnitTest(".abcd."), ".abcd" },
 { PathInitializer_UnitTest(".abcd.abcd"), ".abcd" },
-
 { PathInitializer_UnitTest("..a."), "." },
 { PathInitializer_UnitTest("..a.abcd"), "." },
 { PathInitializer_UnitTest("..abcd."), "." },
 { PathInitializer_UnitTest("..abcd.abcd"), "." }
 };
-
 for (const auto& test : tests) {
 THEN(test.log()) {
 REQUIRE_NOTHROW(test.object_.CutoutName());
@@ -374,13 +301,10 @@ REQUIRE(result == test.expectedValue_);
 }
 }
 }
-
-
 WHEN("Testing the CutoutFormat()") {
 struct test {
 const PathInitializer_UnitTest object_;
 const std::string expectedValue_;
-
 std::string log() const {
 return
 "{ \"" + object_.getTestValue()
@@ -395,23 +319,19 @@ const std::initializer_list<test> tests = {
 { PathInitializer_UnitTest(".."), "" },
 { PathInitializer_UnitTest("./"), "" },
 { PathInitializer_UnitTest("../"), "" },
-
 { PathInitializer_UnitTest("a."), "." },
 { PathInitializer_UnitTest("a.abcd"), ".abcd" },
 { PathInitializer_UnitTest("abcd."), "." },
 { PathInitializer_UnitTest("abcd.abcd"), ".abcd" },
-
 { PathInitializer_UnitTest(".a."), "." },
 { PathInitializer_UnitTest(".a.abcd"), ".abcd" },
 { PathInitializer_UnitTest(".abcd."), "." },
 { PathInitializer_UnitTest(".abcd.abcd"), ".abcd" },
-
 { PathInitializer_UnitTest("..a."), ".a." },
 { PathInitializer_UnitTest("..a.abcd"), ".a.abcd" },
 { PathInitializer_UnitTest("..abcd."), ".abcd." },
 { PathInitializer_UnitTest("..abcd.abcd"), ".abcd.abcd" }
 };
-
 for (const auto& test : tests) {
 THEN(test.log()) {
 REQUIRE_NOTHROW(test.object_.CutoutFormat());
@@ -420,13 +340,10 @@ REQUIRE(result == test.expectedValue_);
 }
 }
 }
-
-
 WHEN("Testing the AppendConditionalSlash()") {
 struct test {
 const PathInitializer_UnitTest object_;
 const std::string expectedValue_;
-
 std::string log() const {
 return
 "{ \"" + object_.getTestValue()
@@ -441,23 +358,19 @@ const std::initializer_list<test> tests = {
 { PathInitializer_UnitTest(".."), "../" },
 { PathInitializer_UnitTest("./"), "./" },
 { PathInitializer_UnitTest("../"), "../" },
-
 { PathInitializer_UnitTest("a."), "a./" },
 { PathInitializer_UnitTest("a.abcd"), "a.abcd/" },
 { PathInitializer_UnitTest(".abcd."), ".abcd./" },
 { PathInitializer_UnitTest("..abcd.abcd"), "..abcd.abcd/" },
-
 { PathInitializer_UnitTest("a./"), "a./" },
 { PathInitializer_UnitTest("a.abcd/"), "a.abcd/" },
 { PathInitializer_UnitTest(".abcd./"), ".abcd./" },
 { PathInitializer_UnitTest("..abcd.abcd/"), "..abcd.abcd/" },
-
 { PathInitializer_UnitTest("a.
 { PathInitializer_UnitTest("a.abcd
 { PathInitializer_UnitTest(".abcd.
 { PathInitializer_UnitTest("..abcd.abcd
 };
-
 for (const auto& test : tests) {
 THEN(test.log()) {
 REQUIRE_NOTHROW(test.object_.AppendConditionalSlash());
@@ -470,10 +383,6 @@ REQUIRE(result == test.expectedValue_);
 
 
 
-
-
-
-
 ############################################################################  source/PathInitializer.ut.hpp
 string
 
@@ -482,41 +391,26 @@ PathInitializer.hpp
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
+############################################################################
+#pragma once
 class PathInitializer_UnitTest : PathInitializer {
 const std::string testValue_;
-
-
 public:
 explicit PathInitializer_UnitTest(const std::string& testValue):
 PathInitializer("",""),
 testValue_(testValue)
 {}
-
 std::string getTestValue() const { return testValue_; }
-
 std::string CutoutName() const {
 return PathInitializer::CutoutName(testValue_);
 }
-
 std::string CutoutFormat() const {
 return PathInitializer::CutoutFormat(testValue_);
 }
-
 std::string AppendConditionalSlash() const {
 return PathInitializer::AppendConditionalSlash(testValue_);
 }
 };
-
-
-
-
 
 
 
@@ -528,38 +422,27 @@ Tools
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
+############################################################################
+#pragma once
 class PathInitializer {
 const std::string path_;
 const std::string name_;
 const std::string format_;
-
-
 public:
 explicit PathInitializer(const int& argc, const char* const * const argv):
 path_(GenPath(argc, argv)),
 name_(),
 format_()
 {}
-
 explicit PathInitializer(const std::string& path, const std::string& fullName):
 path_(AppendConditionalSlash(path)),
 name_(CutoutName(fullName)),
 format_(CutoutFormat(fullName))
 {}
-
 std::string getPath() const { return path_; }
 std::string getName() const { return name_; }
 std::string getFormat() const { return format_; }
 std::string getDefaultPath() const { return "../"; }
-
-
 private:
 std::string GenPath(const int& argc, const char* const * const argv) const {
 if (argc > 1) {
@@ -567,8 +450,6 @@ return AppendConditionalSlash(argv[1]);
 }
 return getDefaultPath();
 }
-
-
 protected:
 static std::string CutoutName(const std::string& str) {
 if (Tools::IgnoreFiles::isIgnored(str)) {
@@ -583,7 +464,6 @@ std::string result;
 result.insert(result.begin(), str.begin(), str.end()-index);
 return result;
 }
-
 static std::string CutoutFormat(const std::string& str) {
 if (Tools::IgnoreFiles::isIgnored(str)) {
 return "";
@@ -596,7 +476,6 @@ std::string result;
 result.insert(result.begin(), str.begin()+index, str.end());
 return result;
 }
-
 static std::string AppendConditionalSlash(std::string str) {
 if (!str.empty()) {
 str += (str.at(str.size()-1) == '/')? "" : "/";
@@ -604,10 +483,6 @@ str += (str.at(str.size()-1) == '/')? "" : "/";
 return str;
 }
 };
-
-
-
-
 
 
 
@@ -624,56 +499,35 @@ GeneratorTxt.hpp
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
-
-
-
-
-
+############################################################################
+#pragma once
 class Program {
 const std::string targetPath_;
 const std::string outputPath_;
-
-
 public:
 explicit Program(const std::string& target):
 targetPath_(target),
 outputPath_("sup.txt")
-
 {}
-
 void execute() {
 initializeIgnoreFiles();
 ProjectTreeBuilder builder(targetPath_);
 auto rawData_ = builder.getProduct();
-
 ProjectTreeParser parser(targetPath_, rawData_);
 auto parsedData = parser.getProduct();
-
 for (const auto& file : parsedData) {
 std::cout << file.getPath() << " "
 << file.getName() << " "
 << file.getFormat() << " " << file.getSubFiles().size() << "\n";
-
-
 }
 GeneratorTxt generator(targetPath_, parsedData);
 Tools::FileIO::saveToFile(outputPath_, generator.buildFile());
 }
-
-
 private:
 void initializeIgnoreFiles() {
 using Tools::Converter;
 using Tools::FileIO;
 using Tools::IgnoreFiles;
-
 auto fileName = IgnoreFiles::getIgnoreFileName();
 if (FileIO::fileExist(fileName)) {
 auto data = FileIO::readFile(fileName);
@@ -689,8 +543,6 @@ FileIO::saveToFile(fileName, Converter::to_fileData(data));
 
 
 
-
-
 ############################################################################  source/ProjectTreeBuilder.hpp
 algorithm
 string
@@ -701,41 +553,27 @@ PathInitializer.hpp
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
-
-
+############################################################################
+#pragma once
 using ProjectTree = std::vector<File>;
-
 class ProjectTreeBuilder {
 const std::string initPath_;
 const ProjectTree product_;
-
 public:
 explicit ProjectTreeBuilder(const std::string& initPath):
 initPath_(initPath),
 product_(BuildProduct())
 {}
-
 ProjectTree getProduct() const { return product_; }
-
-
 private:
 ProjectTree BuildProduct() const {
 auto subFiles = ReadRecursive("");
 File projectRoot(initPath_, subFiles);
 return Flaten(projectRoot);
 }
-
 std::vector<File> ReadRecursive(const std::string& targetPath) const {
 auto paths = Tools::FileIO::readPaths(initPath_ + targetPath);
 std::vector<File> files;
-
 for (const auto& path : paths) {
 auto subFiles = ReadRecursive(targetPath + path + '/');
 PathInitializer initializer(targetPath, path);
@@ -744,8 +582,6 @@ files.push_back(File(initializer, subFiles));
 std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);
 return files;
 }
-
-
 protected:
 ProjectTree Flaten(const File& root) const {
 ProjectTree result;
@@ -756,7 +592,6 @@ result.insert(result.end(), subResult.begin(), subResult.end());
 }
 return result;
 }
-
 static bool SortCriterion_CatalogLast(const File& f, const File& s) {
 int test = f.isCatalog() + s.isCatalog();
 if (test % 2 == 0) {
@@ -766,14 +601,10 @@ else {
 return s.isCatalog();
 }
 }
-
 static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s) {
 return (f < s);
 }
 };
-
-
-
 
 
 
@@ -788,50 +619,32 @@ PathInitializer.hpp
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
-
-
-
+############################################################################
+#pragma once
 using RawProjectTree = std::vector<File>;
 using ParsedProjectTree = std::vector<ParsedFile>;
-
 class ProjectTreeParser {
 const std::string initPath_;
 const RawProjectTree rawData_;
 const ParsedProjectTree product_;
-
 public:
 explicit ProjectTreeParser(const std::string& initPath, const RawProjectTree& rawData):
 initPath_(initPath),
 rawData_(rawData),
 product_(BuildProduct())
 {}
-
 ParsedProjectTree getProduct() const { return product_; }
-
-
 private:
 ParsedProjectTree BuildProduct() const {
 ParsedProjectTree result;
 result.reserve(rawData_.size());
-
 for (const auto& file : rawData_) {
 FileParser parser(initPath_, file);
 result.push_back(parser.getProduct());
 }
-
 return result;
 }
 };
-
-
-
 
 
 
@@ -844,13 +657,8 @@ tools/IgnoreFiles.hpp
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
+############################################################################
+#pragma once
 namespace Tools {
 class Converter;
 class FileIO;
@@ -866,9 +674,8 @@ plugins/catch.hpp
 
 
 
-############################################################################  #define CATCH_CONFIG_MAIN
-
-
+############################################################################
+#define CATCH_CONFIG_MAIN
 
 
 
@@ -881,29 +688,14 @@ Program.hpp
 
 
 
-############################################################################  
-
-
-
-
-
-
+############################################################################
 int main(int argc, char* argv[]) {
 PathInitializer target(argc, argv);
 Program program(target.getPath());
 program.execute();
-
 std::cout << "\n\n";
 return 0;
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -913,7 +705,8 @@ return 0;
 
 
 
-############################################################################  
+############################################################################
+
 
 
 ############################################################################  source/tools/Converter.hpp
@@ -926,14 +719,8 @@ vector
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
-
+############################################################################
+#pragma once
 namespace Tools {
 class Converter {
 public:
@@ -941,19 +728,17 @@ template <class T>
 static std::set<T> to_set(const std::vector<T>& data) {
 return std::set<T>(data.begin(), data.end());
 }
-
 static std::string to_fileData(const std::set<std::string>& data) {
 std::string result;
 std::for_each (data.begin(), data.end(), [&](const auto& val){result += val + '\n';});
 return result;
 }
-
-static std::string to_string(const std::vector<std::string>& data) {
+static std::string to_string(const std::vector<std::string>& data2) {
 std::stringstream result;
+auto data = removeEmptyLines(data2);
 std::for_each(data.begin(), data.end(), [&](const auto& line){result << removeWhitespaces(line) << "\n";});
 return result.str();
 }
-
 static std::string removeWhitespaces(const std::string& data) {
 std::string result = data;
 result = RemoveSpecialChars(result);
@@ -962,7 +747,17 @@ result = RemoveFromEnd(result);
 result = RemoveAdjacentSpaces(result);
 return result;
 }
-
+static std::vector<std::string> removeEmptyLines(const std::vector<std::string>& data) {
+std::vector<std::string> result;
+result.reserve(data.size());
+for (auto record : data) {
+record = removeWhitespaces(record);
+if (!record.empty()) {
+result.push_back(record);
+}
+}
+return result;
+}
 private:
 static std::string RemoveSpecialChars(const std::string& data) {
 std::string result = data;
@@ -1004,14 +799,8 @@ result << data[i];
 }
 return result.str();
 }
-
-
-
 };
 }
-
-
-
 
 
 
@@ -1027,22 +816,11 @@ IgnoreFiles.hpp
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
-
-
-
-
-
+############################################################################
+#pragma once
 namespace Tools {
 class FileIO {
 explicit FileIO() {}
-
-
 public:
 static bool fileExist(const std::string& path) {
 std::ifstream readFile(path);
@@ -1053,12 +831,10 @@ return false;
 readFile.close();
 return true;
 }
-
 static std::vector<std::string> readPaths(const std::string& targetPath) {
 std::vector<std::string> result;
 DIR* directory;
 directory = opendir(targetPath.c_str());
-
 if (!directory) {
 return result;
 }
@@ -1073,13 +849,11 @@ result.push_back(data);
 closedir(directory);
 return result;
 }
-
 static std::vector<std::string> readFile(const std::string& path) {
 std::ifstream readFile(path);
 if (!readFile || !readFile.is_open()) {
 throw std::logic_error("Cannot read given file path: " + path + "\n");
 }
-
 std::vector<std::string> result;
 std::string record;
 while (std::getline(readFile, record)) {
@@ -1088,7 +862,6 @@ result.push_back(record);
 readFile.close();
 return result;
 }
-
 static void saveToFile(const std::string& path, const std::string& data) {
 std::ofstream output(path);
 if (!output || !output.is_open()) {
@@ -1102,9 +875,6 @@ output.close();
 
 
 
-
-
-
 ############################################################################  source/tools/IgnoreFiles.hpp
 set
 string
@@ -1113,12 +883,8 @@ string
 
 
 
-############################################################################  #pragma once
-
-
-
-
-
+############################################################################
+#pragma once
 namespace Tools {
 class IgnoreFiles {
 const static std::string filename_;
@@ -1126,17 +892,11 @@ const static std::set<std::string> alwaysIgnores_;
 const static std::set<std::string> formatIgnores_;
 static std::set<std::string> defaultIgnores_;
 static std::set<std::string> ignored_;
-
 explicit IgnoreFiles() { }
-
-
 public:
 static void setIgnoreFiles(const std::set<std::string>& data) { defaultIgnores_ = data; }
-
 static std::string getIgnoreFileName() { return filename_; }
-
 static std::set<std::string> getDefaultIgnoreFiles() { return defaultIgnores_; }
-
 static bool isAlwaysIgnored(const std::string& value) {
 return (alwaysIgnores_.find(value) != alwaysIgnores_.end());
 }
@@ -1159,9 +919,7 @@ std::copy_if(vctr.begin(), vctr.end(), result.begin(), [](auto val){return !isAl
 return result;
 }
 };
-
 const std::string IgnoreFiles::filename_ = ".supignore";
-
 const std::set<std::string> IgnoreFiles::formatIgnores_ {
 ".ut.cpp",
 ".ut.hpp"
@@ -1187,6 +945,3 @@ std::set<std::string> IgnoreFiles::defaultIgnores_ {
 "CMakeLists.txt"
 };
 }
-
-
-

@@ -20,8 +20,9 @@ public:
         return result;
     }
 
-    static std::string to_string(const std::vector<std::string>& data) {
+    static std::string to_string(const std::vector<std::string>& data2) {
         std::stringstream result;       
+        auto data = removeEmptyLines(data2);
         std::for_each(data.begin(), data.end(), [&](const auto& line){result << removeWhitespaces(line) << "\n";});
         return result.str();
     }
@@ -34,6 +35,20 @@ public:
         result = RemoveAdjacentSpaces(result);
         return result;
     }
+
+    static std::vector<std::string> removeEmptyLines(const std::vector<std::string>& data) {
+        std::vector<std::string> result;
+        result.reserve(data.size());
+
+        for (auto record : data) {
+            record = removeWhitespaces(record);
+            if (!record.empty()) {
+                result.push_back(record);
+            }
+        }
+        return result;
+    }
+
 
 private:
     static std::string RemoveSpecialChars(const std::string& data) {
@@ -77,7 +92,6 @@ private:
         return result.str();
     }
 
-    //static std::vector<std::string> removeEmptyLines(
 
 };
 } // namespace Tools
