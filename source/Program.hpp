@@ -6,30 +6,32 @@
 #include "Tools"
 #include "ParsedFile.hpp"
 #include "ProjectTreeBuilder.hpp"
+#include "ProjectTreeParser.hpp"
 
 
 class Program {
     const std::string targetPath_;
-    ProjectTree data_;
+    ProjectTree rawData_;
 
 public:
     explicit Program(const std::string& target):
         targetPath_(target),
-        data_()
+        rawData_()
     {}
 
     void execute() {
         initializeIgnoreFiles();
         ProjectTreeBuilder builder(targetPath_);
-        data_ = builder.getProduct();
+        rawData_ = builder.getProduct();
         
-        for (const auto& file : data_) {
+        for (const auto& file : rawData_) {
             std::cout << file.getPath() << "  " 
                 << file.getName() << "  " 
                 << file.getFormat() << "  " << file.getSubFiles().size() << "\n";
             //std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "\n";
             //std::cout << file.path_ << file.name_ << file.format_ << "\n";
         }
+        ProjectTreeParser parser(targetPath_, rawData_);
     }
 
 

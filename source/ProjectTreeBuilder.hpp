@@ -11,7 +11,7 @@ using ProjectTree = std::vector<File>;
 
 class ProjectTreeBuilder {
     const std::string initPath_;
-    ProjectTree product_;
+    const ProjectTree product_;
 
 public:
     explicit ProjectTreeBuilder(const std::string& initPath):
