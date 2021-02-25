@@ -23,13 +23,13 @@ public:
     
 
 private:
-    ProjectTree BuildProduct() {
+    ProjectTree BuildProduct() const {
         auto subFiles = ReadRecursive("");
         File projectRoot(initPath_, subFiles);
         return Flaten(projectRoot);
     }
 
-    std::vector<File> ReadRecursive(const std::string& targetPath) {
+    std::vector<File> ReadRecursive(const std::string& targetPath) const {
         auto paths = Tools::FileIO::readPaths(initPath_ + targetPath);
         std::vector<File> files;
 

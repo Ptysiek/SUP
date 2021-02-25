@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 
+#include "FileParser.hpp"
 #include "Tools"
 #include "PathInitializer.hpp"
 
@@ -26,8 +27,13 @@ public:
     
 
 private:
-    ParsedProjectTree BuildProduct() {
-        return ParsedProjectTree();
+    ParsedProjectTree BuildProduct() const {
+        ParsedProjectTree result;
+        result.reserve(rawData_.size());
+
+
+
+        return result;
     }
 };
 

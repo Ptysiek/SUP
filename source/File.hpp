@@ -30,6 +30,7 @@ public:
     std::string getName() const { return name_; }
     std::string getPath() const { return path_; }
     std::string getFormat() const { return format_; }
+    std::string getFile() const { return path_ + name_ + format_; }
     std::vector<File> getSubFiles() const { return subFiles_; }
 
     bool isCatalog() const { return !subFiles_.empty(); }
