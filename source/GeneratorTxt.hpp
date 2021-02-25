@@ -31,6 +31,9 @@ public:
         for (const auto& file : data_) {
             result << "\n\n\n############################################################################  "; 
             result << file.getFile() << "\n";
+            result << Tools::Converter::to_string(file.getLibIncludes()) << "\n";
+            result << Tools::Converter::to_string(file.getProjIncludes()) << "\n";
+            result << "\n\n\n############################################################################  "; 
             result << file.getData();
         }
 

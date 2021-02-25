@@ -24,17 +24,35 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
+
+
+############################################################################  
+
+
 ############################################################################  source
 
 
 
+
+
+############################################################################  
+
+
 ############################################################################  source/File.hpp
-#pragma once
+string
+vector
 
-#include <string>
-#include <vector>
+PathInitializer.hpp
 
-#include "PathInitializer.hpp"
+
+
+
+############################################################################  #pragma once
+
+
+
+
+
 
 
 class File {
@@ -71,11 +89,19 @@ public:
 
 
 ############################################################################  source/FileParser.hpp
-#pragma once
 
-#include "File.hpp"
-#include "ParsedFile.hpp"
-#include "Tools"
+File.hpp
+ParsedFile.hpp
+Tools
+
+
+
+
+############################################################################  #pragma once
+
+
+
+
 
 
 class FileParser {
@@ -100,9 +126,9 @@ private:
         auto data = Tools::FileIO::readFile(initPath_+rawFile_.getFile());
         RemoveOnelineComments(data);
         RemoveMultilineComments(data);
+        auto includes = CutoutIncludes(data);
 
-        ParsedFile result(rawFile_, data);
-        return result;
+        return ParsedFile(rawFile_, data, includes);
     }
 
     void RemoveOnelineComments(Data& data) const {
@@ -115,6 +141,10 @@ private:
     }
 
     void RemoveMultilineComments(Data& data) const {
+        
+
+
+
         bool isCommented = false;
 
         for (auto& line : data) {
@@ -128,22 +158,35 @@ private:
                     line = "";
                 }
             }
-            
-                auto begin = line.find("
+            auto begin = line.find("
 
 ", begin);
-                    if (end != std::string::npos) {
-                        std::string tmp = line.substr(end + 2);
-                        line = line.substr(0, begin);
-                        line += ' ' + tmp;
-                    }
-                    else {
-                        line = line.substr(0, begin);
-                        isCommented = true;
-                    }
+                if (end != std::string::npos) {
+                    std::string tmp = line.substr(end + 2);
+                    line = line.substr(0, begin);
+                    line += ' ' + tmp;
                 }
-            
+                else {
+                    line = line.substr(0, begin);
+                    isCommented = true;
+                }
+            }
         }
+    }
+    
+    std::vector<std::string> CutoutIncludes(Data& data) const {
+        std::vector<std::string> includes;
+        for (auto& line : data) {
+            if (Tools::Converter::removeWhitespaces(line)[0] != '#') {
+                continue;
+            }
+
+            if (line.find("#include") != std::string::npos) {
+                includes.push_back(line.substr(8));
+                line = "";
+            }
+        }
+        return includes;
     }
 };
 
@@ -151,11 +194,18 @@ private:
 
 
 ############################################################################  source/GeneratorTxt.hpp
-#pragma once
+sstream
 
-#include <sstream>
+Tools
 
-#include "Tools"
+
+
+
+############################################################################  #pragma once
+
+
+
+
 
 
 class GeneratorTxt {
@@ -184,6 +234,9 @@ public:
         for (const auto& file : data_) {
             result << "\n\n\n############################################################################  "; 
             result << file.getFile() << "\n";
+            result << Tools::Converter::to_string(file.getLibIncludes()) << "\n";
+            result << Tools::Converter::to_string(file.getProjIncludes()) << "\n";
+            result << "\n\n\n############################################################################  "; 
             result << file.getData();
         }
 
@@ -197,42 +250,81 @@ public:
 
 
 ############################################################################  source/ParsedFile.hpp
-#pragma once
+algorithm
+string
+vector
 
-#include <sstream>
-#include <string>
-#include <vector>
+File.hpp
+Tools
 
-#include "File.hpp"
+
+
+
+############################################################################  #pragma once
+
+
+
+
+
+
+
 
 
 class ParsedFile : public File {
-
-    std::vector<std::string> data_;
+    using DataConteiner = std::vector<std::string>;
+    DataConteiner data_;
+    DataConteiner libIncludes_;
+    DataConteiner projIncludes_;
     
 
 
 public:
-    explicit ParsedFile(const File& base, const std::vector<std::string>& data):
+    explicit ParsedFile(const File& base, const DataConteiner& data, const DataConteiner& includes):
         File(base),
-        data_(data)
-    {}
-
-    std::string getData() const {
-        std::stringstream result;       
-        std::for_each(data_.begin(), data_.end(), [&](const auto& line){result << line << "\n";});
-        return result.str();
+        data_(data),
+        libIncludes_(),
+        projIncludes_()
+    {
+        BuildIncludes(includes);    
     }
 
+    std::string getData() const { return Tools::Converter::to_string(data_); } 
 
+    std::vector<std::string> getLibIncludes() const { return libIncludes_; }
+    
+    std::vector<std::string> getProjIncludes() const { return projIncludes_; }
+
+
+private:
+    void BuildIncludes(const DataConteiner& includes) {
+        for (auto str : includes) {
+            str = Tools::Converter::removeWhitespaces(str);
+            if (str.at(0) == '<') {
+                libIncludes_.push_back(str.substr(1, str.length() - 2));
+            }
+            else if (str.at(0) == '\"') {
+                projIncludes_.push_back(str.substr(1, str.length() - 2));
+            }
+            else {
+                throw std::logic_error("ParsedFile::BuildIncludes():  wrong syntax \"" + str + "\"");
+            }
+        }
+    }
 };
 
 
 
 
 ############################################################################  source/PathInitializer.ut.cpp
-#include "plugins/catch.hpp"
-#include "PathInitializer.ut.hpp"
+
+plugins/catch.hpp
+PathInitializer.ut.hpp
+
+
+
+
+############################################################################  
+
 
 
 TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {
@@ -383,11 +475,18 @@ TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [
 
 
 ############################################################################  source/PathInitializer.ut.hpp
-#pragma once 
+string
 
-#include <string>
+PathInitializer.hpp
 
-#include "PathInitializer.hpp"
+
+
+
+############################################################################  #pragma once 
+
+
+
+
 
 
 class PathInitializer_UnitTest : PathInitializer {
@@ -422,11 +521,18 @@ public:
 
 
 ############################################################################  source/PathInitializer.hpp
-#pragma once
+string
 
-#include <string>
+Tools
 
-#include "Tools"
+
+
+
+############################################################################  #pragma once
+
+
+
+
 
 
 class PathInitializer {
@@ -506,16 +612,28 @@ protected:
 
 
 ############################################################################  source/Program.hpp
-#pragma once
+iostream
 
-#include <iostream>
+File.hpp
+Tools
+ParsedFile.hpp
+ProjectTreeBuilder.hpp
+ProjectTreeParser.hpp
+GeneratorTxt.hpp
 
-#include "File.hpp"
-#include "Tools"
-#include "ParsedFile.hpp"
-#include "ProjectTreeBuilder.hpp"
-#include "ProjectTreeParser.hpp"
-#include "GeneratorTxt.hpp"
+
+
+
+############################################################################  #pragma once
+
+
+
+
+
+
+
+
+
 
 
 class Program {
@@ -574,13 +692,22 @@ private:
 
 
 ############################################################################  source/ProjectTreeBuilder.hpp
-#pragma once
+algorithm
+string
 
-#include <algorithm>
-#include <string>
+Tools
+PathInitializer.hpp
 
-#include "Tools"
-#include "PathInitializer.hpp"
+
+
+
+############################################################################  #pragma once
+
+
+
+
+
+
 
 
 using ProjectTree = std::vector<File>;
@@ -651,14 +778,24 @@ protected:
 
 
 ############################################################################  source/ProjectTreeParser.hpp
-#pragma once
+algorithm
+string
 
-#include <algorithm>
-#include <string>
+FileParser.hpp
+Tools
+PathInitializer.hpp
 
-#include "FileParser.hpp"
-#include "Tools"
-#include "PathInitializer.hpp"
+
+
+
+############################################################################  #pragma once
+
+
+
+
+
+
+
 
 
 using RawProjectTree = std::vector<File>;
@@ -699,11 +836,19 @@ private:
 
 
 ############################################################################  source/Tools
-#pragma once
 
-#include "tools/Converter.hpp"
-#include "tools/FileIO.hpp"
-#include "tools/IgnoreFiles.hpp"
+tools/Converter.hpp
+tools/FileIO.hpp
+tools/IgnoreFiles.hpp
+
+
+
+
+############################################################################  #pragma once
+
+
+
+
 
 
 namespace Tools {
@@ -715,18 +860,32 @@ namespace Tools {
 
 
 ############################################################################  source/catch_main.cpp
-#define CATCH_CONFIG_MAIN
-#include "plugins/catch.hpp"
+
+plugins/catch.hpp
+
+
+
+
+############################################################################  #define CATCH_CONFIG_MAIN
+
 
 
 
 
 ############################################################################  source/main.cpp
+iostream
 
-#include <iostream>
+PathInitializer.hpp
+Program.hpp
 
-#include "PathInitializer.hpp"
-#include "Program.hpp"
+
+
+
+############################################################################  
+
+
+
+
 
 
 int main(int argc, char* argv[]) {
@@ -752,12 +911,27 @@ int main(int argc, char* argv[]) {
 
 
 
-############################################################################  source/tools/Converter.hpp
-#pragma once
 
-#include <algorithm>
-#include <set>
-#include <vector>
+
+############################################################################  
+
+
+############################################################################  source/tools/Converter.hpp
+algorithm
+set
+sstream
+vector
+
+
+
+
+
+############################################################################  #pragma once
+
+
+
+
+
 
 
 namespace Tools {
@@ -774,6 +948,23 @@ public:
         return result;
     }
 
+    static std::string to_string(const std::vector<std::string>& data) {
+        std::stringstream result;       
+        std::for_each(data.begin(), data.end(), [&](const auto& line){result << line << "\n";});
+        return result.str();
+    }
+
+    static std::string removeWhitespaces(const std::string& data) {
+        std::stringstream result;       
+        for (const auto& character : data) {
+            if (character == ' ' || character == '\t' || character == '\n') {
+                continue;
+            }
+            result << character;
+        }
+        return result.str();
+    }
+
 };
 } 
 
@@ -783,15 +974,26 @@ public:
 
 
 ############################################################################  source/tools/FileIO.hpp
-#pragma once
+dirent.h
+exception
+fstream
+string
+vector
 
-#include <dirent.h>
-#include <exception>
-#include <fstream>
-#include <string>
-#include <vector>
+IgnoreFiles.hpp
 
-#include "IgnoreFiles.hpp"
+
+
+
+############################################################################  #pragma once
+
+
+
+
+
+
+
+
 
 
 namespace Tools {
@@ -862,10 +1064,17 @@ public:
 
 
 ############################################################################  source/tools/IgnoreFiles.hpp
-#pragma once 
+set
+string
 
-#include <set>
-#include <string>
+
+
+
+
+############################################################################  #pragma once 
+
+
+
 
 
 namespace Tools {

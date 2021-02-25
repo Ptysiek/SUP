@@ -27,9 +27,9 @@ private:
         auto data = Tools::FileIO::readFile(initPath_+rawFile_.getFile());
         RemoveOnelineComments(data);
         RemoveMultilineComments(data);
+        auto includes = CutoutIncludes(data);
 
-        ParsedFile result(rawFile_, data);
-        return result;
+        return ParsedFile(rawFile_, data, includes);
     }
 
     void RemoveOnelineComments(Data& data) const {
@@ -42,6 +42,10 @@ private:
     }
 
     void RemoveMultilineComments(Data& data) const {
+        /*TODO:
+         * Simplify.
+         * sift string data ex.("abcd // cde";  // comment)
+        */
         bool isCommented = false;
 
         for (auto& line : data) {
@@ -55,22 +59,35 @@ private:
                     line = "";
                 }
             }
-            //else {
-                auto begin = line.find("/*");
-                if (begin != std::string::npos) {
-                    auto end = line.find("*/", begin);
-                    if (end != std::string::npos) {
-                        std::string tmp = line.substr(end + 2);
-                        line = line.substr(0, begin);
-                        line += ' ' + tmp;
-                    }
-                    else {
-                        line = line.substr(0, begin);
-                        isCommented = true;
-                    }
+            auto begin = line.find("/*");
+            if (begin != std::string::npos) {
+                auto end = line.find("*/", begin);
+                if (end != std::string::npos) {
+                    std::string tmp = line.substr(end + 2);
+                    line = line.substr(0, begin);
+                    line += ' ' + tmp;
                 }
-            //}
+                else {
+                    line = line.substr(0, begin);
+                    isCommented = true;
+                }
+            }
         }
+    }
+    
+    std::vector<std::string> CutoutIncludes(Data& data) const {
+        std::vector<std::string> includes;
+        for (auto& line : data) {
+            if (Tools::Converter::removeWhitespaces(line)[0] != '#') {
+                continue;
+            }
+
+            if (line.find("#include") != std::string::npos) {
+                includes.push_back(line.substr(8));
+                line = "";
+            }
+        }
+        return includes;
     }
 };
 
