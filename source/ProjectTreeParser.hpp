@@ -31,7 +31,7 @@ private:
         ParsedProjectTree result;
         result.reserve(rawData_.size());
 
-
+        
 
         return result;
     }
