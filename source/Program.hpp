@@ -7,31 +7,38 @@
 #include "ParsedFile.hpp"
 #include "ProjectTreeBuilder.hpp"
 #include "ProjectTreeParser.hpp"
+#include "GeneratorTxt.hpp"
 
 
 class Program {
     const std::string targetPath_;
-    ProjectTree rawData_;
+    const std::string outputPath_;
+    // ProjectTree rawData_;
 
 public:
     explicit Program(const std::string& target):
         targetPath_(target),
-        rawData_()
+        outputPath_("sup.txt")
+       // rawData_()
     {}
 
     void execute() {
         initializeIgnoreFiles();
         ProjectTreeBuilder builder(targetPath_);
-        rawData_ = builder.getProduct();
+        auto rawData_ = builder.getProduct();
         
-        for (const auto& file : rawData_) {
+        ProjectTreeParser parser(targetPath_, rawData_);
+        auto parsedData = parser.getProduct();
+        
+        for (const auto& file : parsedData) {
             std::cout << file.getPath() << "  " 
                 << file.getName() << "  " 
                 << file.getFormat() << "  " << file.getSubFiles().size() << "\n";
             //std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "\n";
             //std::cout << file.path_ << file.name_ << file.format_ << "\n";
         }
-        ProjectTreeParser parser(targetPath_, rawData_);
+        GeneratorTxt generator(targetPath_, parsedData);
+        Tools::FileIO::saveToFile(outputPath_, generator.buildFile());
     }
 
 

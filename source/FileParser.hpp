@@ -19,12 +19,14 @@ public:
         product_(BuildProduct())
     {}
 
+    ParsedFile getProduct() const { return product_; }
+
 
 private:
     ParsedFile BuildProduct() const {
         auto data = Tools::FileIO::readFile(initPath_+rawFile_.getFile());
-        //RemoveOnelineComments(data);
-        //RemoveMultilineComments(data);
+        RemoveOnelineComments(data);
+        RemoveMultilineComments(data);
 
         ParsedFile result(rawFile_, data);
         return result;

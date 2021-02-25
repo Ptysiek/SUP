@@ -31,7 +31,10 @@ private:
         ParsedProjectTree result;
         result.reserve(rawData_.size());
 
-        
+        for (const auto& file : rawData_) {
+            FileParser parser(initPath_, file);
+            result.push_back(parser.getProduct());
+        }
 
         return result;
     }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -18,6 +19,11 @@ public:
         data_(data)
     {}
 
+    std::string getData() const {
+        std::stringstream result;       
+        std::for_each(data_.begin(), data_.end(), [&](const auto& line){result << line << "\n";});
+        return result.str();
+    }
 
 
 };
