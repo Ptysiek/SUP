@@ -7,10 +7,10 @@
 
 
 class FileParserComments {
+protected:
     using Data = DataStructures::Data;
     using Line = DataStructures::Line;
 
-protected:
     FileParserComments() {}
 
 

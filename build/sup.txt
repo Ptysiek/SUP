@@ -120,6 +120,7 @@ return includes;
 
 
 ############################################################################  source/FileParserComments.hpp
+exception
 
 DataStructures
 
@@ -130,9 +131,9 @@ DataStructures
 #pragma once
 //#include "Tools"
 class FileParserComments {
+protected:
 using Data = DataStructures::Data;
 using Line = DataStructures::Line;
-protected:
 FileParserComments() {}
 public:
 static Data modifyData(Data data) {
@@ -152,14 +153,15 @@ auto i = line.find("//");
 if (i == std::string::npos) {
 return line;
 }
-if (IsInsideString(line, i)) {
+if (IsInsideString(line.substr(0, i))) {
 return line;
 }
 return line.substr(0, i);
 }
-static bool IsInsideString(const Line& line, const size_t end_i) {
-auto count = std::count(line.begin(), line.begin() + end_i, '\"');
-return (count % 2);
+static bool IsInsideString(const Line& subline) {
+auto count_a = std::count(subline.begin(), subline.end(), '\"');
+auto count_b = std::count(subline.begin(), subline.end(), '\'');
+return (count_a % 2) || (count_b % 2);
 }
 static Data RemoveMultilineComments(Data data) {
 /*TODO:
@@ -209,8 +211,11 @@ FileParserComments.hpp
 class FileParserComments_UnitTest : FileParserComments {
 public:
 FileParserComments_UnitTest() {}
-static bool IsInsideString(const std::string& line, const size_t end_i) {
-return FileParserComments::IsInsideString(line, end_i);
+bool IsInsideString(const Line& line) {
+return FileParserComments::IsInsideString(line);
+}
+Line RemoveOnelineComments(const Line& line) {
+return FileParserComments::RemoveOnelineComments(line);
 }
 };
 
@@ -225,30 +230,46 @@ FileParserComments.ut.hpp
 
 
 ############################################################################
-TEST_CASE("FileParserComments: base operations", "[IsInsideString]") {
 FileParserComments_UnitTest testObject;
+TEST_CASE("FileParserComments: base operations", "[IsInsideString]") {
 //_______________________________________________________________________________________________________
 //-------------------------------------------------------------------------------------------------------
 WHEN("Testing the IsInsideString()") {
 struct test {
 const std::string line_;
-const size_t end_index_;
 const bool expectedValue_;
 std::string log() const {
 return
 "{ \"" + line_
-+ "\", " + std::to_string(end_index_)
-+ " == " + std::to_string(expectedValue_)
++ "\" == " + std::to_string(expectedValue_)
 + " }";
 }
 };
 const std::initializer_list<test> tests = {
-{ " abcd // abcd", 9, false }
+{ "", false },
+{ " abcd", false },
+{ "abcd", false },
+{ " \" a\"bcd", false },
+{ " \' a\'bcd", false },
+{ " \" \"\" a\"bcd", false },
+{ " \' \'\' a\'bcd", false },
+{ " \" \'\' a\"bcd", false },
+{ " \' \"\" a\'bcd", false },
+{ " \" \'\" a\'bcd", false },
+{ " \' \"\' a\"bcd", false },
+{ " \"\" a\'bcd", true },
+{ " \'\' a\"bcd", true },
+{ " \" a\'bcd", true },
+{ " \' a\"bcd", true },
+{ " \" abcd", true },
+{ " \' abcd", true },
+{ "\"\" \" abcd", true },
+{ "\'\' ww \' abcd", true }
 };
 for (const auto& test : tests) {
 THEN(test.log()) {
-REQUIRE_NOTHROW(testObject.IsInsideString(test.line_, test.end_index_));
-auto result = testObject.IsInsideString(test.line_, test.end_index_);
+REQUIRE_NOTHROW(testObject.IsInsideString(test.line_));
+auto result = testObject.IsInsideString(test.line_);
 REQUIRE(result == test.expectedValue_);
 }
 }
@@ -257,47 +278,56 @@ REQUIRE(result == test.expectedValue_);
 TEST_CASE("FileParserComments: static operations", "[RemoveOnelineComments], [RemoveMultilineComments]") {
 //_______________________________________________________________________________________________________
 //-------------------------------------------------------------------------------------------------------
-/*
 WHEN("Testing the RemoveOnelineComments()") {
 struct test {
-const PathInitializer_UnitTest object_;
+const std::string line_;
 const std::string expectedValue_;
 std::string log() const {
 return
-"{ \"" + object_.getTestValue()
+"{ \"" + line_
 + "\" == \"" + expectedValue_
 + "\" }";
 }
 };
 const std::initializer_list<test> tests = {
-{ PathInitializer_UnitTest("\n"), "\n" },
-{ PathInitializer_UnitTest(""), "" },
-{ PathInitializer_UnitTest("."), "." },
-{ PathInitializer_UnitTest(".."), ".." },
-{ PathInitializer_UnitTest("./"), "./" },
-{ PathInitializer_UnitTest("../"), "../" },
-{ PathInitializer_UnitTest("a."), "a" },
-{ PathInitializer_UnitTest("a.abcd"), "a" },
-{ PathInitializer_UnitTest("abcd."), "abcd" },
-{ PathInitializer_UnitTest("abcd.abcd"), "abcd" },
-{ PathInitializer_UnitTest(".a."), ".a" },
-{ PathInitializer_UnitTest(".a.abcd"), ".a" },
-{ PathInitializer_UnitTest(".abcd."), ".abcd" },
-{ PathInitializer_UnitTest(".abcd.abcd"), ".abcd" },
-{ PathInitializer_UnitTest("..a."), "." },
-{ PathInitializer_UnitTest("..a.abcd"), "." },
-{ PathInitializer_UnitTest("..abcd."), "." },
-{ PathInitializer_UnitTest("..abcd.abcd"), "." }
+{"", ""},
+{" abcd", " abcd"},
+{" // abcd", " "},
+{" a//bcd", " a"},
+{" abcd//", " abcd"},
+{"// abcd", ""},
+{" /abcd", " /abcd"},
+{" /a/b/cd", " /a/b/cd"},
+{" abcd/", " abcd/"},
+{"/ abcd", "/ abcd"},
+{"/ abcd/", "/ abcd/"},
+{" \" abcd", " \" abcd"},
+{" \" abcd\"", " \" abcd\""},
+{" \"\" abcd", " \"\" abcd"},
+{" \' abcd", " \' abcd"},
+{" \' abcd\'", " \' abcd\'"},
+{" \'\' abcd", " \'\' abcd"},
+{" \"\' abcd", " \"\' abcd"},
+{" \"\'\" abcd", " \"\'\" abcd"},
+{" \" //abcd", " \" //abcd"},
+{" \" abcd\"//", " \" abcd\""},
+{" \"\"// abcd", " \"\""},
+{" //\' abcd", " "},
+{" \' a/bcd\'", " \' a/bcd\'"},
+{" \'\' abc//d", " \'\' abc"},
+{" \"\' a//bcd", " \"\' a//bcd"},
+{" \"\'\" a//bcd", " \"\'\" a//bcd"},
+{" \"\' a/bcd", " \"\' a/bcd"},
+{" \"\'\" a/bcd", " \"\'\" a/bcd"},
 };
 for (const auto& test : tests) {
 THEN(test.log()) {
-REQUIRE_NOTHROW(test.object_.CutoutName());
-auto result = test.object_.CutoutName();
+REQUIRE_NOTHROW(testObject.RemoveOnelineComments(test.line_));
+auto result = testObject.RemoveOnelineComments(test.line_);
 REQUIRE(result == test.expectedValue_);
 }
 }
 }
-*/
 }
 
 

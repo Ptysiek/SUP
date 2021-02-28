@@ -2,12 +2,9 @@
 #include "FileParserComments.ut.hpp"
 
 
-
+FileParserComments_UnitTest testObject;
 
 TEST_CASE("FileParserComments: base operations", "[IsInsideString]") { 
-
-    FileParserComments_UnitTest testObject;
-
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
     WHEN("Testing the IsInsideString()") {
@@ -59,31 +56,63 @@ TEST_CASE("FileParserComments: base operations", "[IsInsideString]") {
 TEST_CASE("FileParserComments: static operations", "[RemoveOnelineComments], [RemoveMultilineComments]") {
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
-    /*
     WHEN("Testing the RemoveOnelineComments()") {
         struct test {
-            const PathInitializer_UnitTest object_;
+            const std::string line_;
             const std::string expectedValue_;
 
             std::string log() const {
                 return 
-                    "{ \"" + object_.getTestValue()
+                    "{ \"" + line_
                     + "\" == \"" + expectedValue_
                     + "\" }";
             }
         };
         const std::initializer_list<test> tests = {
+            {"", ""},
+            {"   abcd", "   abcd"},
+            {"   // abcd", "   "},
+            {"   a//bcd", "   a"},
+            {"   abcd//", "   abcd"},
+            {"//   abcd", ""},
+
+            {"   /abcd", "   /abcd"},
+            {"   /a/b/cd", "   /a/b/cd"},
+            {"   abcd/", "   abcd/"},
+            {"/   abcd", "/   abcd"},
+            {"/   abcd/", "/   abcd/"},
+            
+            {" \"  abcd", " \"  abcd"},
+            {" \"  abcd\"", " \"  abcd\""},
+            {" \"\"  abcd", " \"\"  abcd"},
+            {" \'  abcd", " \'  abcd"},
+            {" \'  abcd\'", " \'  abcd\'"},
+            {" \'\'  abcd", " \'\'  abcd"},
+            
+            {" \"\'  abcd", " \"\'  abcd"},
+            {" \"\'\"  abcd", " \"\'\"  abcd"},
+            
+            {" \"  //abcd", " \"  //abcd"},
+            {" \"  abcd\"//", " \"  abcd\""},
+            {" \"\"//  abcd", " \"\""},
+            {" //\'  abcd", " "},
+            {" \'  a/bcd\'", " \'  a/bcd\'"},
+            {" \'\'  abc//d", " \'\'  abc"},
+            
+            {" \"\'  a//bcd", " \"\'  a//bcd"},
+            {" \"\'\"  a//bcd", " \"\'\"  a//bcd"},
+            {" \"\'  a/bcd", " \"\'  a/bcd"},
+            {" \"\'\"  a/bcd", " \"\'\"  a/bcd"},
         };
 
         for (const auto& test : tests) {
             THEN(test.log()) {
-                REQUIRE_NOTHROW(test.object_.CutoutName());
-                auto result = test.object_.CutoutName();
+                REQUIRE_NOTHROW(testObject.RemoveOnelineComments(test.line_));
+                auto result = testObject.RemoveOnelineComments(test.line_);
                 REQUIRE(result == test.expectedValue_);
             }
         }
     }
-*/
 }
 
 
