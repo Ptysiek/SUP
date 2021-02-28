@@ -1,8 +1,10 @@
   ../  			1
-  source  			13
+  source  			15
 source/  DataStructures  			0
 source/  FileParser  .hpp			0
 source/  FileParserComments  .hpp			0
+source/  FileParserComments  .ut.hpp			0
+source/  FileParserComments  .ut.cpp			0
 source/  GeneratorTxt  .hpp			0
 source/  Program  .hpp			0
 source/  ProjectTreeBuilder  .hpp			0
@@ -18,9 +20,10 @@ source/dataStructures/  ParsedFile  .hpp			0
 source/dataStructures/  PathInitializer  .ut.cpp			0
 source/dataStructures/  PathInitializer  .ut.hpp			0
 source/dataStructures/  PathInitializer  .hpp			0
-source/  tools  			3
+source/  tools  			4
 source/tools/  Converter  .hpp			0
 source/tools/  FileIO  .hpp			0
+source/tools/  IgnoreFiles  .cpp			0
 source/tools/  IgnoreFiles  .hpp			0
 
 
@@ -60,7 +63,8 @@ dataStructures/PathInitializer.hpp
 ############################################################################
 #pragma once
 namespace DataStructures {
-using Data = BaseStructures::Data; //std::vector<std::string>;
+using Data = BaseStructures::Data;
+using Line = BaseStructures::Line;
 using ProjectTree = std::vector<File>;
 using ParsedProjectTree = std::vector<ParsedFile>;
 }
@@ -118,66 +122,183 @@ return includes;
 ############################################################################  source/FileParserComments.hpp
 
 DataStructures
-Tools
 
 
 
 
 ############################################################################
 #pragma once
+//#include "Tools"
 class FileParserComments {
 using Data = DataStructures::Data;
+using Line = DataStructures::Line;
+protected:
 FileParserComments() {}
 public:
 static Data modifyData(Data data) {
-RemoveOnelineComments(data);
+RemoveAllOnelineComments(data);
 RemoveMultilineComments(data);
 return data;
 }
-private:
-static Data RemoveOnelineComments(Data data) {
+protected:
+static Data RemoveAllOnelineComments(Data data) {
 for (auto& line : data) {
-auto i = line.find("//");
-if (i != std::string::npos) {
-line = line.substr(0, i);
-}
+line = RemoveOnelineComments(line);
 }
 return data;
 }
+static Line RemoveOnelineComments(const Line& line) {
+auto i = line.find("//");
+if (i == std::string::npos) {
+return line;
+}
+if (IsInsideString(line, i)) {
+return line;
+}
+return line.substr(0, i);
+}
+static bool IsInsideString(const Line& line, const size_t end_i) {
+auto count = std::count(line.begin(), line.begin() + end_i, '\"');
+return (count % 2);
+}
 static Data RemoveMultilineComments(Data data) {
 /*TODO:
-* Simplify.
 * sift string data ex.("abcd // cde"; // comment)
 */
 bool isCommented = false;
 for (auto& line : data) {
 if (isCommented) {
-auto end = line.find("*/");
-if (end != std::string::npos) {
-line = line.substr(end + 2);
-isCommented = false;
-}
-else {
-line = "";
-}
+ClearLine(line, isCommented);
 }
 auto begin = line.find("/*");
 if (begin != std::string::npos) {
-auto end = line.find("*/", begin);
-if (end != std::string::npos) {
-std::string tmp = line.substr(end + 2);
-line = line.substr(0, begin);
-line += ' ' + tmp;
-}
-else {
-line = line.substr(0, begin);
-isCommented = true;
-}
+FindClosing(line, isCommented, begin);
 }
 }
 return data;
 }
+static Line ClearLine(Line line, bool& isCommented) {
+auto end = line.find("*/");
+if (end != std::string::npos) {
+isCommented = false;
+return line.substr(end + 2);
+}
+return "";
+}
+static Line FindClosing(Line line, bool& isCommented, const size_t begin) {
+auto end = line.find("*/", begin);
+if (end != std::string::npos) {
+std::string tmp = line.substr(end + 2);
+return line.substr(0, begin) + " " + tmp;
+}
+isCommented = true;
+return line.substr(0, begin);
+}
 };
+
+
+
+############################################################################  source/FileParserComments.ut.hpp
+
+FileParserComments.hpp
+
+
+
+
+############################################################################
+class FileParserComments_UnitTest : FileParserComments {
+public:
+FileParserComments_UnitTest() {}
+static bool IsInsideString(const std::string& line, const size_t end_i) {
+return FileParserComments::IsInsideString(line, end_i);
+}
+};
+
+
+
+############################################################################  source/FileParserComments.ut.cpp
+
+plugins/catch.hpp
+FileParserComments.ut.hpp
+
+
+
+
+############################################################################
+TEST_CASE("FileParserComments: base operations", "[IsInsideString]") {
+FileParserComments_UnitTest testObject;
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the IsInsideString()") {
+struct test {
+const std::string line_;
+const size_t end_index_;
+const bool expectedValue_;
+std::string log() const {
+return
+"{ \"" + line_
++ "\", " + std::to_string(end_index_)
++ " == " + std::to_string(expectedValue_)
++ " }";
+}
+};
+const std::initializer_list<test> tests = {
+{ " abcd // abcd", 9, false }
+};
+for (const auto& test : tests) {
+THEN(test.log()) {
+REQUIRE_NOTHROW(testObject.IsInsideString(test.line_, test.end_index_));
+auto result = testObject.IsInsideString(test.line_, test.end_index_);
+REQUIRE(result == test.expectedValue_);
+}
+}
+}
+}
+TEST_CASE("FileParserComments: static operations", "[RemoveOnelineComments], [RemoveMultilineComments]") {
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+/*
+WHEN("Testing the RemoveOnelineComments()") {
+struct test {
+const PathInitializer_UnitTest object_;
+const std::string expectedValue_;
+std::string log() const {
+return
+"{ \"" + object_.getTestValue()
++ "\" == \"" + expectedValue_
++ "\" }";
+}
+};
+const std::initializer_list<test> tests = {
+{ PathInitializer_UnitTest("\n"), "\n" },
+{ PathInitializer_UnitTest(""), "" },
+{ PathInitializer_UnitTest("."), "." },
+{ PathInitializer_UnitTest(".."), ".." },
+{ PathInitializer_UnitTest("./"), "./" },
+{ PathInitializer_UnitTest("../"), "../" },
+{ PathInitializer_UnitTest("a."), "a" },
+{ PathInitializer_UnitTest("a.abcd"), "a" },
+{ PathInitializer_UnitTest("abcd."), "abcd" },
+{ PathInitializer_UnitTest("abcd.abcd"), "abcd" },
+{ PathInitializer_UnitTest(".a."), ".a" },
+{ PathInitializer_UnitTest(".a.abcd"), ".a" },
+{ PathInitializer_UnitTest(".abcd."), ".abcd" },
+{ PathInitializer_UnitTest(".abcd.abcd"), ".abcd" },
+{ PathInitializer_UnitTest("..a."), "." },
+{ PathInitializer_UnitTest("..a.abcd"), "." },
+{ PathInitializer_UnitTest("..abcd."), "." },
+{ PathInitializer_UnitTest("..abcd.abcd"), "." }
+};
+for (const auto& test : tests) {
+THEN(test.log()) {
+REQUIRE_NOTHROW(test.object_.CutoutName());
+auto result = test.object_.CutoutName();
+REQUIRE(result == test.expectedValue_);
+}
+}
+}
+*/
+}
 
 
 
@@ -475,6 +596,7 @@ vector
 #pragma once
 namespace BaseStructures {
 using Data = std::vector<std::string>;
+using Line = std::string;
 }
 
 
@@ -986,9 +1108,51 @@ output.close();
 
 
 
+############################################################################  source/tools/IgnoreFiles.cpp
+string
+vector
+
+IgnoreFiles.hpp
+
+
+
+
+############################################################################
+namespace Tools {
+const std::string IgnoreFiles::filename_ = ".supignore";
+const std::set<std::string> IgnoreFiles::formatIgnores_ {
+".ut.cpp",
+".ut.hpp"
+};
+const std::set<std::string> IgnoreFiles::alwaysIgnores_ {
+"\n",
+"",
+".",
+"..",
+"./",
+"../"
+};
+std::set<std::string> IgnoreFiles::defaultIgnores_ {
+".git",
+".gitignore",
+".notes",
+".sup",
+"notes",
+"build",
+"plugins",
+"tags",
+"README.md",
+"CMakeLists.txt"
+};
+} // namespace Tools
+
+
+
 ############################################################################  source/tools/IgnoreFiles.hpp
+algorithm
 set
 string
+vector
 
 
 
@@ -1029,30 +1193,5 @@ result.resize(vctr.size());
 std::copy_if(vctr.begin(), vctr.end(), result.begin(), [](auto val){return !isAlwaysIgnored(val);});
 return result;
 }
-};
-const std::string IgnoreFiles::filename_ = ".supignore";
-const std::set<std::string> IgnoreFiles::formatIgnores_ {
-".ut.cpp",
-".ut.hpp"
-};
-const std::set<std::string> IgnoreFiles::alwaysIgnores_ {
-"\n",
-"",
-".",
-"..",
-"./",
-"../"
-};
-std::set<std::string> IgnoreFiles::defaultIgnores_ {
-".git",
-".gitignore",
-".notes",
-".sup",
-"notes",
-"build",
-"plugins",
-"tags",
-"README.md",
-"CMakeLists.txt"
 };
 } // namespace Tools

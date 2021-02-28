@@ -1,7 +1,9 @@
 #pragma once 
 
+#include <algorithm>
 #include <set>
 #include <string>
+#include <vector>
 
 
 namespace Tools {
@@ -43,33 +45,6 @@ public:
         std::copy_if(vctr.begin(), vctr.end(), result.begin(), [](auto val){return !isAlwaysIgnored(val);});
         return result;
     }
-};
-
-const std::string IgnoreFiles::filename_ = ".supignore";
-
-const std::set<std::string> IgnoreFiles::formatIgnores_ {
-    ".ut.cpp",
-    ".ut.hpp"
-};
-const std::set<std::string> IgnoreFiles::alwaysIgnores_ {
-    "\n",
-    "",
-    ".",
-    "..",
-    "./",
-    "../"
-};
-std::set<std::string> IgnoreFiles::defaultIgnores_ {
-    ".git",
-    ".gitignore",
-    ".notes",
-    ".sup",
-    "notes",
-    "build",
-    "plugins",
-    "tags",
-    "README.md",
-    "CMakeLists.txt"
 };
 } // namespace Tools
 

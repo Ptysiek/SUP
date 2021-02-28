@@ -10,7 +10,8 @@
 
 
 namespace DataStructures {
-    using Data = BaseStructures::Data;  //std::vector<std::string>;
+    using Data = BaseStructures::Data; 
+    using Line = BaseStructures::Line;
     using ProjectTree = std::vector<File>;
     using ParsedProjectTree = std::vector<ParsedFile>;
 }
