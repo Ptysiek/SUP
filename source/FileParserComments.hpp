@@ -23,6 +23,8 @@ public:
 
 
 protected:
+    //_______________________________________________________________________________________________________
+    //-------------------------------------------------------------------------------------------------------
     static Data RemoveAllOnelineComments(Data data) {
         for (auto& line : data) {
             line = RemoveOnelineComments(line);
@@ -41,41 +43,38 @@ protected:
         return line.substr(0, i);
     }
 
-    static bool IsInsideString(const Line& subline) {
-        auto count_a = std::count(subline.begin(), subline.end(), '\"');
-        auto count_b = std::count(subline.begin(), subline.end(), '\'');
-        return (count_a % 2) || (count_b % 2);
-    }
-
-
+    //_______________________________________________________________________________________________________
+    //-------------------------------------------------------------------------------------------------------
     static Data RemoveMultilineComments(Data data) {
-        /*TODO:
-         * sift string data ex.("abcd // cde";  // comment)
-        */
         bool isCommented = false;
-
         for (auto& line : data) {
             if (isCommented) {
-                ClearLine(line, isCommented);
+                Multiline_ClearLine(line, isCommented);
             }
             auto begin = line.find("/*");
             if (begin != std::string::npos) {
-                FindClosing(line, isCommented, begin);
+                Multiline_FindClosing(line, isCommented, begin);
             }
         }
         return data;
     }
     
-    static Line ClearLine(Line line, bool& isCommented) {
+    static Line Multiline_ClearLine(Line line, bool& isCommented) {
         auto end = line.find("*/");
-        if (end != std::string::npos) {
-            isCommented = false;
-            return line.substr(end + 2);
+        if (end == std::string::npos) {
+            return "";
         }
-        return "";
+        if (IsAlreadyCommentedByOneline(line.substr(0, end))) {
+            return "";
+        }
+        if (IsInsideString(line.substr(0, end))) {
+            return "";
+        }
+        isCommented = false;
+        return line.substr(end + 2);
     }
 
-    static Line FindClosing(Line line, bool& isCommented, const size_t begin) {
+    static Line Multiline_FindClosing(Line line, bool& isCommented, const size_t begin) {
         auto end = line.find("*/", begin);
         if (end != std::string::npos) {
             std::string tmp = line.substr(end + 2);
@@ -85,5 +84,16 @@ protected:
         return line.substr(0, begin);
     }
 
+    //_______________________________________________________________________________________________________
+    //-------------------------------------------------------------------------------------------------------
+    static bool IsInsideString(const Line& subline) {
+        auto count_a = std::count(subline.begin(), subline.end(), '\"');
+        auto count_b = std::count(subline.begin(), subline.end(), '\'');
+        return (count_a % 2) || (count_b % 2);
+    }
+
+    static bool IsAlreadyCommentedByOneline(const Line& subline) {
+        return (subline.find("//") != std::string::npos);
+    }
 };
 

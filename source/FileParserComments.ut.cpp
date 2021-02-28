@@ -1,6 +1,8 @@
 #include "plugins/catch.hpp"
 #include "FileParserComments.ut.hpp"
 
+#include <algorithm>
+#include <numeric>
 
 FileParserComments_UnitTest testObject;
 
@@ -53,57 +55,57 @@ TEST_CASE("FileParserComments: base operations", "[IsInsideString]") {
 }
 
 
-TEST_CASE("FileParserComments: static operations", "[RemoveOnelineComments], [RemoveMultilineComments]") {
+TEST_CASE("FileParserComments: RemoveOneLine operations", "[RemoveOnelineComments], [RemoveAllOnelineComments]") {
+    struct test {
+        const std::string line_;
+        const std::string expectedValue_;
+
+        std::string log() const {
+            return 
+                "{ \"" + line_
+                + "\" == \"" + expectedValue_
+                + "\" }";
+        }
+    };
+    const std::initializer_list<test> tests = {
+        {"", ""},
+        {"   abcd", "   abcd"},
+        {"   // abcd", "   "},
+        {"   a//bcd", "   a"},
+        {"   abcd//", "   abcd"},
+        {"//   abcd", ""},
+
+        {"   /abcd", "   /abcd"},
+        {"   /a/b/cd", "   /a/b/cd"},
+        {"   abcd/", "   abcd/"},
+        {"/   abcd", "/   abcd"},
+        {"/   abcd/", "/   abcd/"},
+
+        {" \"  abcd", " \"  abcd"},
+        {" \"  abcd\"", " \"  abcd\""},
+        {" \"\"  abcd", " \"\"  abcd"},
+        {" \'  abcd", " \'  abcd"},
+        {" \'  abcd\'", " \'  abcd\'"},
+        {" \'\'  abcd", " \'\'  abcd"},
+
+        {" \"\'  abcd", " \"\'  abcd"},
+        {" \"\'\"  abcd", " \"\'\"  abcd"},
+
+        {" \"  //abcd", " \"  //abcd"},
+        {" \"  abcd\"//", " \"  abcd\""},
+        {" \"\"//  abcd", " \"\""},
+        {" //\'  abcd", " "},
+        {" \'  a/bcd\'", " \'  a/bcd\'"},
+        {" \'\'  abc//d", " \'\'  abc"},
+
+        {" \"\'  a//bcd", " \"\'  a//bcd"},
+        {" \"\'\"  a//bcd", " \"\'\"  a//bcd"},
+        {" \"\'  a/bcd", " \"\'  a/bcd"},
+        {" \"\'\"  a/bcd", " \"\'\"  a/bcd"},
+    };
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
     WHEN("Testing the RemoveOnelineComments()") {
-        struct test {
-            const std::string line_;
-            const std::string expectedValue_;
-
-            std::string log() const {
-                return 
-                    "{ \"" + line_
-                    + "\" == \"" + expectedValue_
-                    + "\" }";
-            }
-        };
-        const std::initializer_list<test> tests = {
-            {"", ""},
-            {"   abcd", "   abcd"},
-            {"   // abcd", "   "},
-            {"   a//bcd", "   a"},
-            {"   abcd//", "   abcd"},
-            {"//   abcd", ""},
-
-            {"   /abcd", "   /abcd"},
-            {"   /a/b/cd", "   /a/b/cd"},
-            {"   abcd/", "   abcd/"},
-            {"/   abcd", "/   abcd"},
-            {"/   abcd/", "/   abcd/"},
-            
-            {" \"  abcd", " \"  abcd"},
-            {" \"  abcd\"", " \"  abcd\""},
-            {" \"\"  abcd", " \"\"  abcd"},
-            {" \'  abcd", " \'  abcd"},
-            {" \'  abcd\'", " \'  abcd\'"},
-            {" \'\'  abcd", " \'\'  abcd"},
-            
-            {" \"\'  abcd", " \"\'  abcd"},
-            {" \"\'\"  abcd", " \"\'\"  abcd"},
-            
-            {" \"  //abcd", " \"  //abcd"},
-            {" \"  abcd\"//", " \"  abcd\""},
-            {" \"\"//  abcd", " \"\""},
-            {" //\'  abcd", " "},
-            {" \'  a/bcd\'", " \'  a/bcd\'"},
-            {" \'\'  abc//d", " \'\'  abc"},
-            
-            {" \"\'  a//bcd", " \"\'  a//bcd"},
-            {" \"\'\"  a//bcd", " \"\'\"  a//bcd"},
-            {" \"\'  a/bcd", " \"\'  a/bcd"},
-            {" \"\'\"  a/bcd", " \"\'\"  a/bcd"},
-        };
 
         for (const auto& test : tests) {
             THEN(test.log()) {
@@ -111,6 +113,23 @@ TEST_CASE("FileParserComments: static operations", "[RemoveOnelineComments], [Re
                 auto result = testObject.RemoveOnelineComments(test.line_);
                 REQUIRE(result == test.expectedValue_);
             }
+        }
+    }
+    //_______________________________________________________________________________________________________
+    //-------------------------------------------------------------------------------------------------------
+    WHEN("Testing the RemoveAllOnelineComments()") {
+        std::vector<std::string> data; 
+        data.reserve(tests.size());
+        std::for_each(tests.begin(), tests.end(), [&](auto test){ data.push_back(test.line_); });
+
+        REQUIRE_NOTHROW(testObject.RemoveAllOnelineComments(data));
+        auto results = testObject.RemoveAllOnelineComments(data);
+        size_t i = 0;
+        for (const auto& test : tests) {
+            THEN("id: " + std::to_string(i) + "  (" + results.at(i) + ") == (" + test.expectedValue_ + ")") {
+                REQUIRE(results.at(i) == test.expectedValue_); 
+            }
+            ++i;
         }
     }
 }

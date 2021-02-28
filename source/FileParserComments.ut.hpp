@@ -13,5 +13,8 @@ public:
     }
 
 
+    std::vector<std::string> RemoveAllOnelineComments(const std::vector<std::string>& data) {
+        return FileParserComments::RemoveAllOnelineComments(data);
+    }
 };
 
