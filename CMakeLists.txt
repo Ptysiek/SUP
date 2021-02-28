@@ -12,7 +12,7 @@ project(sup)
 set(THIS_PROJECT_SRC_DIRECTORIES
 )
 set(THIS_PROJECT_TESTS_DIRECTORIES
-    source/PathInitializer.ut.cpp
+    source/dataStructures/PathInitializer.ut.cpp
 )
 
 # set flags

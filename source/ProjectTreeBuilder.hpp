@@ -3,13 +3,13 @@
 #include <algorithm>
 #include <string>
 
+#include "DataStructures"
 #include "Tools"
-#include "PathInitializer.hpp"
+//#include "PathInitializer.hpp"
 
-
-using ProjectTree = std::vector<File>;
 
 class ProjectTreeBuilder {
+    using ProjectTree = DataStructures::ProjectTree;
     const std::string initPath_;
     const ProjectTree product_;
 

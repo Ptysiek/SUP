@@ -1,18 +1,21 @@
   ../  			1
-  source  			14
-source/  File  .hpp			0
+  source  			11
+source/  DataStructures  			0
 source/  FileParser  .hpp			0
 source/  GeneratorTxt  .hpp			0
-source/  ParsedFile  .hpp			0
-source/  PathInitializer  .ut.cpp			0
-source/  PathInitializer  .ut.hpp			0
-source/  PathInitializer  .hpp			0
 source/  Program  .hpp			0
 source/  ProjectTreeBuilder  .hpp			0
 source/  ProjectTreeParser  .hpp			0
 source/  Tools  			0
 source/  catch_main  .cpp			0
 source/  main  .cpp			0
+source/  dataStructures  			6
+source/dataStructures/  BaseStructures  			0
+source/dataStructures/  File  .hpp			0
+source/dataStructures/  ParsedFile  .hpp			0
+source/dataStructures/  PathInitializer  .ut.cpp			0
+source/dataStructures/  PathInitializer  .ut.hpp			0
+source/dataStructures/  PathInitializer  .hpp			0
 source/  tools  			3
 source/tools/  Converter  .hpp			0
 source/tools/  FileIO  .hpp			0
@@ -40,49 +43,31 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  source/File.hpp
+############################################################################  source/DataStructures
 string
 vector
 
-PathInitializer.hpp
+dataStructures/BaseStructures
+dataStructures/File.hpp
+dataStructures/ParsedFile.hpp
+dataStructures/PathInitializer.hpp
 
 
 
 
 ############################################################################
 #pragma once
-class File {
-std::string name_;
-std::string path_;
-std::string format_;
-std::vector<File> subFiles_;
-public:
-explicit File(const std::string& path, const std::vector<File>& subFiles):
-name_(path),
-path_(),
-format_(),
-subFiles_(subFiles)
-{}
-explicit File(const PathInitializer& target, const std::vector<File>& subFiles):
-name_(target.getName()),
-path_(target.getPath()),
-format_(target.getFormat()),
-subFiles_(subFiles)
-{}
-std::string getName() const { return name_; }
-std::string getPath() const { return path_; }
-std::string getFormat() const { return format_; }
-std::string getFile() const { return path_ + name_ + format_; }
-std::vector<File> getSubFiles() const { return subFiles_; }
-bool isCatalog() const { return !subFiles_.empty(); }
-};
+namespace DataStructures {
+using Data = BaseStructures::Data;
+using ProjectTree = std::vector<File>;
+using ParsedProjectTree = std::vector<ParsedFile>;
+}
 
 
 
 ############################################################################  source/FileParser.hpp
 
-File.hpp
-ParsedFile.hpp
+DataStructures
 Tools
 
 
@@ -91,7 +76,7 @@ Tools
 ############################################################################
 #pragma once
 class FileParser {
-using Data = std::vector<std::string>;
+using Data = DataStructures::Data;
 const std::string initPath_;
 const File rawFile_;
 const ParsedFile product_;
@@ -166,6 +151,7 @@ return includes;
 sstream
 
 Tools
+DataStructures
 
 
 
@@ -173,7 +159,7 @@ Tools
 ############################################################################
 #pragma once
 class GeneratorTxt {
-using ParsedProjectTree = std::vector<ParsedFile>;
+using ParsedProjectTree = DataStructures::ParsedProjectTree;
 const std::string initPath_;
 const ParsedProjectTree data_;
 public:
@@ -203,12 +189,67 @@ return result.str();
 
 
 
-############################################################################  source/ParsedFile.hpp
+############################################################################  source/Program.hpp
+iostream
+
+DataStructures
+Tools
+ProjectTreeBuilder.hpp
+ProjectTreeParser.hpp
+GeneratorTxt.hpp
+
+
+
+
+############################################################################
+#pragma once
+class Program {
+const std::string targetPath_;
+const std::string outputPath_;
+public:
+explicit Program(const std::string& target):
+targetPath_(target),
+outputPath_("sup.txt")
+{}
+void execute() {
+initializeIgnoreFiles();
+ProjectTreeBuilder builder(targetPath_);
+auto rawData_ = builder.getProduct();
+ProjectTreeParser parser(targetPath_, rawData_);
+auto parsedData = parser.getProduct();
+for (const auto& file : parsedData) {
+std::cout << file.getPath() << " "
+<< file.getName() << " "
+<< file.getFormat() << " " << file.getSubFiles().size() << "\n";
+}
+GeneratorTxt generator(targetPath_, parsedData);
+Tools::FileIO::saveToFile(outputPath_, generator.buildFile());
+}
+private:
+void initializeIgnoreFiles() {
+using Tools::Converter;
+using Tools::FileIO;
+using Tools::IgnoreFiles;
+auto fileName = IgnoreFiles::getIgnoreFileName();
+if (FileIO::fileExist(fileName)) {
+auto data = FileIO::readFile(fileName);
+data = IgnoreFiles::pickoutAlwaysIgnored(data);
+IgnoreFiles::setIgnoreFiles(Converter::to_set(data));
+}
+else {
+auto data = IgnoreFiles::getDefaultIgnoreFiles();
+FileIO::saveToFile(fileName, Converter::to_fileData(data));
+}
+}
+};
+
+
+
+############################################################################  source/ProjectTreeBuilder.hpp
 algorithm
 string
-vector
 
-File.hpp
+DataStructures
 Tools
 
 
@@ -216,13 +257,237 @@ Tools
 
 ############################################################################
 #pragma once
-class ParsedFile : public File {
-using DataConteiner = std::vector<std::string>;
-DataConteiner data_;
-DataConteiner libIncludes_;
-DataConteiner projIncludes_;
+class ProjectTreeBuilder {
+using ProjectTree = DataStructures::ProjectTree;
+const std::string initPath_;
+const ProjectTree product_;
 public:
-explicit ParsedFile(const File& base, const DataConteiner& data, const DataConteiner& includes):
+explicit ProjectTreeBuilder(const std::string& initPath):
+initPath_(initPath),
+product_(BuildProduct())
+{}
+ProjectTree getProduct() const { return product_; }
+private:
+ProjectTree BuildProduct() const {
+auto subFiles = ReadRecursive("");
+File projectRoot(initPath_, subFiles);
+return Flaten(projectRoot);
+}
+std::vector<File> ReadRecursive(const std::string& targetPath) const {
+auto paths = Tools::FileIO::readPaths(initPath_ + targetPath);
+std::vector<File> files;
+for (const auto& path : paths) {
+auto subFiles = ReadRecursive(targetPath + path + '/');
+PathInitializer initializer(targetPath, path);
+files.push_back(File(initializer, subFiles));
+}
+std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);
+return files;
+}
+protected:
+ProjectTree Flaten(const File& root) const {
+ProjectTree result;
+result.push_back(root);
+for (const auto& file : root.getSubFiles()) {
+auto subResult = Flaten(file);
+result.insert(result.end(), subResult.begin(), subResult.end());
+}
+return result;
+}
+static bool SortCriterion_CatalogLast(const File& f, const File& s) {
+int test = f.isCatalog() + s.isCatalog();
+if (test % 2 == 0) {
+return SortCriterion_Alphabetical(f.getName(), s.getName());
+}
+else {
+return s.isCatalog();
+}
+}
+static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s) {
+return (f < s);
+}
+};
+
+
+
+############################################################################  source/ProjectTreeParser.hpp
+algorithm
+string
+
+DataStructures
+Tools
+FileParser.hpp
+
+
+
+
+############################################################################
+#pragma once
+class ProjectTreeParser {
+using RawProjectTree = DataStructures::ProjectTree;
+using ParsedProjectTree = DataStructures::ParsedProjectTree;
+const std::string initPath_;
+const RawProjectTree rawData_;
+const ParsedProjectTree product_;
+public:
+explicit ProjectTreeParser(const std::string& initPath, const RawProjectTree& rawData):
+initPath_(initPath),
+rawData_(rawData),
+product_(BuildProduct())
+{}
+ParsedProjectTree getProduct() const { return product_; }
+private:
+ParsedProjectTree BuildProduct() const {
+ParsedProjectTree result;
+result.reserve(rawData_.size());
+for (const auto& file : rawData_) {
+FileParser parser(initPath_, file);
+result.push_back(parser.getProduct());
+}
+return result;
+}
+};
+
+
+
+############################################################################  source/Tools
+
+tools/Converter.hpp
+tools/FileIO.hpp
+tools/IgnoreFiles.hpp
+
+
+
+
+############################################################################
+#pragma once
+namespace Tools {
+class Converter;
+class FileIO;
+class IgnoreFiles;
+}
+
+
+
+############################################################################  source/catch_main.cpp
+
+plugins/catch.hpp
+
+
+
+
+############################################################################
+#define CATCH_CONFIG_MAIN
+
+
+
+############################################################################  source/main.cpp
+iostream
+
+DataStructures
+Program.hpp
+
+
+
+
+############################################################################
+int main(int argc, char* argv[]) {
+PathInitializer target(argc, argv);
+Program program(target.getPath());
+program.execute();
+std::cout << "\n\n";
+return 0;
+}
+
+
+
+############################################################################  source/dataStructures
+
+
+
+
+
+############################################################################
+
+
+
+############################################################################  source/dataStructures/BaseStructures
+string
+vector
+
+
+
+
+
+############################################################################
+#pragma once
+namespace BaseStructures {
+using Data = std::vector<std::string>;
+}
+
+
+
+############################################################################  source/dataStructures/File.hpp
+string
+vector
+
+PathInitializer.hpp
+
+
+
+
+############################################################################
+#pragma once
+class File {
+std::string name_;
+std::string path_;
+std::string format_;
+std::vector<File> subFiles_;
+public:
+explicit File(const std::string& path, const std::vector<File>& subFiles):
+name_(path),
+path_(),
+format_(),
+subFiles_(subFiles)
+{}
+explicit File(const PathInitializer& target, const std::vector<File>& subFiles):
+name_(target.getName()),
+path_(target.getPath()),
+format_(target.getFormat()),
+subFiles_(subFiles)
+{}
+std::string getName() const { return name_; }
+std::string getPath() const { return path_; }
+std::string getFormat() const { return format_; }
+std::string getFile() const { return path_ + name_ + format_; }
+std::vector<File> getSubFiles() const { return subFiles_; }
+bool isCatalog() const { return !subFiles_.empty(); }
+};
+
+
+
+############################################################################  source/dataStructures/ParsedFile.hpp
+algorithm
+string
+vector
+
+File.hpp
+../Tools
+BaseStructures
+
+
+
+
+############################################################################
+#pragma once
+class ParsedFile : public File {
+using Converter = Tools::Converter;
+using Data = BaseStructures::Data;
+Data data_;
+Data libIncludes_;
+Data projIncludes_;
+public:
+explicit ParsedFile(const File& base, const Data& data, const Data& includes):
 File(base),
 data_(data),
 libIncludes_(),
@@ -230,13 +495,13 @@ projIncludes_()
 {
 BuildIncludes(includes);
 }
-std::string getData() const { return Tools::Converter::to_string(data_); }
+std::string getData() const { return Converter::to_string(data_); }
 std::vector<std::string> getLibIncludes() const { return libIncludes_; }
 std::vector<std::string> getProjIncludes() const { return projIncludes_; }
 private:
-void BuildIncludes(const DataConteiner& includes) {
+void BuildIncludes(const Data& includes) {
 for (auto str : includes) {
-str = Tools::Converter::removeWhitespaces(str);
+str = Converter::removeWhitespaces(str);
 if (str.at(0) == '<') {
 libIncludes_.push_back(str.substr(1, str.length() - 2));
 }
@@ -252,9 +517,9 @@ throw std::logic_error("ParsedFile::BuildIncludes(): wrong syntax \"" + str + "\
 
 
 
-############################################################################  source/PathInitializer.ut.cpp
+############################################################################  source/dataStructures/PathInitializer.ut.cpp
 
-plugins/catch.hpp
+../plugins/catch.hpp
 PathInitializer.ut.hpp
 
 
@@ -383,7 +648,7 @@ REQUIRE(result == test.expectedValue_);
 
 
 
-############################################################################  source/PathInitializer.ut.hpp
+############################################################################  source/dataStructures/PathInitializer.ut.hpp
 string
 
 PathInitializer.hpp
@@ -414,10 +679,10 @@ return PathInitializer::AppendConditionalSlash(testValue_);
 
 
 
-############################################################################  source/PathInitializer.hpp
+############################################################################  source/dataStructures/PathInitializer.hpp
 string
 
-Tools
+../Tools
 
 
 
@@ -425,6 +690,7 @@ Tools
 ############################################################################
 #pragma once
 class PathInitializer {
+using IgnoreFiles = Tools::IgnoreFiles;
 const std::string path_;
 const std::string name_;
 const std::string format_;
@@ -483,219 +749,6 @@ str += (str.at(str.size()-1) == '/')? "" : "/";
 return str;
 }
 };
-
-
-
-############################################################################  source/Program.hpp
-iostream
-
-File.hpp
-Tools
-ParsedFile.hpp
-ProjectTreeBuilder.hpp
-ProjectTreeParser.hpp
-GeneratorTxt.hpp
-
-
-
-
-############################################################################
-#pragma once
-class Program {
-const std::string targetPath_;
-const std::string outputPath_;
-public:
-explicit Program(const std::string& target):
-targetPath_(target),
-outputPath_("sup.txt")
-{}
-void execute() {
-initializeIgnoreFiles();
-ProjectTreeBuilder builder(targetPath_);
-auto rawData_ = builder.getProduct();
-ProjectTreeParser parser(targetPath_, rawData_);
-auto parsedData = parser.getProduct();
-for (const auto& file : parsedData) {
-std::cout << file.getPath() << " "
-<< file.getName() << " "
-<< file.getFormat() << " " << file.getSubFiles().size() << "\n";
-}
-GeneratorTxt generator(targetPath_, parsedData);
-Tools::FileIO::saveToFile(outputPath_, generator.buildFile());
-}
-private:
-void initializeIgnoreFiles() {
-using Tools::Converter;
-using Tools::FileIO;
-using Tools::IgnoreFiles;
-auto fileName = IgnoreFiles::getIgnoreFileName();
-if (FileIO::fileExist(fileName)) {
-auto data = FileIO::readFile(fileName);
-data = IgnoreFiles::pickoutAlwaysIgnored(data);
-IgnoreFiles::setIgnoreFiles(Converter::to_set(data));
-}
-else {
-auto data = IgnoreFiles::getDefaultIgnoreFiles();
-FileIO::saveToFile(fileName, Converter::to_fileData(data));
-}
-}
-};
-
-
-
-############################################################################  source/ProjectTreeBuilder.hpp
-algorithm
-string
-
-Tools
-PathInitializer.hpp
-
-
-
-
-############################################################################
-#pragma once
-using ProjectTree = std::vector<File>;
-class ProjectTreeBuilder {
-const std::string initPath_;
-const ProjectTree product_;
-public:
-explicit ProjectTreeBuilder(const std::string& initPath):
-initPath_(initPath),
-product_(BuildProduct())
-{}
-ProjectTree getProduct() const { return product_; }
-private:
-ProjectTree BuildProduct() const {
-auto subFiles = ReadRecursive("");
-File projectRoot(initPath_, subFiles);
-return Flaten(projectRoot);
-}
-std::vector<File> ReadRecursive(const std::string& targetPath) const {
-auto paths = Tools::FileIO::readPaths(initPath_ + targetPath);
-std::vector<File> files;
-for (const auto& path : paths) {
-auto subFiles = ReadRecursive(targetPath + path + '/');
-PathInitializer initializer(targetPath, path);
-files.push_back(File(initializer, subFiles));
-}
-std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);
-return files;
-}
-protected:
-ProjectTree Flaten(const File& root) const {
-ProjectTree result;
-result.push_back(root);
-for (const auto& file : root.getSubFiles()) {
-auto subResult = Flaten(file);
-result.insert(result.end(), subResult.begin(), subResult.end());
-}
-return result;
-}
-static bool SortCriterion_CatalogLast(const File& f, const File& s) {
-int test = f.isCatalog() + s.isCatalog();
-if (test % 2 == 0) {
-return SortCriterion_Alphabetical(f.getName(), s.getName());
-}
-else {
-return s.isCatalog();
-}
-}
-static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s) {
-return (f < s);
-}
-};
-
-
-
-############################################################################  source/ProjectTreeParser.hpp
-algorithm
-string
-
-FileParser.hpp
-Tools
-PathInitializer.hpp
-
-
-
-
-############################################################################
-#pragma once
-using RawProjectTree = std::vector<File>;
-using ParsedProjectTree = std::vector<ParsedFile>;
-class ProjectTreeParser {
-const std::string initPath_;
-const RawProjectTree rawData_;
-const ParsedProjectTree product_;
-public:
-explicit ProjectTreeParser(const std::string& initPath, const RawProjectTree& rawData):
-initPath_(initPath),
-rawData_(rawData),
-product_(BuildProduct())
-{}
-ParsedProjectTree getProduct() const { return product_; }
-private:
-ParsedProjectTree BuildProduct() const {
-ParsedProjectTree result;
-result.reserve(rawData_.size());
-for (const auto& file : rawData_) {
-FileParser parser(initPath_, file);
-result.push_back(parser.getProduct());
-}
-return result;
-}
-};
-
-
-
-############################################################################  source/Tools
-
-tools/Converter.hpp
-tools/FileIO.hpp
-tools/IgnoreFiles.hpp
-
-
-
-
-############################################################################
-#pragma once
-namespace Tools {
-class Converter;
-class FileIO;
-class IgnoreFiles;
-}
-
-
-
-############################################################################  source/catch_main.cpp
-
-plugins/catch.hpp
-
-
-
-
-############################################################################
-#define CATCH_CONFIG_MAIN
-
-
-
-############################################################################  source/main.cpp
-iostream
-
-PathInitializer.hpp
-Program.hpp
-
-
-
-
-############################################################################
-int main(int argc, char* argv[]) {
-PathInitializer target(argc, argv);
-Program program(target.getPath());
-program.execute();
-std::cout << "\n\n";
-return 0;
-}
 
 
 

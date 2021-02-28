@@ -1,21 +1,21 @@
-Start testing: Feb 17 13:12 CET
+Start testing: Feb 28 14:10 CET
 ----------------------------------------------------------
 1/1 Testing: sup-ut
 1/1 Test: sup-ut
 Command: "/home/kacu/Desktop/SUP/build/sup-ut"
 Directory: /home/kacu/Desktop/SUP/build
-"sup-ut" start time: Feb 17 13:12 CET
+"sup-ut" start time: Feb 28 14:10 CET
 Output:
 ----------------------------------------------------------
 ===============================================================================
-All tests passed (20 assertions in 1 test case)
+All tests passed (108 assertions in 1 test case)
 
 <end of output>
-Test time =   0.01 sec
+Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"sup-ut" end time: Feb 17 13:12 CET
+"sup-ut" end time: Feb 28 14:10 CET
 "sup-ut" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Feb 17 13:12 CET
+End testing: Feb 28 14:10 CET

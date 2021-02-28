@@ -2,10 +2,11 @@
 
 #include <string>
 
-#include "Tools"
+#include "../Tools"
 
 
 class PathInitializer {
+    using IgnoreFiles = Tools::IgnoreFiles;
     const std::string path_;
     const std::string name_;
     const std::string format_;

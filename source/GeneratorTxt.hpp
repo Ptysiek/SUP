@@ -3,10 +3,10 @@
 #include <sstream>
 
 #include "Tools"
-
+#include "DataStructures"
 
 class GeneratorTxt {
-    using ParsedProjectTree = std::vector<ParsedFile>;
+    using ParsedProjectTree = DataStructures::ParsedProjectTree; // std::vector<ParsedFile>;
     const std::string initPath_;
     const ParsedProjectTree data_;
 

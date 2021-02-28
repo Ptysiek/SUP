@@ -1,12 +1,13 @@
 #pragma once
 
-#include "File.hpp"
-#include "ParsedFile.hpp"
+//#include "File.hpp"
+//#include "ParsedFile.hpp"
+#include "DataStructures"
 #include "Tools"
 
 
 class FileParser {
-    using Data = std::vector<std::string>;
+    using Data = DataStructures::Data;
     const std::string initPath_;
     const File rawFile_;
     const ParsedFile product_;

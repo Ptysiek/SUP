@@ -1,0 +1,18 @@
+#pragma once
+
+#include <string>
+#include <vector>
+
+#include "dataStructures/BaseStructures"
+#include "dataStructures/File.hpp"
+#include "dataStructures/ParsedFile.hpp"
+#include "dataStructures/PathInitializer.hpp"
+
+
+namespace DataStructures {
+    using Data = BaseStructures::Data;  //std::vector<std::string>;
+    using ProjectTree = std::vector<File>;
+    using ParsedProjectTree = std::vector<ParsedFile>;
+}
+
+

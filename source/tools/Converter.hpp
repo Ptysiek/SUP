@@ -91,8 +91,6 @@ private:
         }
         return result.str();
     }
-
-
 };
 } // namespace Tools
 

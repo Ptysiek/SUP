@@ -1,0 +1,10 @@
+#pragma once
+
+#include <string>
+#include <vector>
+
+namespace BaseStructures {
+    using Data = std::vector<std::string>;
+}
+
+

@@ -5,19 +5,21 @@
 #include <vector>
 
 #include "File.hpp"
-#include "Tools"
+#include "../Tools"
+#include "BaseStructures"
 
 
 class ParsedFile : public File {
-    using DataConteiner = std::vector<std::string>;
-    DataConteiner data_;
-    DataConteiner libIncludes_;
-    DataConteiner projIncludes_;
+    using Converter = Tools::Converter;
+    using Data = BaseStructures::Data; // std::vector<std::string>;
+    Data data_;
+    Data libIncludes_;
+    Data projIncludes_;
     
 
 
 public:
-    explicit ParsedFile(const File& base, const DataConteiner& data, const DataConteiner& includes):
+    explicit ParsedFile(const File& base, const Data& data, const Data& includes):
         File(base),
         data_(data),
         libIncludes_(),
@@ -26,7 +28,7 @@ public:
         BuildIncludes(includes);    
     }
 
-    std::string getData() const { return Tools::Converter::to_string(data_); } 
+    std::string getData() const { return Converter::to_string(data_); } 
 
     std::vector<std::string> getLibIncludes() const { return libIncludes_; }
     
@@ -34,9 +36,9 @@ public:
 
 
 private:
-    void BuildIncludes(const DataConteiner& includes) {
+    void BuildIncludes(const Data& includes) {
         for (auto str : includes) {
-            str = Tools::Converter::removeWhitespaces(str);
+            str = Converter::removeWhitespaces(str);
             if (str.at(0) == '<') {
                 libIncludes_.push_back(str.substr(1, str.length() - 2));
             }

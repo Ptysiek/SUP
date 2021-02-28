@@ -3,15 +3,16 @@
 #include <algorithm>
 #include <string>
 
-#include "FileParser.hpp"
+#include "DataStructures"
 #include "Tools"
-#include "PathInitializer.hpp"
+#include "FileParser.hpp"
+//#include "PathInitializer.hpp"
 
 
-using RawProjectTree = std::vector<File>;
-using ParsedProjectTree = std::vector<ParsedFile>;
 
 class ProjectTreeParser {
+    using RawProjectTree = DataStructures::ProjectTree;  //std::vector<File>;
+    using ParsedProjectTree = DataStructures::ParsedProjectTree;  //std::vector<ParsedFile>;
     const std::string initPath_;
     const RawProjectTree rawData_;
     const ParsedProjectTree product_;
