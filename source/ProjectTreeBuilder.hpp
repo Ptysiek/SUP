@@ -5,7 +5,6 @@
 
 #include "DataStructures"
 #include "Tools"
-//#include "PathInitializer.hpp"
 
 
 class ProjectTreeBuilder {

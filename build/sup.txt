@@ -1,11 +1,13 @@
   ../  			1
-  source  			11
+  source  			13
 source/  DataStructures  			0
 source/  FileParser  .hpp			0
+source/  FileParserComments  .hpp			0
 source/  GeneratorTxt  .hpp			0
 source/  Program  .hpp			0
 source/  ProjectTreeBuilder  .hpp			0
 source/  ProjectTreeParser  .hpp			0
+source/  SyntaxParser  .hpp			0
 source/  Tools  			0
 source/  catch_main  .cpp			0
 source/  main  .cpp			0
@@ -58,7 +60,7 @@ dataStructures/PathInitializer.hpp
 ############################################################################
 #pragma once
 namespace DataStructures {
-using Data = BaseStructures::Data;
+using Data = BaseStructures::Data; //std::vector<std::string>;
 using ProjectTree = std::vector<File>;
 using ParsedProjectTree = std::vector<ParsedFile>;
 }
@@ -69,6 +71,8 @@ using ParsedProjectTree = std::vector<ParsedFile>;
 
 DataStructures
 Tools
+SyntaxParser.hpp
+FileParserComments.hpp
 
 
 
@@ -89,46 +93,10 @@ product_(BuildProduct())
 ParsedFile getProduct() const { return product_; }
 private:
 ParsedFile BuildProduct() const {
-auto data = Tools::FileIO::readFile(initPath_+rawFile_.getFile());
-RemoveOnelineComments(data);
-RemoveMultilineComments(data);
+auto data = Tools::FileIO::readFile(initPath_ + rawFile_.getFile());
+data = FileParserComments::modifyData(data);
 auto includes = CutoutIncludes(data);
 return ParsedFile(rawFile_, data, includes);
-}
-void RemoveOnelineComments(Data& data) const {
-for (auto& line : data) {
-auto i = line.find("
-if (i != std::string::npos) {
-line = line.substr(0, i);
-}
-}
-}
-void RemoveMultilineComments(Data& data) const {
-bool isCommented = false;
-for (auto& line : data) {
-if (isCommented) {
-auto end = line.find("*/");
-if (end != std::string::npos) {
-line = line.substr(end + 2);
-isCommented = false;
-}
-else {
-line = "";
-}
-}
-auto begin = line.find("
-", begin);
-if (end != std::string::npos) {
-std::string tmp = line.substr(end + 2);
-line = line.substr(0, begin);
-line += ' ' + tmp;
-}
-else {
-line = line.substr(0, begin);
-isCommented = true;
-}
-}
-}
 }
 std::vector<std::string> CutoutIncludes(Data& data) const {
 std::vector<std::string> includes;
@@ -147,6 +115,72 @@ return includes;
 
 
 
+############################################################################  source/FileParserComments.hpp
+
+DataStructures
+Tools
+
+
+
+
+############################################################################
+#pragma once
+class FileParserComments {
+using Data = DataStructures::Data;
+FileParserComments() {}
+public:
+static Data modifyData(Data data) {
+RemoveOnelineComments(data);
+RemoveMultilineComments(data);
+return data;
+}
+private:
+static Data RemoveOnelineComments(Data data) {
+for (auto& line : data) {
+auto i = line.find("//");
+if (i != std::string::npos) {
+line = line.substr(0, i);
+}
+}
+return data;
+}
+static Data RemoveMultilineComments(Data data) {
+/*TODO:
+* Simplify.
+* sift string data ex.("abcd // cde"; // comment)
+*/
+bool isCommented = false;
+for (auto& line : data) {
+if (isCommented) {
+auto end = line.find("*/");
+if (end != std::string::npos) {
+line = line.substr(end + 2);
+isCommented = false;
+}
+else {
+line = "";
+}
+}
+auto begin = line.find("/*");
+if (begin != std::string::npos) {
+auto end = line.find("*/", begin);
+if (end != std::string::npos) {
+std::string tmp = line.substr(end + 2);
+line = line.substr(0, begin);
+line += ' ' + tmp;
+}
+else {
+line = line.substr(0, begin);
+isCommented = true;
+}
+}
+}
+return data;
+}
+};
+
+
+
 ############################################################################  source/GeneratorTxt.hpp
 sstream
 
@@ -159,7 +193,7 @@ DataStructures
 ############################################################################
 #pragma once
 class GeneratorTxt {
-using ParsedProjectTree = DataStructures::ParsedProjectTree;
+using ParsedProjectTree = DataStructures::ParsedProjectTree; // std::vector<ParsedFile>;
 const std::string initPath_;
 const ParsedProjectTree data_;
 public:
@@ -206,10 +240,12 @@ GeneratorTxt.hpp
 class Program {
 const std::string targetPath_;
 const std::string outputPath_;
+// ProjectTree rawData_;
 public:
 explicit Program(const std::string& target):
 targetPath_(target),
 outputPath_("sup.txt")
+// rawData_()
 {}
 void execute() {
 initializeIgnoreFiles();
@@ -221,6 +257,8 @@ for (const auto& file : parsedData) {
 std::cout << file.getPath() << " "
 << file.getName() << " "
 << file.getFormat() << " " << file.getSubFiles().size() << "\n";
+//std::cout << file.path_ << " " << file.name_ << " " << file.format_ << "\n";
+//std::cout << file.path_ << file.name_ << file.format_ << "\n";
 }
 GeneratorTxt generator(targetPath_, parsedData);
 Tools::FileIO::saveToFile(outputPath_, generator.buildFile());
@@ -323,9 +361,10 @@ FileParser.hpp
 
 ############################################################################
 #pragma once
+//#include "PathInitializer.hpp"
 class ProjectTreeParser {
-using RawProjectTree = DataStructures::ProjectTree;
-using ParsedProjectTree = DataStructures::ParsedProjectTree;
+using RawProjectTree = DataStructures::ProjectTree; //std::vector<File>;
+using ParsedProjectTree = DataStructures::ParsedProjectTree; //std::vector<ParsedFile>;
 const std::string initPath_;
 const RawProjectTree rawData_;
 const ParsedProjectTree product_;
@@ -347,6 +386,16 @@ result.push_back(parser.getProduct());
 return result;
 }
 };
+
+
+
+############################################################################  source/SyntaxParser.hpp
+
+
+
+
+
+############################################################################
 
 
 
@@ -398,6 +447,9 @@ program.execute();
 std::cout << "\n\n";
 return 0;
 }
+/* TODO:
+- napisz obsługę flag. -md -markdown -txt -text
+*/
 
 
 
@@ -482,7 +534,7 @@ BaseStructures
 #pragma once
 class ParsedFile : public File {
 using Converter = Tools::Converter;
-using Data = BaseStructures::Data;
+using Data = BaseStructures::Data; // std::vector<std::string>;
 Data data_;
 Data libIncludes_;
 Data projIncludes_;
@@ -527,6 +579,8 @@ PathInitializer.ut.hpp
 
 ############################################################################
 TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
 WHEN("Testing the CutoutName()") {
 struct test {
 const PathInitializer_UnitTest object_;
@@ -566,6 +620,8 @@ REQUIRE(result == test.expectedValue_);
 }
 }
 }
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
 WHEN("Testing the CutoutFormat()") {
 struct test {
 const PathInitializer_UnitTest object_;
@@ -605,6 +661,8 @@ REQUIRE(result == test.expectedValue_);
 }
 }
 }
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
 WHEN("Testing the AppendConditionalSlash()") {
 struct test {
 const PathInitializer_UnitTest object_;
@@ -631,10 +689,10 @@ const std::initializer_list<test> tests = {
 { PathInitializer_UnitTest("a.abcd/"), "a.abcd/" },
 { PathInitializer_UnitTest(".abcd./"), ".abcd./" },
 { PathInitializer_UnitTest("..abcd.abcd/"), "..abcd.abcd/" },
-{ PathInitializer_UnitTest("a.
-{ PathInitializer_UnitTest("a.abcd
-{ PathInitializer_UnitTest(".abcd.
-{ PathInitializer_UnitTest("..abcd.abcd
+{ PathInitializer_UnitTest("a.//"), "a.//" },
+{ PathInitializer_UnitTest("a.abcd//"), "a.abcd//" },
+{ PathInitializer_UnitTest(".abcd.//"), ".abcd.//" },
+{ PathInitializer_UnitTest("..abcd.abcd//"), "..abcd.abcd//" }
 };
 for (const auto& test : tests) {
 THEN(test.log()) {
@@ -853,7 +911,7 @@ result << data[i];
 return result.str();
 }
 };
-}
+} // namespace Tools
 
 
 
@@ -924,7 +982,7 @@ output << data;
 output.close();
 }
 };
-}
+} // namespace Tools
 
 
 
@@ -997,4 +1055,4 @@ std::set<std::string> IgnoreFiles::defaultIgnores_ {
 "README.md",
 "CMakeLists.txt"
 };
-}
+} // namespace Tools
