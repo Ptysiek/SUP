@@ -21,5 +21,13 @@ public:
     Data RemoveAllOnelineComments(const Data& data) {
         return FileParserComments::RemoveAllOnelineComments(data);
     }
+    //_______________________________________________________________________________________________________
+    //-------------------------------------------------------------------------------------------------------
+    Line Multiline_ClearLine(const Line& line, bool& isCommented) {
+        return FileParserComments::Multiline_ClearLine(line, isCommented);
+    }
 };
+
+
+
 

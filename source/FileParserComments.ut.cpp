@@ -8,20 +8,20 @@
 FileParserComments_UnitTest testObject;
 
 TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") { 
+    struct test {
+        const std::string line_;
+        const bool expectedValue_;
+
+        std::string log() const {
+            return 
+                "{ \"" + line_
+                + "\" == " + std::to_string(expectedValue_)
+                + " }";
+        }
+    };
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
     WHEN("Testing the IsInsideString()") {
-        struct test {
-            const std::string line_;
-            const bool expectedValue_;
-
-            std::string log() const {
-                return 
-                    "{ \"" + line_
-                    + "\" == " + std::to_string(expectedValue_)
-                    + " }";
-            }
-        };
         const std::initializer_list<test> tests = {
             { "", false },
             { "    abcd", false },
@@ -56,17 +56,6 @@ TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCo
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
     WHEN("Testing the IsAlreadyCommentedByOneline()") {
-        struct test {
-            const std::string line_;
-            const bool expectedValue_;
-
-            std::string log() const {
-                return 
-                    "{ \"" + line_
-                    + "\" == " + std::to_string(expectedValue_)
-                    + " }";
-            }
-        };
         const std::initializer_list<test> tests = {
             { "", false },
             { "/", false },
@@ -149,7 +138,6 @@ TEST_CASE("FileParserComments: RemoveOneLine operations", "[RemoveOnelineComment
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
     WHEN("Testing the RemoveOnelineComments()") {
-
         for (const auto& test : tests) {
             THEN(test.log()) {
                 REQUIRE_NOTHROW(testObject.RemoveOnelineComments(test.line_));
@@ -173,6 +161,68 @@ TEST_CASE("FileParserComments: RemoveOneLine operations", "[RemoveOnelineComment
                 REQUIRE(results.at(i) == test.expectedValue_); 
             }
             ++i;
+        }
+    }
+}
+
+
+TEST_CASE("FileParserComments: RemoveMultiline operations", "[ClearLine]") {
+    //_______________________________________________________________________________________________________
+    //-------------------------------------------------------------------------------------------------------
+    WHEN("Testing the Multiline_ClearLine()") {
+        struct test {
+            const std::string line_;
+            const std::string expectedValue_;
+            const bool expectedBool_;
+
+            std::string log() const {
+                return 
+                    "{ \"" + line_
+                    + "\" == \"" + expectedValue_
+                    + "\" }";
+            }
+        };
+        const std::initializer_list<test> tests = {
+            {"", "", true},
+            {"asdfbd", "", true},
+        
+            {"asdfbd*/", "", false},
+            {"asd*/fbd", "fbd", false},
+            {"*/asdfbd", "asdfbd", false},
+            {"*/asdfbd*/", "asdfbd*/", false},
+            {"asd*/fbd*/", "fbd*/", false},
+            {"asd*/*/fbd*/", "*/fbd*/", false},
+            {"asd/*/fbd*/", "fbd*/", false},
+        
+            {"asd//fbd*/", "", true},
+            {"//asd*/fbd", "", true},
+            {"asd//*/fbd*/", "", true},
+            {"asd*///fbd*/", "//fbd*/", false},
+            {"asd*/f//bd*/", "f//bd*/", false},
+            {"a/s/d/*/fbd", "fbd", false},
+            {"a/s/d*/fbd", "fbd", false},
+        
+            {"asd*/fb\"d", "fb\"d", false},
+            {"asd*/fb\"\"d", "fb\"\"d", false},
+            {"asd*/fb\'d\'", "fb\'d\'", false},
+            
+            {"a\"sd*/fb\"d", "", true},
+            {"a\'sd*/fb\"d", "", true},
+            {"a\"s\"d*/fb\"d", "fb\"d", false},
+            {"a\'s\'d*/fb\"d", "fb\"d", false},
+            {"a\"s\'d*/fb\"d", "", true},
+            {"a\'s\"d*/fb\"d", "", true}
+        };
+        for (const auto& test : tests) {
+            THEN(test.log()) {
+                bool isCommented = true;
+                REQUIRE_NOTHROW(testObject.Multiline_ClearLine(test.line_, isCommented));
+
+                isCommented = true;
+                auto result = testObject.Multiline_ClearLine(test.line_, isCommented);
+                REQUIRE(result == test.expectedValue_);
+                REQUIRE(isCommented == test.expectedBool_);
+            }
         }
     }
 }

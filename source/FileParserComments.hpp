@@ -1,9 +1,6 @@
 #pragma once
 
-#include <exception>
-
 #include "DataStructures"
-//#include "Tools"
 
 
 class FileParserComments {
@@ -96,4 +93,6 @@ protected:
         return (subline.find("//") != std::string::npos);
     }
 };
+
+
 
