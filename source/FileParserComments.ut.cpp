@@ -4,9 +4,10 @@
 #include <algorithm>
 #include <numeric>
 
+
 FileParserComments_UnitTest testObject;
 
-TEST_CASE("FileParserComments: base operations", "[IsInsideString]") { 
+TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") { 
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
     WHEN("Testing the IsInsideString()") {
@@ -48,6 +49,48 @@ TEST_CASE("FileParserComments: base operations", "[IsInsideString]") {
             THEN(test.log()) {
                 REQUIRE_NOTHROW(testObject.IsInsideString(test.line_));
                 auto result = testObject.IsInsideString(test.line_);
+                REQUIRE(result == test.expectedValue_);
+            }
+        }
+    }
+    //_______________________________________________________________________________________________________
+    //-------------------------------------------------------------------------------------------------------
+    WHEN("Testing the IsAlreadyCommentedByOneline()") {
+        struct test {
+            const std::string line_;
+            const bool expectedValue_;
+
+            std::string log() const {
+                return 
+                    "{ \"" + line_
+                    + "\" == " + std::to_string(expectedValue_)
+                    + " }";
+            }
+        };
+        const std::initializer_list<test> tests = {
+            { "", false },
+            { "/", false },
+            { "    abcd", false },
+            { "abcd", false },
+            
+            { "//", true },
+            { "    abcd//", true },
+            { "    ab//cd", true },
+            { "  //  abcd", true },
+            { "//    abcd", true },
+            { "  //  abcd//", true },
+            { " /   abcd//", true },
+            { "  /  a/bcd//", true },
+            { "//  /  abcd", true },
+            { "//   / a/b/c/d", true },
+            
+            { "  /  abcd", false },
+            { "/  /  a/bc/d", false },
+        };
+        for (const auto& test : tests) {
+            THEN(test.log()) {
+                REQUIRE_NOTHROW(testObject.IsAlreadyCommentedByOneline(test.line_));
+                auto result = testObject.IsAlreadyCommentedByOneline(test.line_);
                 REQUIRE(result == test.expectedValue_);
             }
         }
@@ -101,7 +144,7 @@ TEST_CASE("FileParserComments: RemoveOneLine operations", "[RemoveOnelineComment
         {" \"\'  a//bcd", " \"\'  a//bcd"},
         {" \"\'\"  a//bcd", " \"\'\"  a//bcd"},
         {" \"\'  a/bcd", " \"\'  a/bcd"},
-        {" \"\'\"  a/bcd", " \"\'\"  a/bcd"},
+        {" \"\'\"  a/bcd", " \"\'\"  a/bcd"}
     };
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
