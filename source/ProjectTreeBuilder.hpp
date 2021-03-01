@@ -24,18 +24,18 @@ public:
 private:
     ProjectTree BuildProduct() const {
         auto subFiles = ReadRecursive("");
-        File projectRoot(initPath_, subFiles);
+        FileHeader projectRoot(initPath_, subFiles);
         return Flaten(projectRoot);
     }
 
-    std::vector<File> ReadRecursive(const std::string& targetPath) const {
+    std::vector<FileHeader> ReadRecursive(const std::string& targetPath) const {
         auto paths = Tools::FileIO::readPaths(initPath_ + targetPath);
-        std::vector<File> files;
+        std::vector<FileHeader> files;
 
         for (const auto& path : paths) {
             auto subFiles = ReadRecursive(targetPath + path + '/');
             PathInitializer initializer(targetPath, path);
-            files.push_back(File(initializer, subFiles));
+            files.push_back(FileHeader(initializer, subFiles));
         }
         std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);
         return files;
@@ -43,7 +43,7 @@ private:
 
 
 protected:
-    ProjectTree Flaten(const File& root) const {
+    ProjectTree Flaten(const FileHeader& root) const {
         ProjectTree result;
         result.push_back(root);
         for (const auto& file : root.getSubFiles()) {
@@ -53,7 +53,7 @@ protected:
         return result;
     }
 
-    static bool SortCriterion_CatalogLast(const File& f, const File& s) { 
+    static bool SortCriterion_CatalogLast(const FileHeader& f, const FileHeader& s) { 
         int test = f.isCatalog() + s.isCatalog();
         if (test % 2 == 0) {
             return SortCriterion_Alphabetical(f.getName(), s.getName());

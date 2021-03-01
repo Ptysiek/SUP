@@ -4,7 +4,7 @@
 
 #include "DataStructures"
 
-
+/*
 class FileParserSyntax {
 protected:
     using Data = DataStructures::Data;
@@ -76,4 +76,4 @@ protected:
     }
 
 };
-
+*/

@@ -10,12 +10,12 @@
 class FileParser {
     using Data = DataStructures::Data;
     const std::string initPath_;
-    const File rawFile_;
+    const FileHeader rawFile_;
     const ParsedFile product_;
 
 
 public:
-    FileParser(const std::string& initPath, const File& file):
+    FileParser(const std::string& initPath, const FileHeader& file):
         initPath_(initPath),
         rawFile_(file),
         product_(BuildProduct())
@@ -29,9 +29,11 @@ private:
         auto data = Tools::FileIO::readFile(initPath_ + rawFile_.getFile());
         data = FileParserComments::modifyData(data);
         auto includes = CutoutIncludes(data);
-        auto syntaxedData = FileParserSyntax::generateSyntax(data);
+ //       SyntaxedData syntaxedData_;
+   //     syntaxedData = FileParserSyntax::generateSyntax(data);
 
-        return ParsedFile(rawFile_, data, syntaxedData, includes);
+      //  return ParsedFile(rawFile_, data, syntaxedData, includes);
+        return ParsedFile(rawFile_, data, includes);
     }
 
     std::vector<std::string> CutoutIncludes(Data& data) const {

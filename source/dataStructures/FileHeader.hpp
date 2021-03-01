@@ -6,21 +6,21 @@
 #include "PathInitializer.hpp"
 
 
-class File {
+class FileHeader {
     std::string name_;
     std::string path_;
     std::string format_;
-    std::vector<File> subFiles_;
+    std::vector<FileHeader> subFiles_;
 
 
 public:
-    explicit File(const std::string& path, const std::vector<File>& subFiles):
+    explicit FileHeader(const std::string& path, const std::vector<FileHeader>& subFiles):
         name_(path),
         path_(),
         format_(),
         subFiles_(subFiles)
     {}
-    explicit File(const PathInitializer& target, const std::vector<File>& subFiles):
+    explicit FileHeader(const PathInitializer& target, const std::vector<FileHeader>& subFiles):
         name_(target.getName()),
         path_(target.getPath()),
         format_(target.getFormat()),
@@ -31,7 +31,7 @@ public:
     std::string getPath() const { return path_; }
     std::string getFormat() const { return format_; }
     std::string getFile() const { return path_ + name_ + format_; }
-    std::vector<File> getSubFiles() const { return subFiles_; }
+    std::vector<FileHeader> getSubFiles() const { return subFiles_; }
 
     bool isCatalog() const { return !subFiles_.empty(); }
 };
