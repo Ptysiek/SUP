@@ -29,9 +29,9 @@ private:
         auto data = Tools::FileIO::readFile(initPath_ + rawFile_.getFile());
         data = FileParserComments::modifyData(data);
         auto includes = CutoutIncludes(data);
-        auto tagMap = FileParserSyntax::tagData(data);
+        auto syntaxedData = FileParserSyntax::generateSyntax(data);
 
-        return ParsedFile(rawFile_, data, includes);
+        return ParsedFile(rawFile_, data, syntaxedData, includes);
     }
 
     std::vector<std::string> CutoutIncludes(Data& data) const {

@@ -9,17 +9,43 @@ class FileParserSyntax {
 protected:
     using Data = DataStructures::Data;
     using Line = DataStructures::Line;
+    using SyntaxedData = DataStructures::SyntaxedData;
     
     FileParserSyntax() {}
 
 
 public:
-    static std::map<size_t, char> tagData(const Data& data) {
-        return CreateTagMap(data);
+    static SyntaxedData generateSyntax(const Data& data) {
+        return Generate(data);
     }
 
 
 protected:
+    static SyntaxedData Generate(const Data& data) {
+        SyntaxedData result;
+        std::string spareLines;
+        for (const auto& line : data) {
+            if (HasSemicolon(line)) {
+                result.push_back({"instruction", spareLines + line});
+                spareLines = CutoutSpareLines(line); 
+            }
+            else {
+                spareLines += line + "\n";
+            }
+        }
+        return result;
+    }
+
+    static bool HasSemicolon(const Line& line) {
+        return (line.find(';') != std::string::npos); 
+    }
+
+    static Line CutoutSpareLines(const Line& line) {
+        const auto i = line.find(';');
+        return (i < line.size() - 1)? line.substr(i) : ""; 
+    }
+
+
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
     static std::map<size_t, char> CreateTagMap(const Data& data) {
