@@ -2,6 +2,10 @@
 
 #include "DataStructures"
 
+/* TODO:
+- fix multiline comments
+ex:   abcd  *//* */ /* *** */  /* */ /* abcdc */
+
 
 class FileParserComments {
 protected:

@@ -3,8 +3,8 @@
 #include "DataStructures"
 #include "Tools"
 
-#include "SyntaxParser.hpp"
 #include "FileParserComments.hpp"
+#include "FileParserSyntax.hpp"
 
 
 class FileParser {
@@ -28,8 +28,8 @@ private:
     ParsedFile BuildProduct() const {
         auto data = Tools::FileIO::readFile(initPath_ + rawFile_.getFile());
         data = FileParserComments::modifyData(data);
-        
         auto includes = CutoutIncludes(data);
+        auto tagMap = FileParserSyntax::tagData(data);
 
         return ParsedFile(rawFile_, data, includes);
     }

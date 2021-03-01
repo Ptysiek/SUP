@@ -1,15 +1,16 @@
   ../  			1
-  source  			15
+  source  			16
 source/  DataStructures  			0
 source/  FileParser  .hpp			0
 source/  FileParserComments  .hpp			0
 source/  FileParserComments  .ut.hpp			0
 source/  FileParserComments  .ut.cpp			0
+source/  FileParserKeyWords  .hpp			0
+source/  FileParserSyntax  .hpp			0
 source/  GeneratorTxt  .hpp			0
 source/  Program  .hpp			0
 source/  ProjectTreeBuilder  .hpp			0
 source/  ProjectTreeParser  .hpp			0
-source/  SyntaxParser  .hpp			0
 source/  Tools  			0
 source/  catch_main  .cpp			0
 source/  main  .cpp			0
@@ -75,8 +76,8 @@ using ParsedProjectTree = std::vector<ParsedFile>;
 
 DataStructures
 Tools
-SyntaxParser.hpp
 FileParserComments.hpp
+FileParserSyntax.hpp
 
 
 
@@ -100,6 +101,7 @@ ParsedFile BuildProduct() const {
 auto data = Tools::FileIO::readFile(initPath_ + rawFile_.getFile());
 data = FileParserComments::modifyData(data);
 auto includes = CutoutIncludes(data);
+auto tagMap = FileParserSyntax::tagData(data);
 return ParsedFile(rawFile_, data, includes);
 }
 std::vector<std::string> CutoutIncludes(Data& data) const {
@@ -120,7 +122,6 @@ return includes;
 
 
 ############################################################################  source/FileParserComments.hpp
-exception
 
 DataStructures
 
@@ -129,7 +130,9 @@ DataStructures
 
 ############################################################################
 #pragma once
-//#include "Tools"
+/* TODO:
+- fix multiline comments
+ex: abcd *//* */ /* *** */ /* */ /* abcdc */
 class FileParserComments {
 protected:
 using Data = DataStructures::Data;
@@ -223,17 +226,34 @@ FileParserComments.hpp
 class FileParserComments_UnitTest : FileParserComments {
 public:
 FileParserComments_UnitTest() {}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
 bool IsInsideString(const Line& line) {
 return FileParserComments::IsInsideString(line);
 }
+bool IsAlreadyCommentedByOneline(const Line& subline) {
+return FileParserComments::IsAlreadyCommentedByOneline(subline);
+}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
 Line RemoveOnelineComments(const Line& line) {
 return FileParserComments::RemoveOnelineComments(line);
+}
+Data RemoveAllOnelineComments(const Data& data) {
+return FileParserComments::RemoveAllOnelineComments(data);
+}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+Line Multiline_ClearLine(const Line& line, bool& isCommented) {
+return FileParserComments::Multiline_ClearLine(line, isCommented);
 }
 };
 
 
 
 ############################################################################  source/FileParserComments.ut.cpp
+algorithm
+numeric
 
 plugins/catch.hpp
 FileParserComments.ut.hpp
@@ -243,10 +263,7 @@ FileParserComments.ut.hpp
 
 ############################################################################
 FileParserComments_UnitTest testObject;
-TEST_CASE("FileParserComments: base operations", "[IsInsideString]") {
-//_______________________________________________________________________________________________________
-//-------------------------------------------------------------------------------------------------------
-WHEN("Testing the IsInsideString()") {
+TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") {
 struct test {
 const std::string line_;
 const bool expectedValue_;
@@ -257,6 +274,9 @@ return
 + " }";
 }
 };
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the IsInsideString()") {
 const std::initializer_list<test> tests = {
 { "", false },
 { " abcd", false },
@@ -286,11 +306,37 @@ REQUIRE(result == test.expectedValue_);
 }
 }
 }
-}
-TEST_CASE("FileParserComments: static operations", "[RemoveOnelineComments], [RemoveMultilineComments]") {
 //_______________________________________________________________________________________________________
 //-------------------------------------------------------------------------------------------------------
-WHEN("Testing the RemoveOnelineComments()") {
+WHEN("Testing the IsAlreadyCommentedByOneline()") {
+const std::initializer_list<test> tests = {
+{ "", false },
+{ "/", false },
+{ " abcd", false },
+{ "abcd", false },
+{ "//", true },
+{ " abcd//", true },
+{ " ab//cd", true },
+{ " // abcd", true },
+{ "// abcd", true },
+{ " // abcd//", true },
+{ " / abcd//", true },
+{ " / a/bcd//", true },
+{ "// / abcd", true },
+{ "// / a/b/c/d", true },
+{ " / abcd", false },
+{ "/ / a/bc/d", false },
+};
+for (const auto& test : tests) {
+THEN(test.log()) {
+REQUIRE_NOTHROW(testObject.IsAlreadyCommentedByOneline(test.line_));
+auto result = testObject.IsAlreadyCommentedByOneline(test.line_);
+REQUIRE(result == test.expectedValue_);
+}
+}
+}
+}
+TEST_CASE("FileParserComments: RemoveOneLine operations", "[RemoveOnelineComments], [RemoveAllOnelineComments]") {
 struct test {
 const std::string line_;
 const std::string expectedValue_;
@@ -330,8 +376,11 @@ const std::initializer_list<test> tests = {
 {" \"\' a//bcd", " \"\' a//bcd"},
 {" \"\'\" a//bcd", " \"\'\" a//bcd"},
 {" \"\' a/bcd", " \"\' a/bcd"},
-{" \"\'\" a/bcd", " \"\'\" a/bcd"},
+{" \"\'\" a/bcd", " \"\'\" a/bcd"}
 };
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the RemoveOnelineComments()") {
 for (const auto& test : tests) {
 THEN(test.log()) {
 REQUIRE_NOTHROW(testObject.RemoveOnelineComments(test.line_));
@@ -340,7 +389,137 @@ REQUIRE(result == test.expectedValue_);
 }
 }
 }
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the RemoveAllOnelineComments()") {
+std::vector<std::string> data;
+data.reserve(tests.size());
+std::for_each(tests.begin(), tests.end(), [&](auto test){ data.push_back(test.line_); });
+REQUIRE_NOTHROW(testObject.RemoveAllOnelineComments(data));
+auto results = testObject.RemoveAllOnelineComments(data);
+size_t i = 0;
+for (const auto& test : tests) {
+THEN("id: " + std::to_string(i) + " (" + results.at(i) + ") == (" + test.expectedValue_ + ")") {
+REQUIRE(results.at(i) == test.expectedValue_);
 }
+++i;
+}
+}
+}
+TEST_CASE("FileParserComments: RemoveMultiline operations", "[ClearLine]") {
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the Multiline_ClearLine()") {
+struct test {
+const std::string line_;
+const std::string expectedValue_;
+const bool expectedBool_;
+std::string log() const {
+return
+"{ \"" + line_
++ "\" == \"" + expectedValue_
++ "\" }";
+}
+};
+const std::initializer_list<test> tests = {
+{"", "", true},
+{"asdfbd", "", true},
+{"asdfbd*/", "", false},
+{"asd*/fbd", "fbd", false},
+{"*/asdfbd", "asdfbd", false},
+{"*/asdfbd*/", "asdfbd*/", false},
+{"asd*/fbd*/", "fbd*/", false},
+{"asd*/*/fbd*/", "*/fbd*/", false},
+{"asd/*/fbd*/", "fbd*/", false},
+{"asd//fbd*/", "", true},
+{"//asd*/fbd", "", true},
+{"asd//*/fbd*/", "", true},
+{"asd*///fbd*/", "//fbd*/", false},
+{"asd*/f//bd*/", "f//bd*/", false},
+{"a/s/d/*/fbd", "fbd", false},
+{"a/s/d*/fbd", "fbd", false},
+{"asd*/fb\"d", "fb\"d", false},
+{"asd*/fb\"\"d", "fb\"\"d", false},
+{"asd*/fb\'d\'", "fb\'d\'", false},
+{"a\"sd*/fb\"d", "", true},
+{"a\'sd*/fb\"d", "", true},
+{"a\"s\"d*/fb\"d", "fb\"d", false},
+{"a\'s\'d*/fb\"d", "fb\"d", false},
+{"a\"s\'d*/fb\"d", "", true},
+{"a\'s\"d*/fb\"d", "", true}
+};
+for (const auto& test : tests) {
+THEN(test.log()) {
+bool isCommented = true;
+REQUIRE_NOTHROW(testObject.Multiline_ClearLine(test.line_, isCommented));
+isCommented = true;
+auto result = testObject.Multiline_ClearLine(test.line_, isCommented);
+REQUIRE(result == test.expectedValue_);
+REQUIRE(isCommented == test.expectedBool_);
+}
+}
+}
+}
+
+
+
+############################################################################  source/FileParserKeyWords.hpp
+
+
+
+
+
+############################################################################
+
+
+
+############################################################################  source/FileParserSyntax.hpp
+map
+
+DataStructures
+
+
+
+
+############################################################################
+#pragma once
+class FileParserSyntax {
+protected:
+using Data = DataStructures::Data;
+using Line = DataStructures::Line;
+FileParserSyntax() {}
+public:
+static std::map<size_t, char> tagData(const Data& data) {
+return CreateTagMap(data);
+}
+protected:
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+static std::map<size_t, char> CreateTagMap(const Data& data) {
+std::map<size_t, char> result;
+for (size_t i = 0; i < data.size(); ++i) {
+auto open = data[i].find("{");
+auto close = data[i].find("}");
+auto key = GenerateKey(open, close);
+if (key != 'n') {
+result[i] = key;
+}
+}
+return result;
+}
+static char GenerateKey(const size_t open, const size_t close) {
+if (open == std::string::npos) {
+if (close == std::string::npos) {
+return 'n'; // none
+}
+return 'c'; // close
+}
+if (close == std::string::npos) {
+return 'o'; // open
+}
+return 'b'; // both
+}
+};
 
 
 
@@ -549,16 +728,6 @@ result.push_back(parser.getProduct());
 return result;
 }
 };
-
-
-
-############################################################################  source/SyntaxParser.hpp
-
-
-
-
-
-############################################################################
 
 
 
