@@ -2,7 +2,7 @@
 
 #include "Tools"
 
-#include "FileParserComments.hpp"
+#include "data parsers/CommentParser.hpp"
 #include "FileParserSyntax.hpp"
 
 #include "data structures/FileData.hpp"

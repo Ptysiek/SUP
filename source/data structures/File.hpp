@@ -51,8 +51,7 @@ public:
     size_t countSubFilesRecursive() const { return countRecursive_; }
 
     void setData(const FileData& data) { data_ = data; }
-    std::vector<std::string> getLibIncludes() const { return data_.getLibIncludes(); }
-    std::vector<std::string> getProjIncludes() const { return data_.getProjIncludes(); }
+    FileData getData() const { return data_; }
 };
 
 

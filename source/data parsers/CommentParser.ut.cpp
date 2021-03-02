@@ -1,5 +1,5 @@
 #include "plugins/catch.hpp"
-#include "FileParserComments.ut.hpp"
+#include "CommentsParser.ut.hpp"
 
 #include <algorithm>
 #include <numeric>

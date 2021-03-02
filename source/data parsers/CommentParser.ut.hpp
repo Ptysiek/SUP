@@ -1,30 +1,30 @@
-#include "FileParserComments.hpp"
+#include "CommentParser.hpp"
 
 
-class FileParserComments_UnitTest : FileParserComments {
+class CommentParser_UnitTest : CommentParser {
 public:
-    FileParserComments_UnitTest() {}
+    CommentParser_UnitTest() {}
 
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
     bool IsInsideString(const Line& line) {
-        return FileParserComments::IsInsideString(line);
+        return CommentParser::IsInsideString(line);
     }
     bool IsAlreadyCommentedByOneline(const Line& subline) {
-        return FileParserComments::IsAlreadyCommentedByOneline(subline);
+        return CommentParser::IsAlreadyCommentedByOneline(subline);
     }
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
     Line RemoveOnelineComments(const Line& line) { 
-        return FileParserComments::RemoveOnelineComments(line);
+        return CommentParser::RemoveOnelineComments(line);
     }
     Data RemoveAllOnelineComments(const Data& data) {
-        return FileParserComments::RemoveAllOnelineComments(data);
+        return CommentParser::RemoveAllOnelineComments(data);
     }
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
     Line Multiline_ClearLine(const Line& line, bool& isCommented) {
-        return FileParserComments::Multiline_ClearLine(line, isCommented);
+        return CommentParser::Multiline_ClearLine(line, isCommented);
     }
 };
 

@@ -1,17 +1,16 @@
   ../  			1
-  source  			20
+  source  			19
 source/  DataStructures  			0
 source/  FileBuilder  .hpp			0
 source/  FileDataBuilder  .hpp			0
-source/  FileParser  .hpp			0
 source/  FileParserComments  .hpp			0
 source/  FileParserComments  .ut.cpp			0
 source/  FileParserComments  .ut.hpp			0
 source/  FileParserKeyWords  .hpp			0
 source/  FileParserSyntax  .hpp			0
 source/  GeneratorTxt  .hpp			0
+source/  ParserOperations  .hpp			0
 source/  PathInitializer  .ut.cpp			0
-source/  PathInitializer  .ut.hpp			0
 source/  PathInitializer  .hpp			0
 source/  Program  .hpp			0
 source/  ProjectTreeBuilder  .hpp			0
@@ -70,16 +69,6 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/FileDataBuilder.hpp
-
-
-
-
-
-############################################################################
-
-
-
-############################################################################  ../source/FileParser.hpp
 
 
 
@@ -149,7 +138,7 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  ../source/PathInitializer.ut.cpp
+############################################################################  ../source/ParserOperations.hpp
 
 
 
@@ -159,7 +148,7 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  ../source/PathInitializer.ut.hpp
+############################################################################  ../source/PathInitializer.ut.cpp
 
 
 

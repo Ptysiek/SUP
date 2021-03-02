@@ -6,7 +6,7 @@
 ex:   abcd  *//* */ /* *** */  /* */ /* abcdc */
 
 
-class FileParserComments {
+class CommentParser {
 protected:
  /*
  
