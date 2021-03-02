@@ -1,12 +1,9 @@
   ../  			1
-  source  			17
+  source  			14
 source/  DataStructures  			0
 source/  FileBuilder  .hpp			0
 source/  FileDataBuilder  .hpp			0
-source/  FileParserKeyWords  .hpp			0
-source/  FileParserSyntax  .hpp			0
 source/  GeneratorTxt  .hpp			0
-source/  ParserOperations  .hpp			0
 source/  PathInitializer  .ut.cpp			0
 source/  PathInitializer  .hpp			0
 source/  Program  .hpp			0
@@ -79,37 +76,7 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  ../source/FileParserKeyWords.hpp
-
-
-
-
-
-############################################################################
-
-
-
-############################################################################  ../source/FileParserSyntax.hpp
-
-
-
-
-
-############################################################################
-
-
-
 ############################################################################  ../source/GeneratorTxt.hpp
-
-
-
-
-
-############################################################################
-
-
-
-############################################################################  ../source/ParserOperations.hpp
 
 
 

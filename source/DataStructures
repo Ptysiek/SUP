@@ -8,9 +8,10 @@
 
 
 namespace DataStructures {
-    class File;
-    class FileData;
+    //class File;
+    //class FileData;
 
+    using Data = std::vector<std::string>;
     using Project = std::vector<File>;
 }
 

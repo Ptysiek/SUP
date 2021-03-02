@@ -4,16 +4,18 @@
 #include <string>
 
 #include "Tools"
+#include "DataStructures"
 
 #include "FileBuilder.hpp"
 #include "FileDataBuilder.hpp"
 
 
 class ProjectTreeBuilder {
-    using ProjectTree = std::vector<File>;
-    //using ProjectTree = DataStructures::ProjectTree;
+    using ProjectTree = DataStructures::Project; 
+    
     const std::string initPath_;
     const ProjectTree product_;
+
 
 public:
     explicit ProjectTreeBuilder(const std::string& initPath):

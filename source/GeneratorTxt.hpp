@@ -2,8 +2,8 @@
 
 #include <sstream>
 
-#include "data structures/File.hpp"
 #include "Tools"
+#include "DataStructures"
 
 
 class GeneratorTxt {

@@ -1,15 +1,15 @@
 #pragma once
 
 #include "Tools"
-
+#include "DataStructures"
 #include "data parsers/CommentParser.hpp"
-#include "data structures/FileData.hpp"
 
 
 class FileDataBuilder {
-    bool productExist_;
-    std::vector<std::string> rawData_;
+    using Data = DataStructures::Data;
     
+    bool productExist_;
+    Data rawData_;
     const File& fileHeader_;    
     const FileData product_;
 
