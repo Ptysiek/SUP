@@ -2,13 +2,12 @@
 #include <iostream>
 
 #include "Program.hpp"
-
-#include "PathInitializer.hpp"
+#include "ProgramInitializer.hpp"
 
 
 int main(int argc, char* argv[]) {
-    PathInitializer target(argc, argv);
-    Program program(target.getPath());
+    ProgramInitializer target(argc, argv);
+    Program program(target);
     program.execute();    
 
     std::cout << "\n\n";

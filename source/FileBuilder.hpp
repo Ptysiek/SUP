@@ -8,6 +8,7 @@
 
 class FileBuilder {
     using IgnoreFiles = Tools::IgnoreFiles;
+    using Converter = Tools::Converter;
     const std::string initPath_;
     const std::string path_;
     const std::string name_;
@@ -24,8 +25,8 @@ public:
         const std::vector<File>& subfiles, 
         const size_t depth
         ):
-        initPath_(AppendConditionalSlash(initPath)),
-        path_(AppendConditionalSlash(path)),
+        initPath_(Converter::AppendConditionalSlash(initPath)),
+        path_(Converter::AppendConditionalSlash(path)),
         name_(CutoutName(fullName)),
         format_(CutoutFormat(fullName)),
         product_(BuildProduct(subfiles, depth))
@@ -78,13 +79,6 @@ protected:
         std::string result;
         result.insert(result.begin(), str.begin()+index, str.end());
         return result;
-    }
-
-    std::string AppendConditionalSlash(std::string str) const {
-        if (!str.empty()) {
-            str += (str.at(str.size()-1) == '/')? "" : "/";  
-        }
-        return str;
     }
 };
 

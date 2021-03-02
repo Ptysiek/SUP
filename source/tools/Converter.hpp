@@ -27,6 +27,13 @@ public:
         return result.str();
     }
 
+    static std::string AppendConditionalSlash(std::string str) {
+        if (!str.empty()) {
+            str += (str.at(str.size()-1) == '/')? "" : "/";  
+        }
+        return str;
+    }
+
     static std::string removeWhitespaces(const std::string& data) {
         std::string result = data;
         result = RemoveSpecialChars(result);

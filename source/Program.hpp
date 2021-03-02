@@ -4,17 +4,20 @@
 
 #include "GeneratorTxt.hpp"
 #include "ProjectBuilder.hpp"
+#include "ProgramInitializer.hpp"
 #include "Tools"
 
 
 class Program {
+    const ProgramInitializer flagSupport_;
     const std::string targetPath_;
     const std::string outputPath_;
 
 
 public:
-    explicit Program(const std::string& target):
-        targetPath_(target),
+    explicit Program(const ProgramInitializer& target):
+        flagSupport_(target),
+        targetPath_(target.getPath()),
         outputPath_("sup.txt")
     {}
 
