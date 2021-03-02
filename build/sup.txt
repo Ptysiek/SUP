@@ -1,5 +1,5 @@
   ../  			1
-  source  			21
+  source  			20
 source/  DataStructures  			0
 source/  FileBuilder  .hpp			0
 source/  FileDataBuilder  .hpp			0
@@ -15,7 +15,6 @@ source/  PathInitializer  .ut.hpp			0
 source/  PathInitializer  .hpp			0
 source/  Program  .hpp			0
 source/  ProjectTreeBuilder  .hpp			0
-source/  ProjectTreeParser  .hpp			0
 source/  Tools  			0
 source/  catch_main  .cpp			0
 source/  main  .cpp			0
@@ -191,16 +190,6 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/ProjectTreeBuilder.hpp
-
-
-
-
-
-############################################################################
-
-
-
-############################################################################  ../source/ProjectTreeParser.hpp
 
 
 
