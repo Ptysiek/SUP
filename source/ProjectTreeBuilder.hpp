@@ -36,7 +36,7 @@ private:
     ProjectTree UpdateProjectWithData(ProjectTree& project) const {
         for (auto& file : project) {
             FileDataBuilder builder(file);
-            if (builder.productExist()) {
+            if (builder.dataExist()) {
                 auto data = builder.getProduct();
                 file.setData(data);
             }
@@ -83,9 +83,7 @@ private:
         if (test % 2 == 0) {
             return SortCriterion_Alphabetical(f.getName(), s.getName());
         }
-        else {
-            return s.isCatalog();
-        }
+        return s.isCatalog();
     }
 
     static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s) { 

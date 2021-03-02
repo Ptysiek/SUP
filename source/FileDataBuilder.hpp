@@ -5,7 +5,7 @@
 #include "FileParserComments.hpp"
 #include "FileParserSyntax.hpp"
 
-#include "dataStructures/FileData.hpp"
+#include "data structures/FileData.hpp"
 
 
 class FileDataBuilder {
@@ -24,7 +24,7 @@ public:
         product_(BuildProduct())
     {}
 
-    bool productExist() const { return productExist_; }
+    bool dataExist() const { return productExist_; }
     FileData getProduct() const { return product_; }
 
     

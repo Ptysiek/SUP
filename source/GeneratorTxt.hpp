@@ -2,45 +2,36 @@
 
 #include <sstream>
 
+#include "data structures/File.hpp"
 #include "Tools"
 
+
 class GeneratorTxt {
-
-/*
-    using ParsedProjectTree = DataStructures::ParsedProjectTree; // std::vector<ParsedFile>;
-    const std::string initPath_;
-    const ParsedProjectTree data_;
-
+    const std::string targetPath_;
+    std::vector<File> data_;
 
 public:
-    explicit GeneratorTxt(const std::string& initPath, const ParsedProjectTree& data):
-        initPath_(initPath),
+    explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data):
+        targetPath_(targetPath),
         data_(data)
     {}
 
-
     std::string buildFile() {
         std::stringstream result;       
-
         for (const auto& file : data_) {
             result << file.getPath() << "  "; 
             result << file.getName() << "  "; 
             result << file.getFormat() << "\t\t\t"; 
             result << std::to_string(file.getSubFiles().size()) << "\n"; 
         }
-
         for (const auto& file : data_) {
             result << "\n\n\n############################################################################  "; 
             result << file.getFile() << "\n";
             result << Tools::Converter::to_string(file.getLibIncludes()) << "\n";
             result << Tools::Converter::to_string(file.getProjIncludes()) << "\n";
             result << "\n\n\n############################################################################\n"; 
-            result << file.getData();
         }
-
         return result.str();
     }
-    
-*/
 };
 

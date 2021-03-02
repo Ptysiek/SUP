@@ -24,12 +24,12 @@ public:
     void execute() {
         initializeIgnoreFiles();
         ProjectTreeBuilder builder(targetPath_);
-        auto rawData_ = builder.getProduct();
+        auto project = builder.getProduct();
         
         //ProjectTreeParser parser(targetPath_, rawData_);
         //auto parsedData = parser.getProduct();
         
-        for (const auto& file : rawData_) {
+        for (const auto& file : project) {
             std::cout 
                 << file.getDepth() << "\t"
                 << file.countSubFiles() << "\t"
@@ -41,8 +41,8 @@ public:
             //std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "\n";
             //std::cout << file.path_ << file.name_ << file.format_ << "\n";
         }
-        //GeneratorTxt generator(targetPath_, parsedData);
-        //Tools::FileIO::saveToFile(outputPath_, generator.buildFile());
+        GeneratorTxt generator(targetPath_, project);
+        Tools::FileIO::saveToFile(outputPath_, generator.buildFile());
     }
 
 
