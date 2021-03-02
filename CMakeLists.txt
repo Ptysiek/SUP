@@ -13,8 +13,8 @@ set(THIS_PROJECT_SRC_DIRECTORIES
     source/tools/IgnoreFiles.cpp
 )
 set(THIS_PROJECT_TESTS_DIRECTORIES
-    source/dataStructures/PathInitializer.ut.cpp
-    source/FileParserComments.ut.cpp
+    #source/PathInitializer.ut.cpp
+    #source/FileParserComments.ut.cpp
 )
 
 # set flags

@@ -3,8 +3,6 @@
 #include <string>
 #include <vector>
 
-#include "PathInitializer.hpp"
-
 
 class File {
     size_t depth_;

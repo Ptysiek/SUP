@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <string>
 
-#include "DataStructures"
 #include "Tools"
 
 #include "FileBuilder.hpp"
@@ -11,7 +10,8 @@
 
 
 class ProjectTreeBuilder {
-    using ProjectTree = DataStructures::ProjectTree;
+    using ProjectTree = std::vector<File>;
+    //using ProjectTree = DataStructures::ProjectTree;
     const std::string initPath_;
     const ProjectTree product_;
 

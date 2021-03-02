@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <string>
 
-#include "DataStructures"
 #include "Tools"
 #include "FileParser.hpp"
 //#include "PathInitializer.hpp"
@@ -11,6 +10,8 @@
 
 
 class ProjectTreeParser {
+
+/*
     using RawProjectTree = DataStructures::ProjectTree;  //std::vector<File>;
     using ParsedProjectTree = DataStructures::ParsedProjectTree;  //std::vector<ParsedFile>;
     const std::string initPath_;
@@ -39,6 +40,7 @@ private:
 
         return result;
     }
+    */
 };
 
 

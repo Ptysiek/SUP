@@ -1,4 +1,4 @@
-#include "../plugins/catch.hpp"
+#include "plugins/catch.hpp"
 #include "PathInitializer.ut.hpp"
 
 

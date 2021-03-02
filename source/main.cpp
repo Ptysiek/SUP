@@ -1,8 +1,9 @@
 
 #include <iostream>
 
-#include "DataStructures"
 #include "Program.hpp"
+
+#include "PathInitializer.hpp"
 
 
 int main(int argc, char* argv[]) {

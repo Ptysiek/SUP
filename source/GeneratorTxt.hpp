@@ -3,9 +3,10 @@
 #include <sstream>
 
 #include "Tools"
-#include "DataStructures"
 
 class GeneratorTxt {
+
+/*
     using ParsedProjectTree = DataStructures::ParsedProjectTree; // std::vector<ParsedFile>;
     const std::string initPath_;
     const ParsedProjectTree data_;
@@ -40,6 +41,6 @@ public:
         return result.str();
     }
     
-
+*/
 };
 

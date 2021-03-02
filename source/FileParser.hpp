@@ -1,6 +1,5 @@
 #pragma once
 
-#include "DataStructures"
 #include "Tools"
 
 #include "FileParserComments.hpp"
@@ -8,7 +7,8 @@
 
 
 class FileParser {
-    using Data = DataStructures::Data;
+/*
+using Data = DataStructures::Data;
     const std::string initPath_;
     const File rawFile_;
     const ParsedFile product_;
@@ -50,5 +50,6 @@ private:
         }
         return includes;
     }
+    */
 };
 
