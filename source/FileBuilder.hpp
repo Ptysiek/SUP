@@ -3,7 +3,7 @@
 #include <string>
 
 #include "Tools"
-#include "dataStructures/FileHeader.hpp"
+#include "dataStructures/File.hpp"
 
 
 class FileBuilder {
@@ -13,7 +13,7 @@ class FileBuilder {
     const std::string name_;
     const std::string format_;
 
-    const FileHeader product_;
+    const File product_;
 
     
 public:
@@ -21,7 +21,7 @@ public:
         const std::string& initPath,
         const std::string& path, 
         const std::string& fullName, 
-        const std::vector<FileHeader>& subfiles, 
+        const std::vector<File>& subfiles, 
         const int depth):
         initPath_(AppendConditionalSlash(initPath)),
         path_(AppendConditionalSlash(path)),
@@ -30,15 +30,22 @@ public:
         product_(BuildProduct(subfiles, depth))
     {}
 
-    std::string getDefaultPath() const { return "../"; }
-    FileHeader getProduct() const { return product_; }
+    File getProduct() const { return product_; }
+
+    static File buildRoot(const std::string& initPath, const std::vector<File>& subFiles) {
+        return {0, "" , "", initPath, "", subFiles};
+    }
+
+
+
+
 
 
 protected:
-    FileHeader BuildProduct(const std::vector<FileHeader>& subFiles, int depth) {
-        return FileHeader(initPath_, name_, path_, format_, subFiles, depth);
+    File BuildProduct(const std::vector<File>& subFiles, int depth) {
+        return {depth, initPath_, path_, name_, format_, subFiles};
+        //return File(initPath_, name_, path_, format_, subFiles, depth);
     }
-
 
     std::string CutoutName(const std::string& str) const {
         if (Tools::IgnoreFiles::isIgnored(str)) {

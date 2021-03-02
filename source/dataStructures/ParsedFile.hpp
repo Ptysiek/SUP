@@ -5,11 +5,11 @@
 #include <vector>
 
 //#include "../DataStructures"
-#include "FileHeader.hpp"
+#include "File.hpp"
 #include "../Tools"
 #include "BaseStructures"
 
-class ParsedFile : public FileHeader {
+class ParsedFile : public File {
     using Converter = Tools::Converter;
     using Data = BaseStructures::Data; // std::vector<std::string>;
  //   using SyntaxedData = DataStructures::SyntaxedData;
@@ -21,9 +21,9 @@ class ParsedFile : public FileHeader {
 
 
 public:
-    explicit ParsedFile(const FileHeader& base, const Data& data,
+    explicit ParsedFile(const File& base, const Data& data,
         /* const SyntaxedData& syntaxedData,*/ const Data& includes):
-        FileHeader(base),
+        File(base),
         data_(data),
         //syntaxedData_(syntaxedData),
         libIncludes_(),

@@ -37,27 +37,30 @@ private:
     //-------------------------------------------------------------------------------------------------------
     ProjectTree BuildProductStructure() const {
         auto subFiles = BuildRecursive("", 1);
-        FileHeader root(initPath_, subFiles);
+        //File root(initPath_, subFiles);
+        File root = FileBuilder::buildRoot(initPath_, subFiles);
         return FlatenRecursive(root);
     }
 
-    std::vector<FileHeader> BuildRecursive(const std::string& targetPath, int depth) const {
+    std::vector<File> BuildRecursive(const std::string& targetPath, int depth) const {
         auto paths = Tools::FileIO::readPaths(initPath_ + targetPath);
-        std::vector<FileHeader> files;
+        std::vector<File> files;
 
         for (const auto& path : paths) {
             auto subFiles = BuildRecursive(targetPath + path + '/', depth + 1);
             
             FileBuilder builder(initPath_, targetPath, path, subFiles, depth);
-            files.push_back(builder.getProduct());
+            //files.push_back(builder.getProduct());
+            files.emplace_back(builder.getProduct());
         }
         std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);
         return files;
     }
 
-    ProjectTree FlatenRecursive(const FileHeader& root) const {
+    ProjectTree FlatenRecursive(const File& root) const {
         ProjectTree result;
-        result.push_back(root);
+        //result.push_back(root);
+        result.emplace_back(root);
         for (const auto& file : root.getSubFiles()) {
             auto subResult = FlatenRecursive(file);
             result.insert(result.end(), subResult.begin(), subResult.end());
@@ -67,7 +70,7 @@ private:
 
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
-    static bool SortCriterion_CatalogLast(const FileHeader& f, const FileHeader& s) { 
+    static bool SortCriterion_CatalogLast(const File& f, const File& s) { 
         int test = f.isCatalog() + s.isCatalog();
         if (test % 2 == 0) {
             return SortCriterion_Alphabetical(f.getName(), s.getName());

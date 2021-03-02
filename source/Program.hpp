@@ -32,8 +32,8 @@ public:
         
         for (const auto& file : rawData_) {
             std::cout 
-                << file.depth_ << "\t"
-                << file.initPath_ << "\t\t" 
+                << file.getDepth() << "\t"
+                << file.getInitPath() << "\t\t" 
                 << file.getPath() << "\t\t" 
                 << file.getName() << "\t\t" 
                 << file.getFormat() << "\t\t" << file.getSubFiles().size() << "\n";

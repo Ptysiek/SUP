@@ -5,7 +5,7 @@
 
 #include "dataStructures/BaseStructures"
 //#include "dataStructures/DataWithSyntax.hpp"
-#include "dataStructures/FileHeader.hpp"
+#include "dataStructures/File.hpp"
 #include "dataStructures/ParsedFile.hpp"
 #include "dataStructures/PathInitializer.hpp"
 
@@ -15,7 +15,7 @@ namespace DataStructures {
     using Line = BaseStructures::Line;
     //using SyntaxedData = std::vector<DataWithSyntax>;
 
-    using ProjectTree = std::vector<FileHeader>;
+    using ProjectTree = std::vector<File>;
     using ParsedProjectTree = std::vector<ParsedFile>;    
 }
 

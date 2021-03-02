@@ -10,12 +10,12 @@
 class FileParser {
     using Data = DataStructures::Data;
     const std::string initPath_;
-    const FileHeader rawFile_;
+    const File rawFile_;
     const ParsedFile product_;
 
 
 public:
-    FileParser(const std::string& initPath, const FileHeader& file):
+    FileParser(const std::string& initPath, const File& file):
         initPath_(initPath),
         rawFile_(file),
         product_(BuildProduct())
