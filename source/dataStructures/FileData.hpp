@@ -10,7 +10,12 @@ class FileData {
     
 
 public:
-    FileData (
+    FileData():
+        libIncludes_(),
+        projIncludes_()
+    {}
+
+    FileData(
         const std::vector<std::string>& libIncludes,
         const std::vector<std::string>& projIncludes
         ):

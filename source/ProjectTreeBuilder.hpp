@@ -6,7 +6,7 @@
 #include "Tools"
 
 #include "FileBuilder.hpp"
-
+#include "FileDataBuilder.hpp"
 
 
 class ProjectTreeBuilder {
@@ -29,7 +29,18 @@ private:
     //-------------------------------------------------------------------------------------------------------
     ProjectTree BuildProduct() const {
         auto project = BuildProductStructure();
-    
+        project = UpdateProjectWithData(project);
+        return project;
+    }
+
+    ProjectTree UpdateProjectWithData(ProjectTree& project) const {
+        for (auto& file : project) {
+            FileDataBuilder builder(file);
+            if (builder.productExist()) {
+                auto data = builder.getProduct();
+                file.setData(data);
+            }
+        }
         return project;
     }
 
@@ -37,7 +48,6 @@ private:
     //-------------------------------------------------------------------------------------------------------
     ProjectTree BuildProductStructure() const {
         auto subFiles = BuildRecursive("", 1);
-        //File root(initPath_, subFiles);
         File root = FileBuilder::buildRoot(initPath_, subFiles);
         return FlatenRecursive(root);
     }
@@ -50,7 +60,6 @@ private:
             auto subFiles = BuildRecursive(targetPath + path + '/', depth + 1);
             
             FileBuilder builder(initPath_, targetPath, path, subFiles, depth);
-            //files.push_back(builder.getProduct());
             files.emplace_back(builder.getProduct());
         }
         std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);
@@ -59,7 +68,6 @@ private:
 
     ProjectTree FlatenRecursive(const File& root) const {
         ProjectTree result;
-        //result.push_back(root);
         result.emplace_back(root);
         for (const auto& file : root.getSubFiles()) {
             auto subResult = FlatenRecursive(file);

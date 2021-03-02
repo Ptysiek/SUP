@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "FileData.hpp"
+
 
 class File {
     size_t depth_;
@@ -12,6 +14,8 @@ class File {
     std::string name_;
     std::string format_;
     std::vector<File> subFiles_;
+
+    FileData data_;
 
 
 public:
@@ -30,7 +34,8 @@ public:
         path_(path),
         name_(name),
         format_(format),
-        subFiles_(subFiles)
+        subFiles_(subFiles),
+        data_()
     {}
 
     std::string getInitPath() const { return initPath_; }
@@ -44,6 +49,8 @@ public:
     size_t getDepth() const { return depth_; }
     size_t countSubFiles() const { return subFiles_.size(); }
     size_t countSubFilesRecursive() const { return countRecursive_; }
+
+    void setData(const FileData& data) { data_ = data; }
 };
 
 
