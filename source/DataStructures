@@ -1,0 +1,17 @@
+#pragma once
+
+#include <string>
+#include <vector>
+
+#include "data structures/File.hpp"
+#include "data structures/FileData.hpp"
+
+
+namespace DataStructures {
+    class File;
+    class FileData;
+
+    using Project = std::vector<File>;
+}
+
+

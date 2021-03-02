@@ -1,5 +1,6 @@
   ../  			1
-  source  			20
+  source  			21
+source/  DataStructures  			0
 source/  FileBuilder  .hpp			0
 source/  FileDataBuilder  .hpp			0
 source/  FileParser  .hpp			0
@@ -18,11 +19,9 @@ source/  ProjectTreeParser  .hpp			0
 source/  Tools  			0
 source/  catch_main  .cpp			0
 source/  main  .cpp			0
-source/  data structures  			4
-source/data structures/  DataWithSyntax  .hpp			0
+source/  data structures  			2
 source/data structures/  File  .hpp			0
 source/data structures/  FileData  .hpp			0
-source/data structures/  ParsedFile  .hpp			0
 source/  tools  			4
 source/tools/  Converter  .hpp			0
 source/tools/  FileIO  .hpp			0
@@ -42,6 +41,16 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source
+
+
+
+
+
+############################################################################
+
+
+
+############################################################################  ../source/DataStructures
 
 
 
@@ -241,16 +250,6 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  ../source/data structures/DataWithSyntax.hpp
-
-
-
-
-
-############################################################################
-
-
-
 ############################################################################  ../source/data structures/File.hpp
 
 
@@ -262,16 +261,6 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/data structures/FileData.hpp
-
-
-
-
-
-############################################################################
-
-
-
-############################################################################  ../source/data structures/ParsedFile.hpp
 
 
 
