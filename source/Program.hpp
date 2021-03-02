@@ -31,9 +31,11 @@ public:
         auto parsedData = parser.getProduct();
         
         for (const auto& file : parsedData) {
-            std::cout << file.getPath() << "  " 
-                << file.getName() << "  " 
-                << file.getFormat() << "  " << file.getSubFiles().size() << "\n";
+            std::cout 
+                << file.depth_ << "\t"
+                << file.getPath() << "\t\t" 
+                << file.getName() << "\t\t" 
+                << file.getFormat() << "\t\t" << file.getSubFiles().size() << "\n";
             //std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "\n";
             //std::cout << file.path_ << file.name_ << file.format_ << "\n";
         }
