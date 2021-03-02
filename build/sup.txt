@@ -1,11 +1,8 @@
   ../  			1
-  source  			19
+  source  			17
 source/  DataStructures  			0
 source/  FileBuilder  .hpp			0
 source/  FileDataBuilder  .hpp			0
-source/  FileParserComments  .hpp			0
-source/  FileParserComments  .ut.cpp			0
-source/  FileParserComments  .ut.hpp			0
 source/  FileParserKeyWords  .hpp			0
 source/  FileParserSyntax  .hpp			0
 source/  GeneratorTxt  .hpp			0
@@ -17,6 +14,10 @@ source/  ProjectTreeBuilder  .hpp			0
 source/  Tools  			0
 source/  catch_main  .cpp			0
 source/  main  .cpp			0
+source/  data parsers  			3
+source/data parsers/  CommentParser  .ut.cpp			0
+source/data parsers/  CommentParser  .ut.hpp			0
+source/data parsers/  CommentParser  .hpp			0
 source/  data structures  			2
 source/data structures/  File  .hpp			0
 source/data structures/  FileData  .hpp			0
@@ -69,36 +70,6 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/FileDataBuilder.hpp
-
-
-
-
-
-############################################################################
-
-
-
-############################################################################  ../source/FileParserComments.hpp
-
-
-
-
-
-############################################################################
-
-
-
-############################################################################  ../source/FileParserComments.ut.cpp
-
-
-
-
-
-############################################################################
-
-
-
-############################################################################  ../source/FileParserComments.ut.hpp
 
 
 
@@ -209,6 +180,46 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/main.cpp
+
+
+
+
+
+############################################################################
+
+
+
+############################################################################  ../source/data parsers
+
+
+
+
+
+############################################################################
+
+
+
+############################################################################  ../source/data parsers/CommentParser.ut.cpp
+
+
+
+
+
+############################################################################
+
+
+
+############################################################################  ../source/data parsers/CommentParser.ut.hpp
+
+
+
+
+
+############################################################################
+
+
+
+############################################################################  ../source/data parsers/CommentParser.hpp
 
 
 
