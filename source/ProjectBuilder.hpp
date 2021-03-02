@@ -10,32 +10,32 @@
 #include "FileDataBuilder.hpp"
 
 
-class ProjectTreeBuilder {
-    using ProjectTree = DataStructures::Project; 
+class ProjectBuilder {
+    using Project = DataStructures::Project; 
     
     const std::string initPath_;
-    const ProjectTree product_;
+    const Project product_;
 
 
 public:
-    explicit ProjectTreeBuilder(const std::string& initPath):
+    explicit ProjectBuilder(const std::string& initPath):
         initPath_(initPath),
         product_(BuildProduct())
     {}
 
-    ProjectTree getProduct() const { return product_; }
+    Project getProduct() const { return product_; }
     
 
 private:
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
-    ProjectTree BuildProduct() const {
+    Project BuildProduct() const {
         auto project = BuildProductStructure();
         project = UpdateProjectWithData(project);
         return project;
     }
 
-    ProjectTree UpdateProjectWithData(ProjectTree& project) const {
+    Project UpdateProjectWithData(Project& project) const {
         for (auto& file : project) {
             FileDataBuilder builder(file);
             if (builder.dataExist()) {
@@ -48,7 +48,7 @@ private:
 
     //_______________________________________________________________________________________________________
     //-------------------------------------------------------------------------------------------------------
-    ProjectTree BuildProductStructure() const {
+    Project BuildProductStructure() const {
         auto subFiles = BuildRecursive("", 1);
         File root = FileBuilder::buildRoot(initPath_, subFiles);
         return FlatenRecursive(root);
@@ -68,8 +68,8 @@ private:
         return files;
     }
 
-    ProjectTree FlatenRecursive(const File& root) const {
-        ProjectTree result;
+    Project FlatenRecursive(const File& root) const {
+        Project result;
         result.emplace_back(root);
         for (const auto& file : root.getSubFiles()) {
             auto subResult = FlatenRecursive(file);

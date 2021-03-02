@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "GeneratorTxt.hpp"
-#include "ProjectTreeBuilder.hpp"
+#include "ProjectBuilder.hpp"
 #include "Tools"
 
 
@@ -21,7 +21,7 @@ public:
     void execute() {
         initializeIgnoreFiles();
 
-        ProjectTreeBuilder builder(targetPath_);
+        ProjectBuilder builder(targetPath_);
         auto project = builder.getProduct();
         
         for (const auto& file : project) {
