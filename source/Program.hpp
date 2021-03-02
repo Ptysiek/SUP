@@ -27,20 +27,21 @@ public:
         ProjectTreeBuilder builder(targetPath_);
         auto rawData_ = builder.getProduct();
         
-        ProjectTreeParser parser(targetPath_, rawData_);
-        auto parsedData = parser.getProduct();
+        //ProjectTreeParser parser(targetPath_, rawData_);
+        //auto parsedData = parser.getProduct();
         
-        for (const auto& file : parsedData) {
+        for (const auto& file : rawData_) {
             std::cout 
                 << file.depth_ << "\t"
+                << file.initPath_ << "\t\t" 
                 << file.getPath() << "\t\t" 
                 << file.getName() << "\t\t" 
                 << file.getFormat() << "\t\t" << file.getSubFiles().size() << "\n";
             //std::cout << file.path_ << "  " << file.name_ << "  " << file.format_ << "\n";
             //std::cout << file.path_ << file.name_ << file.format_ << "\n";
         }
-        GeneratorTxt generator(targetPath_, parsedData);
-        Tools::FileIO::saveToFile(outputPath_, generator.buildFile());
+        //GeneratorTxt generator(targetPath_, parsedData);
+        //Tools::FileIO::saveToFile(outputPath_, generator.buildFile());
     }
 
 

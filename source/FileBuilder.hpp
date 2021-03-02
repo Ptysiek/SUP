@@ -8,6 +8,7 @@
 
 class FileBuilder {
     using IgnoreFiles = Tools::IgnoreFiles;
+    const std::string initPath_;
     const std::string path_;
     const std::string name_;
     const std::string format_;
@@ -17,9 +18,12 @@ class FileBuilder {
     
 public:
     explicit FileBuilder(
+        const std::string& initPath,
         const std::string& path, 
         const std::string& fullName, 
-        const std::vector<FileHeader>& subfiles, int depth):
+        const std::vector<FileHeader>& subfiles, 
+        const int depth):
+        initPath_(AppendConditionalSlash(initPath)),
         path_(AppendConditionalSlash(path)),
         name_(CutoutName(fullName)),
         format_(CutoutFormat(fullName)),
@@ -32,13 +36,7 @@ public:
 
 protected:
     FileHeader BuildProduct(const std::vector<FileHeader>& subFiles, int depth) {
-        std::vector<std::string> subFileNames;
-        subFileNames.reserve(subFiles.size());
-        for (const auto& file : subFiles) {
-            subFileNames.push_back(file.getName());
-        }
-
-        return FileHeader(name_, path_, format_, subFileNames, depth);
+        return FileHeader(initPath_, name_, path_, format_, subFiles, depth);
     }
 
 

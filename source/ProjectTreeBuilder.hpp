@@ -9,6 +9,7 @@
 #include "FileBuilder.hpp"
 
 
+
 class ProjectTreeBuilder {
     using ProjectTree = DataStructures::ProjectTree;
     const std::string initPath_;
@@ -24,13 +25,20 @@ public:
     
 
 private:
+    //_______________________________________________________________________________________________________
+    //-------------------------------------------------------------------------------------------------------
     ProjectTree BuildProduct() const {
-        auto subFiles = BuildRecursive("", 0);
-        std::sort(subFiles.begin(), subFiles.end(), SortCriterion_Depth);
-        
-        return subFiles;
-        //FileHeader projectRoot(initPath_, subFiles);
-        //return Flaten(projectRoot);
+        auto project = BuildProductStructure();
+    
+        return project;
+    }
+
+    //_______________________________________________________________________________________________________
+    //-------------------------------------------------------------------------------------------------------
+    ProjectTree BuildProductStructure() const {
+        auto subFiles = BuildRecursive("", 1);
+        FileHeader root(initPath_, subFiles);
+        return FlatenRecursive(root);
     }
 
     std::vector<FileHeader> BuildRecursive(const std::string& targetPath, int depth) const {
@@ -40,38 +48,25 @@ private:
         for (const auto& path : paths) {
             auto subFiles = BuildRecursive(targetPath + path + '/', depth + 1);
             
-            FileBuilder builder(targetPath, path, subFiles, depth);
+            FileBuilder builder(initPath_, targetPath, path, subFiles, depth);
             files.push_back(builder.getProduct());
-            
-            //std::sort(subFiles.begin(), subFiles.end(), SortCriterion_CatalogLast);
-            //files.insert(files.end(), subFiles.begin(), subFiles.end());
-
-            //PathInitializer initializer(targetPath, path);
-            //files.push_back(FileHeader(initializer, subFiles));
         }
-        //std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);
+        std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);
         return files;
     }
 
-            
-protected:
-    ProjectTree Flaten(const FileHeader& root) const {
+    ProjectTree FlatenRecursive(const FileHeader& root) const {
         ProjectTree result;
         result.push_back(root);
-        //for (const auto& file : root.getSubFiles()) {
-            //auto subResult = Flaten(file);
-            //result.insert(result.end(), subResult.begin(), subResult.end());
-        //}
+        for (const auto& file : root.getSubFiles()) {
+            auto subResult = FlatenRecursive(file);
+            result.insert(result.end(), subResult.begin(), subResult.end());
+        }
         return result;
     }
 
-    static bool SortCriterion_Depth(const FileHeader& f, const FileHeader& s) { 
-        if (f.depth_ == s.depth_) {
-            return SortCriterion_CatalogLast(f, s);
-        }
-        return (f.depth_ < s.depth_);
-    }
-
+    //_______________________________________________________________________________________________________
+    //-------------------------------------------------------------------------------------------------------
     static bool SortCriterion_CatalogLast(const FileHeader& f, const FileHeader& s) { 
         int test = f.isCatalog() + s.isCatalog();
         if (test % 2 == 0) {
