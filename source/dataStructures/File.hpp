@@ -7,7 +7,8 @@
 
 
 class File {
-    int depth_;
+    size_t depth_;
+    size_t countRecursive_;
     std::string initPath_;
     std::string path_;
     std::string name_;
@@ -17,7 +18,8 @@ class File {
 
 public:
     File(  
-        const int depth,
+        const size_t depth,
+        const size_t countRecursive,
         const std::string& initPath,
         const std::string& path,
         const std::string& name,
@@ -25,6 +27,7 @@ public:
         const std::vector<File>& subFiles
         ):
         depth_(depth),
+        countRecursive_(countRecursive),
         initPath_(initPath),
         path_(path),
         name_(name),
@@ -32,7 +35,6 @@ public:
         subFiles_(subFiles)
     {}
 
-    int getDepth() const { return depth_; }
     std::string getInitPath() const { return initPath_; }
     std::string getPath() const { return path_; }
     std::string getName() const { return name_; }
@@ -41,5 +43,9 @@ public:
     std::vector<File> getSubFiles() const { return subFiles_; }
 
     bool isCatalog() const { return !subFiles_.empty(); }
+    size_t getDepth() const { return depth_; }
+    size_t countSubFiles() const { return subFiles_.size(); }
+    size_t countSubFilesRecursive() const { return countRecursive_; }
 };
+
 

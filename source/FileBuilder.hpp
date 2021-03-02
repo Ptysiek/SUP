@@ -22,7 +22,8 @@ public:
         const std::string& path, 
         const std::string& fullName, 
         const std::vector<File>& subfiles, 
-        const int depth):
+        const size_t depth
+        ):
         initPath_(AppendConditionalSlash(initPath)),
         path_(AppendConditionalSlash(path)),
         name_(CutoutName(fullName)),
@@ -33,18 +34,23 @@ public:
     File getProduct() const { return product_; }
 
     static File buildRoot(const std::string& initPath, const std::vector<File>& subFiles) {
-        return {0, "" , "", initPath, "", subFiles};
+        auto count = CountRecursive(subFiles);
+        return {0, count, "" , "", initPath, "", subFiles};
     }
 
 
-
-
-
-
 protected:
-    File BuildProduct(const std::vector<File>& subFiles, int depth) {
-        return {depth, initPath_, path_, name_, format_, subFiles};
-        //return File(initPath_, name_, path_, format_, subFiles, depth);
+    File BuildProduct(const std::vector<File>& subFiles, size_t depth) {
+        auto count = CountRecursive(subFiles);
+        return {depth, count, initPath_, path_, name_, format_, subFiles};
+    }
+
+    static size_t CountRecursive(const std::vector<File>& subFiles) {
+        size_t result = subFiles.size();
+        for (const auto& file : subFiles) {
+            result += file.countSubFilesRecursive();
+        }
+        return result;
     }
 
     std::string CutoutName(const std::string& str) const {

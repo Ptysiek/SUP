@@ -33,6 +33,8 @@ public:
         for (const auto& file : rawData_) {
             std::cout 
                 << file.getDepth() << "\t"
+                << file.countSubFiles() << "\t"
+                << file.countSubFilesRecursive() << "\t"
                 << file.getInitPath() << "\t\t" 
                 << file.getPath() << "\t\t" 
                 << file.getName() << "\t\t" 
