@@ -11,10 +11,11 @@ source/  ProjectBuilder  .hpp			0
 source/  Tools  			0
 source/  catch_main  .cpp			0
 source/  main  .cpp			0
-source/  data parsers/  			5
+source/  data parsers/  			6
 source/data parsers/  CommentParser  .ut.cpp			0
 source/data parsers/  CommentParser  .ut.hpp			0
 source/data parsers/  CommentParser  .hpp			0
+source/data parsers/  DirectiveParser  .hpp			0
 source/data parsers/  IncludeParser  .hpp			0
 source/data parsers/  SyntaxParser  .hpp			0
 source/  data structures/  			5
@@ -60,22 +61,13 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/DataStructures
-memory
-string
-vector
 
-data structures/Class.hpp
-data structures/File.hpp
-data structures/FileData.hpp
-data structures/Instruction.hpp
-data structures/iSyntax.hpp
 
 
 
 
 ############################################################################
-[#pragma once
-namespace DataStructures {]
+[namespace DataStructures {]
 [using Line = std::string;]
 [using Data = std::vector<std::string>;]
 [using Project = std::vector<File>;]
@@ -88,17 +80,13 @@ namespace DataStructures {]
 
 
 ############################################################################  ../source/FileBuilder.hpp
-string
 
-DataStructures
-Tools
 
 
 
 
 ############################################################################
-[#pragma once
-class FileBuilder {]
+[class FileBuilder {]
 [using IgnoreFiles = Tools::IgnoreFiles;]
 [using Converter = Tools::Converter;]
 [const std::string initPath_;]
@@ -184,18 +172,12 @@ std::string result;]
 
 ############################################################################  ../source/FileDataBuilder.hpp
 
-DataStructures
-Tools
-data parsers/CommentParser.hpp
-data parsers/IncludeParser.hpp
-data parsers/SyntaxParser.hpp
 
 
 
 
 ############################################################################
-[#pragma once
-class FileDataBuilder {]
+[class FileDataBuilder {]
 [using Data = DataStructures::Data;]
 [using Converter = Tools::Converter;]
 [bool productExist_;]
@@ -223,6 +205,7 @@ FileData BuildProduct() {]
 [}
 rawData_ = Tools::FileIO::readFile(fileHeader_.getFile());]
 [rawData_ = CommentParser::removeComments(rawData_);]
+[rawData_ = DirectiveParser::removeDirectives(rawData_);]
 [IncludeParser incParser(rawData_);]
 [auto libs = incParser.getLibIncludes();]
 [auto projs = incParser.getProjIncludes();]
@@ -249,17 +232,13 @@ FileData BuildEmptyData() {]
 
 
 ############################################################################  ../source/GeneratorTxt.hpp
-sstream
 
-DataStructures
-Tools
 
 
 
 
 ############################################################################
-[#pragma once
-class GeneratorTxt {]
+[class GeneratorTxt {]
 [const std::string targetPath_;]
 [std::vector<File> data_;]
 [public:
@@ -302,8 +281,6 @@ return result.str();]
 
 ############################################################################  ../source/PathInitializer.ut.cpp
 
-PathInitializer.ut.hpp
-plugins/catch.hpp
 
 
 
@@ -495,19 +472,13 @@ WHEN("Testing the AppendConditionalSlash()") {]
 
 
 ############################################################################  ../source/Program.hpp
-iostream
 
-GeneratorTxt.hpp
-ProgramInitializer.hpp
-ProjectBuilder.hpp
-Tools
 
 
 
 
 ############################################################################
-[#pragma once
-class Program {]
+[class Program {]
 [const ProgramInitializer flagSupport_;]
 [const std::string targetPath_;]
 [const std::string outputPath_;]
@@ -560,16 +531,13 @@ else {]
 
 
 ############################################################################  ../source/ProgramInitializer.hpp
-string
 
-Tools
 
 
 
 
 ############################################################################
-[#pragma once
-/* TODO:
+[/* TODO:
 - napisz obsługę flag. -md -markdown -txt -text
 - flag supprot
 */
@@ -604,20 +572,13 @@ return getDefaultPath();]
 
 
 ############################################################################  ../source/ProjectBuilder.hpp
-algorithm
-string
 
-DataStructures
-FileBuilder.hpp
-FileDataBuilder.hpp
-Tools
 
 
 
 
 ############################################################################
-[#pragma once
-class ProjectBuilder {]
+[class ProjectBuilder {]
 [using Project = DataStructures::Project;]
 [const std::string initPath_;]
 [const Project product_;]
@@ -696,16 +657,12 @@ static bool SortCriterion_Alphabetical(const std::string& f, const std::string& 
 
 ############################################################################  ../source/Tools
 
-tools/Converter.hpp
-tools/FileIO.hpp
-tools/IgnoreFiles.hpp
 
 
 
 
 ############################################################################
-[#pragma once
-namespace Tools {]
+[namespace Tools {]
 [class Converter;]
 [class FileIO;]
 [class IgnoreFiles;]
@@ -718,7 +675,6 @@ namespace Tools {]
 
 ############################################################################  ../source/catch_main.cpp
 
-plugins/catch.hpp
 
 
 
@@ -732,10 +688,7 @@ plugins/catch.hpp
 
 
 ############################################################################  ../source/main.cpp
-iostream
 
-Program.hpp
-ProgramInitializer.hpp
 
 
 
@@ -769,11 +722,7 @@ ProgramInitializer.hpp
 
 
 ############################################################################  ../source/data parsers/CommentParser.ut.cpp
-algorithm
-numeric
 
-CommentsParser.ut.hpp
-plugins/catch.hpp
 
 
 
@@ -1076,7 +1025,6 @@ WHEN("Testing the Multiline_ClearLine()") {]
 
 ############################################################################  ../source/data parsers/CommentParser.ut.hpp
 
-CommentParser.hpp
 
 
 
@@ -1122,8 +1070,7 @@ Line Multiline_ClearLine(const Line& line, bool& isCommented) {]
 
 
 ############################################################################
-[#pragma once
-/* TODO:
+[/* TODO:
 - fix multiline comments
 ex: abcd *//* */ /* *** */ /* */ /* abcdc */
 class CommentParser {]
@@ -1213,16 +1160,49 @@ static bool IsAlreadyCommentedByOneline(const Line& subline) {]
 
 
 
-############################################################################  ../source/data parsers/IncludeParser.hpp
+############################################################################  ../source/data parsers/DirectiveParser.hpp
 
-../DataStructures
 
 
 
 
 ############################################################################
-[#pragma once
-class IncludeParser {]
+[class DirectiveParser {]
+[protected:
+using Converter = Tools::Converter;]
+[using Data = DataStructures::Data;]
+[using Line = DataStructures::Line;]
+[DirectiveParser() {]
+[}
+public:
+static Data removeDirectives(Data data) {]
+[for (auto& line : data) {]
+[auto tmp = Converter::removeWhitespaces(line);]
+[if (tmp.empty()) {]
+[continue;]
+[}
+if (tmp[0] == '#') {]
+[line = "";]
+[}
+}
+return data;]
+[}
+};]
+
+
+
+############################################################################
+
+
+
+############################################################################  ../source/data parsers/IncludeParser.hpp
+
+
+
+
+
+############################################################################
+[class IncludeParser {]
 [using Converter = Tools::Converter;]
 [using Data = DataStructures::Data;]
 [using Line = DataStructures::Line;]
@@ -1286,16 +1266,13 @@ return includes;]
 
 
 ############################################################################  ../source/data parsers/SyntaxParser.hpp
-iostream
 
-../DataStructures
 
 
 
 
 ############################################################################
-[#pragma once
-class SyntaxParser {]
+[class SyntaxParser {]
 [using Converter = Tools::Converter;]
 [using Data = DataStructures::Data;]
 [using Line = DataStructures::Line;]
@@ -1333,10 +1310,6 @@ Syntax BuildProduct() {]
 return result;]
 [}
 size_t ClosestSemicolonOrParenthesis(const Line& line) {]
-[// if (line.find(';]
-[') != std::string::npos);]
-[// return line.find(';]
-[');]
 [return std::min(line.find(';]
 ['), line.find('{]
 ['));]
@@ -1378,16 +1351,13 @@ std::string ClearFromNewLine(const std::string& line) {]
 
 
 ############################################################################  ../source/data structures/Class.hpp
-string
 
-iSyntax.hpp
 
 
 
 
 ############################################################################
-[#pragma once
-class Class : public iSyntax {]
+[class Class : public iSyntax {]
 [std::string rawData_;]
 [std::vector<std::shared_ptr<iSyntax>> subElements_;]
 [public:
@@ -1410,17 +1380,13 @@ class Class : public iSyntax {]
 
 
 ############################################################################  ../source/data structures/File.hpp
-string
-vector
 
-FileData.hpp
 
 
 
 
 ############################################################################
-[#pragma once
-class File {]
+[class File {]
 [size_t depth_;]
 [size_t countRecursive_;]
 [std::string initPath_;]
@@ -1494,17 +1460,13 @@ FileData getData() const {]
 
 
 ############################################################################  ../source/data structures/FileData.hpp
-string
-vector
 
-iSyntax.hpp
 
 
 
 
 ############################################################################
-[#pragma once
-class FileData {]
+[class FileData {]
 [std::vector<std::string> libIncludes_;]
 [std::vector<std::string> projIncludes_;]
 [std::vector<std::shared_ptr<iSyntax>> data_;]
@@ -1543,16 +1505,13 @@ std::vector<std::shared_ptr<iSyntax>> getData() const {]
 
 
 ############################################################################  ../source/data structures/Instruction.hpp
-string
 
-iSyntax.hpp
 
 
 
 
 ############################################################################
-[#pragma once
-class Instruction : public iSyntax {]
+[class Instruction : public iSyntax {]
 [std::string rawData_;]
 [public:
 std::string getResult() const override {]
@@ -1585,8 +1544,7 @@ Instruction(const std::string& data): rawData_(data) {]
 
 
 ############################################################################
-[#pragma once
-class iSyntax {]
+[class iSyntax {]
 [public:
 enum Type {]
 [ Instruction, Function, Operation, Class, Structure };]
@@ -1620,18 +1578,13 @@ enum Type {]
 
 
 ############################################################################  ../source/tools/Converter.hpp
-algorithm
-set
-sstream
-vector
 
 
 
 
 
 ############################################################################
-[#pragma once
-namespace Tools {]
+[namespace Tools {]
 [class Converter {]
 [public:
 template <class T>
@@ -1741,20 +1694,13 @@ return result.str();]
 
 
 ############################################################################  ../source/tools/FileIO.hpp
-dirent.h
-exception
-fstream
-string
-vector
 
-IgnoreFiles.hpp
 
 
 
 
 ############################################################################
-[#pragma once
-namespace Tools {]
+[namespace Tools {]
 [class FileIO {]
 [explicit FileIO() {]
 [}
@@ -1816,10 +1762,7 @@ output << data;]
 
 
 ############################################################################  ../source/tools/IgnoreFiles.cpp
-string
-vector
 
-IgnoreFiles.hpp
 
 
 
@@ -1859,18 +1802,13 @@ IgnoreFiles.hpp
 
 
 ############################################################################  ../source/tools/IgnoreFiles.hpp
-algorithm
-set
-string
-vector
 
 
 
 
 
 ############################################################################
-[#pragma once
-namespace Tools {]
+[namespace Tools {]
 [class IgnoreFiles {]
 [const static std::string filename_;]
 [const static std::set<std::string> alwaysIgnores_;]

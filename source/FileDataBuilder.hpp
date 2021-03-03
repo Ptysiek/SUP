@@ -5,6 +5,7 @@
 #include "data parsers/CommentParser.hpp"
 #include "data parsers/IncludeParser.hpp"
 #include "data parsers/SyntaxParser.hpp"
+#include "data parsers/DirectiveParser.hpp"
 
 
 class FileDataBuilder {
@@ -37,6 +38,8 @@ private:
         rawData_ = Tools::FileIO::readFile(fileHeader_.getFile());
  
         rawData_ = CommentParser::removeComments(rawData_);
+
+        rawData_ = DirectiveParser::removeDirectives(rawData_);
 
         IncludeParser incParser(rawData_);
         auto libs = incParser.getLibIncludes();

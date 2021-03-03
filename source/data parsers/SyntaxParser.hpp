@@ -49,9 +49,6 @@ protected:
     }
 
     size_t ClosestSemicolonOrParenthesis(const Line& line) {
-  //      if (line.find(';') != std::string::npos);
-       // return line.find(';');    
-
         return std::min(line.find(';'), line.find('{'));
     }
     
