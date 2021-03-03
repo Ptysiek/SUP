@@ -4,6 +4,7 @@
 #include "DataStructures"
 #include "data parsers/CommentParser.hpp"
 #include "data parsers/IncludeParser.hpp"
+#include "data parsers/SyntaxParser.hpp"
 
 
 class FileDataBuilder {
@@ -42,15 +43,15 @@ private:
         auto projs = incParser.getProjIncludes();
         rawData_ = incParser.getData();
 
-        //auto includes = CutoutIncludes(data);
- 
- //       SyntaxedData syntaxedData_;
-   //     syntaxedData = FileParserSyntax::generateSyntax(data);
+        
 
-      //  return ParsedFile(rawFile_, data, syntaxedData, includes);
-        //return {data, includes};
+        SyntaxParser synParser(rawData_);
+        auto syntaxData = synParser.getProduct();
+        rawData_ = synParser.getData();
+
+ 
         productExist_ = true;
- //       return {libs, projs};
+        return {libs, projs, syntaxData};
         return FileData();
     }
 
