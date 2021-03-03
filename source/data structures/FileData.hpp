@@ -3,30 +3,32 @@
 #include <string>
 #include <vector>
 
+#include "iSyntax.hpp"
+
 
 class FileData {
     std::vector<std::string> libIncludes_;
     std::vector<std::string> projIncludes_;
-    
+    std::vector<iSyntax> data_;
 
 public:
     FileData():
         libIncludes_(),
-        projIncludes_()
+        projIncludes_(),
+        data_()
     {}
 
     FileData(
         const std::vector<std::string>& libIncludes,
-        const std::vector<std::string>& projIncludes
+        const std::vector<std::string>& projIncludes,
+        const std::vector<iSyntax>& data
         ):
         libIncludes_(libIncludes),
-        projIncludes_(projIncludes)
+        projIncludes_(projIncludes),
+        data_(data)
     {}
 
     std::vector<std::string> getLibIncludes() const { return libIncludes_; }
     std::vector<std::string> getProjIncludes() const { return projIncludes_; }
-
-
-private:
-
+    std::vector<iSyntax> getData() const { return data_; }
 };

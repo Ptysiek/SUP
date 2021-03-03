@@ -50,7 +50,8 @@ private:
       //  return ParsedFile(rawFile_, data, syntaxedData, includes);
         //return {data, includes};
         productExist_ = true;
-        return {libs, projs};
+ //       return {libs, projs};
+        return FileData();
     }
 
 
