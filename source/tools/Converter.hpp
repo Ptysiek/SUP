@@ -34,13 +34,19 @@ public:
         return str;
     }
 
-    static std::string removeWhitespaces(const std::string& data) {
-        std::string result = data;
-        result = RemoveSpecialChars(result);
-        result = RemoveFromBegin(result);
-        result = RemoveFromEnd(result);
-        result = RemoveAdjacentSpaces(result);
-        return result;
+    static std::vector<std::string> removeWhitespaces(std::vector<std::string> data) {
+        for (auto& line : data) {
+            line = removeWhitespaces(line);
+        }
+        return data;
+    }
+    
+    static std::string removeWhitespaces(std::string data) {
+        data = RemoveSpecialChars(data);
+        data = RemoveFromBegin(data);
+        data = RemoveFromEnd(data);
+        data = RemoveAdjacentSpaces(data);
+        return data;
     }
 
     static std::vector<std::string> removeEmptyLines(const std::vector<std::string>& data) {

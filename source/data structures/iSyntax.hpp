@@ -3,11 +3,14 @@
 
 
 class iSyntax {
+
+
 public:
     enum Type { Instruction, Function, Operation, Class, Structure };
     enum Memory { Global, Component, Static }; 
 
-    //virtual Type getSyntaxType() = 0;    
-    //virtual Memory getMemoryType() = 0;
+    virtual ~iSyntax() = 0;
 
+    virtual Type getSyntaxType() const = 0;    
+    // virtual Memory getMemoryType() const = 0;
 };

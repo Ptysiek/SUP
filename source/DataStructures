@@ -1,10 +1,13 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "data structures/File.hpp"
 #include "data structures/FileData.hpp"
+#include "data structures/iSyntax.hpp"
+#include "data structures/Instruction.hpp"
 
 
 namespace DataStructures {
@@ -12,7 +15,7 @@ namespace DataStructures {
     using Data = std::vector<std::string>;
     using Project = std::vector<File>;
 
-    using Syntax = std::vector<iSyntax>;
+    using Syntax = std::vector<std::shared_ptr<iSyntax>>;
 }
 
 

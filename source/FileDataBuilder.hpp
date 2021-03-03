@@ -9,7 +9,8 @@
 
 class FileDataBuilder {
     using Data = DataStructures::Data;
-    
+    using Converter = Tools::Converter;
+
     bool productExist_;
     Data rawData_;
     const File& fileHeader_;    
@@ -27,7 +28,6 @@ public:
     bool dataExist() const { return productExist_; }
     FileData getProduct() const { return product_; }
 
-    
 
 private:
     FileData BuildProduct() {
@@ -43,12 +43,12 @@ private:
         auto projs = incParser.getProjIncludes();
         rawData_ = incParser.getData();
 
-        
+        rawData_ = Converter::removeWhitespaces(rawData_);
+        rawData_ = Converter::removeEmptyLines(rawData_);
 
         SyntaxParser synParser(rawData_);
         auto syntaxData = synParser.getProduct();
         rawData_ = synParser.getData();
-
  
         productExist_ = true;
         return {libs, projs, syntaxData};

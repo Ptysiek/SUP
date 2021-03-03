@@ -11,14 +11,17 @@ source/  ProjectBuilder  .hpp			0
 source/  Tools  			0
 source/  catch_main  .cpp			0
 source/  main  .cpp			0
-source/  data parsers/  			4
+source/  data parsers/  			5
 source/data parsers/  CommentParser  .ut.cpp			0
 source/data parsers/  CommentParser  .ut.hpp			0
 source/data parsers/  CommentParser  .hpp			0
 source/data parsers/  IncludeParser  .hpp			0
-source/  data structures/  			2
+source/data parsers/  SyntaxParser  .hpp			0
+source/  data structures/  			4
 source/data structures/  File  .hpp			0
 source/data structures/  FileData  .hpp			0
+source/data structures/  Instruction  .hpp			0
+source/data structures/  iSyntax  .hpp			0
 source/  tools/  			4
 source/tools/  Converter  .hpp			0
 source/tools/  FileIO  .hpp			0
@@ -48,11 +51,14 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/DataStructures
+memory
 string
 vector
 
 data structures/File.hpp
 data structures/FileData.hpp
+data structures/Instruction.hpp
+data structures/iSyntax.hpp
 
 
 
@@ -80,6 +86,7 @@ DataStructures
 Tools
 data parsers/CommentParser.hpp
 data parsers/IncludeParser.hpp
+data parsers/SyntaxParser.hpp
 
 
 
@@ -249,6 +256,17 @@ CommentParser.hpp
 
 
 
+############################################################################  ../source/data parsers/SyntaxParser.hpp
+
+../DataStructures
+
+
+
+
+############################################################################
+
+
+
 ############################################################################  ../source/data structures/
 
 
@@ -275,6 +293,28 @@ FileData.hpp
 ############################################################################  ../source/data structures/FileData.hpp
 string
 vector
+
+iSyntax.hpp
+
+
+
+
+############################################################################
+
+
+
+############################################################################  ../source/data structures/Instruction.hpp
+
+iSyntax.hpp
+
+
+
+
+############################################################################
+
+
+
+############################################################################  ../source/data structures/iSyntax.hpp
 
 
 
