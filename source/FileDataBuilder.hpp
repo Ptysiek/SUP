@@ -48,7 +48,6 @@ private:
 
         SyntaxParser synParser(rawData_);
         auto syntaxData = synParser.getProduct();
-        rawData_ = synParser.getData();
  
         productExist_ = true;
         return {libs, projs, syntaxData};

@@ -35,6 +35,13 @@ public:
             result << Tools::Converter::to_string(file.getData().getLibIncludes()) << "\n";
             result << Tools::Converter::to_string(file.getData().getProjIncludes()) << "\n";
             result << "\n\n\n############################################################################\n"; 
+            
+            for (const auto& ptr : file.getData().getData()) {
+                result << "[" << ptr->getResult() << "]\n";
+
+            }
+
+            result << "\n\n\n############################################################################\n"; 
         }
         return result.str();
     }

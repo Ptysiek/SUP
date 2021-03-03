@@ -17,7 +17,8 @@ source/data parsers/  CommentParser  .ut.hpp			0
 source/data parsers/  CommentParser  .hpp			0
 source/data parsers/  IncludeParser  .hpp			0
 source/data parsers/  SyntaxParser  .hpp			0
-source/  data structures/  			4
+source/  data structures/  			5
+source/data structures/  Class  .hpp			0
 source/data structures/  File  .hpp			0
 source/data structures/  FileData  .hpp			0
 source/data structures/  Instruction  .hpp			0
@@ -40,9 +41,17 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
+############################################################################
+
+
+
 ############################################################################  ../source/
 
 
+
+
+
+############################################################################
 
 
 
@@ -55,11 +64,22 @@ memory
 string
 vector
 
+data structures/Class.hpp
 data structures/File.hpp
 data structures/FileData.hpp
 data structures/Instruction.hpp
 data structures/iSyntax.hpp
 
+
+
+
+############################################################################
+[#pragma once
+namespace DataStructures {]
+[using Line = std::string;]
+[using Data = std::vector<std::string>;]
+[using Project = std::vector<File>;]
+[using Syntax = std::vector<std::shared_ptr<iSyntax>>;]
 
 
 
@@ -73,6 +93,88 @@ string
 DataStructures
 Tools
 
+
+
+
+############################################################################
+[#pragma once
+class FileBuilder {]
+[using IgnoreFiles = Tools::IgnoreFiles;]
+[using Converter = Tools::Converter;]
+[const std::string initPath_;]
+[const std::string path_;]
+[const std::string name_;]
+[const std::string format_;]
+[const File product_;]
+[public:
+explicit FileBuilder(
+const std::string& initPath,
+const std::string& path,
+const std::string& fullName,
+const std::vector<File>& subfiles,
+const size_t depth
+):
+initPath_(Converter::AppendConditionalSlash(initPath)),
+path_(Converter::AppendConditionalSlash(path)),
+name_(BuildName(fullName, subfiles.empty())),
+format_(CutoutFormat(fullName)),
+product_(BuildProduct(subfiles, depth))
+{]
+[}
+File getProduct() const {]
+[ return product_;]
+[ }
+static File buildRoot(const std::string& initPath, const std::vector<File>& subFiles) {]
+[auto count = CountRecursive(subFiles);]
+[return {]
+[0, count, "" , "", initPath, "", subFiles};]
+[}
+protected:
+File BuildProduct(const std::vector<File>& subFiles, size_t depth) {]
+[auto count = CountRecursive(subFiles);]
+[return {]
+[depth, count, initPath_, path_, name_, format_, subFiles};]
+[}
+static size_t CountRecursive(const std::vector<File>& subFiles) {]
+[size_t result = subFiles.size();]
+[for (const auto& file : subFiles) {]
+[result += file.countSubFilesRecursive();]
+[}
+return result;]
+[}
+std::string BuildName(const std::string& str, const bool isEmpty) const {]
+[auto name = CutoutName(str);]
+[if (!isEmpty) {]
+[name = Converter::AppendConditionalSlash(name);]
+[}
+return name;]
+[}
+std::string CutoutName(const std::string& str) const {]
+[if (Tools::IgnoreFiles::isIgnored(str)) {]
+[return str;]
+[}
+auto index = str.find('.', 1);]
+[if (index == std::string::npos) {]
+[return str;]
+[}
+index = str.size() - index;]
+[std::string result;]
+[result.insert(result.begin(), str.begin(), str.end()-index);]
+[return result;]
+[}
+std::string CutoutFormat(const std::string& str) const {]
+[if (Tools::IgnoreFiles::isIgnored(str)) {]
+[return "";]
+[}
+auto index = str.find('.', 1);]
+[if (index == std::string::npos) {]
+[return "";]
+[}
+std::string result;]
+[result.insert(result.begin(), str.begin()+index, str.end());]
+[return result;]
+[}
+};]
 
 
 
@@ -92,6 +194,57 @@ data parsers/SyntaxParser.hpp
 
 
 ############################################################################
+[#pragma once
+class FileDataBuilder {]
+[using Data = DataStructures::Data;]
+[using Converter = Tools::Converter;]
+[bool productExist_;]
+[Data rawData_;]
+[const File& fileHeader_;]
+[const FileData product_;]
+[public:
+FileDataBuilder(const File& file):
+productExist_(false),
+rawData_(),
+fileHeader_(file),
+product_(BuildProduct())
+{]
+[}
+bool dataExist() const {]
+[ return productExist_;]
+[ }
+FileData getProduct() const {]
+[ return product_;]
+[ }
+private:
+FileData BuildProduct() {]
+[if (fileHeader_.isCatalog()) {]
+[return BuildEmptyData();]
+[}
+rawData_ = Tools::FileIO::readFile(fileHeader_.getFile());]
+[rawData_ = CommentParser::removeComments(rawData_);]
+[IncludeParser incParser(rawData_);]
+[auto libs = incParser.getLibIncludes();]
+[auto projs = incParser.getProjIncludes();]
+[rawData_ = incParser.getData();]
+[rawData_ = Converter::removeWhitespaces(rawData_);]
+[rawData_ = Converter::removeEmptyLines(rawData_);]
+[SyntaxParser synParser(rawData_);]
+[auto syntaxData = synParser.getProduct();]
+[productExist_ = true;]
+[return {]
+[libs, projs, syntaxData};]
+[return FileData();]
+[}
+FileData BuildEmptyData() {]
+[productExist_ = false;]
+[return FileData();]
+[}
+};]
+
+
+
+############################################################################
 
 
 
@@ -105,6 +258,45 @@ Tools
 
 
 ############################################################################
+[#pragma once
+class GeneratorTxt {]
+[const std::string targetPath_;]
+[std::vector<File> data_;]
+[public:
+explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data):
+targetPath_(targetPath),
+data_(data)
+{]
+[}
+std::string buildFile() {]
+[std::stringstream result;]
+[for (const auto& file : data_) {]
+[result << file.getPath() << " ";]
+[result << file.getName() << " ";]
+[result << file.getFormat() << "\t\t\t";]
+[result << std::to_string(file.getSubFiles().size()) << "\n";]
+[}
+for (const auto& file : data_) {]
+[result << "\n\n\n############################################################################ ";]
+[result << file.getFile() << "\n";]
+[if (file.isCatalog()) {]
+[// continue;]
+[}
+result << Tools::Converter::to_string(file.getData().getLibIncludes()) << "\n";]
+[result << Tools::Converter::to_string(file.getData().getProjIncludes()) << "\n";]
+[result << "\n\n\n############################################################################\n";]
+[for (const auto& ptr : file.getData().getData()) {]
+[result << "[" << ptr->getResult() << "]\n";]
+[}
+result << "\n\n\n############################################################################\n";]
+[}
+return result.str();]
+[}
+};]
+
+
+
+############################################################################
 
 
 
@@ -113,6 +305,188 @@ Tools
 PathInitializer.ut.hpp
 plugins/catch.hpp
 
+
+
+
+############################################################################
+[TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {]
+[//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the CutoutName()") {]
+[struct test {]
+[const PathInitializer_UnitTest object_;]
+[const std::string expectedValue_;]
+[std::string log() const {]
+[return
+"{]
+[ \"" + object_.getTestValue()
++ "\" == \"" + expectedValue_
++ "\" }";]
+[}
+};]
+[const std::initializer_list<test> tests = {]
+[{]
+[ PathInitializer_UnitTest("\n"), "\n" },
+{]
+[ PathInitializer_UnitTest(""), "" },
+{]
+[ PathInitializer_UnitTest("."), "." },
+{]
+[ PathInitializer_UnitTest(".."), ".." },
+{]
+[ PathInitializer_UnitTest("./"), "./" },
+{]
+[ PathInitializer_UnitTest("../"), "../" },
+{]
+[ PathInitializer_UnitTest("a."), "a" },
+{]
+[ PathInitializer_UnitTest("a.abcd"), "a" },
+{]
+[ PathInitializer_UnitTest("abcd."), "abcd" },
+{]
+[ PathInitializer_UnitTest("abcd.abcd"), "abcd" },
+{]
+[ PathInitializer_UnitTest(".a."), ".a" },
+{]
+[ PathInitializer_UnitTest(".a.abcd"), ".a" },
+{]
+[ PathInitializer_UnitTest(".abcd."), ".abcd" },
+{]
+[ PathInitializer_UnitTest(".abcd.abcd"), ".abcd" },
+{]
+[ PathInitializer_UnitTest("..a."), "." },
+{]
+[ PathInitializer_UnitTest("..a.abcd"), "." },
+{]
+[ PathInitializer_UnitTest("..abcd."), "." },
+{]
+[ PathInitializer_UnitTest("..abcd.abcd"), "." }
+};]
+[for (const auto& test : tests) {]
+[THEN(test.log()) {]
+[REQUIRE_NOTHROW(test.object_.CutoutName());]
+[auto result = test.object_.CutoutName();]
+[REQUIRE(result == test.expectedValue_);]
+[}
+}
+}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the CutoutFormat()") {]
+[struct test {]
+[const PathInitializer_UnitTest object_;]
+[const std::string expectedValue_;]
+[std::string log() const {]
+[return
+"{]
+[ \"" + object_.getTestValue()
++ "\" == \"" + expectedValue_
++ "\" }";]
+[}
+};]
+[const std::initializer_list<test> tests = {]
+[{]
+[ PathInitializer_UnitTest("\n"), "" },
+{]
+[ PathInitializer_UnitTest(""), "" },
+{]
+[ PathInitializer_UnitTest("."), "" },
+{]
+[ PathInitializer_UnitTest(".."), "" },
+{]
+[ PathInitializer_UnitTest("./"), "" },
+{]
+[ PathInitializer_UnitTest("../"), "" },
+{]
+[ PathInitializer_UnitTest("a."), "." },
+{]
+[ PathInitializer_UnitTest("a.abcd"), ".abcd" },
+{]
+[ PathInitializer_UnitTest("abcd."), "." },
+{]
+[ PathInitializer_UnitTest("abcd.abcd"), ".abcd" },
+{]
+[ PathInitializer_UnitTest(".a."), "." },
+{]
+[ PathInitializer_UnitTest(".a.abcd"), ".abcd" },
+{]
+[ PathInitializer_UnitTest(".abcd."), "." },
+{]
+[ PathInitializer_UnitTest(".abcd.abcd"), ".abcd" },
+{]
+[ PathInitializer_UnitTest("..a."), ".a." },
+{]
+[ PathInitializer_UnitTest("..a.abcd"), ".a.abcd" },
+{]
+[ PathInitializer_UnitTest("..abcd."), ".abcd." },
+{]
+[ PathInitializer_UnitTest("..abcd.abcd"), ".abcd.abcd" }
+};]
+[for (const auto& test : tests) {]
+[THEN(test.log()) {]
+[REQUIRE_NOTHROW(test.object_.CutoutFormat());]
+[auto result = test.object_.CutoutFormat();]
+[REQUIRE(result == test.expectedValue_);]
+[}
+}
+}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the AppendConditionalSlash()") {]
+[struct test {]
+[const PathInitializer_UnitTest object_;]
+[const std::string expectedValue_;]
+[std::string log() const {]
+[return
+"{]
+[ \"" + object_.getTestValue()
++ "\" == \"" + expectedValue_
++ "\" }";]
+[}
+};]
+[const std::initializer_list<test> tests = {]
+[{]
+[ PathInitializer_UnitTest("\n"), "\n/" },
+{]
+[ PathInitializer_UnitTest(""), "" },
+{]
+[ PathInitializer_UnitTest("."), "./" },
+{]
+[ PathInitializer_UnitTest(".."), "../" },
+{]
+[ PathInitializer_UnitTest("./"), "./" },
+{]
+[ PathInitializer_UnitTest("../"), "../" },
+{]
+[ PathInitializer_UnitTest("a."), "a./" },
+{]
+[ PathInitializer_UnitTest("a.abcd"), "a.abcd/" },
+{]
+[ PathInitializer_UnitTest(".abcd."), ".abcd./" },
+{]
+[ PathInitializer_UnitTest("..abcd.abcd"), "..abcd.abcd/" },
+{]
+[ PathInitializer_UnitTest("a./"), "a./" },
+{]
+[ PathInitializer_UnitTest("a.abcd/"), "a.abcd/" },
+{]
+[ PathInitializer_UnitTest(".abcd./"), ".abcd./" },
+{]
+[ PathInitializer_UnitTest("..abcd.abcd/"), "..abcd.abcd/" },
+{]
+[ PathInitializer_UnitTest("a.//"), "a.//" },
+{]
+[ PathInitializer_UnitTest("a.abcd//"), "a.abcd//" },
+{]
+[ PathInitializer_UnitTest(".abcd.//"), ".abcd.//" },
+{]
+[ PathInitializer_UnitTest("..abcd.abcd//"), "..abcd.abcd//" }
+};]
+[for (const auto& test : tests) {]
+[THEN(test.log()) {]
+[REQUIRE_NOTHROW(test.object_.AppendConditionalSlash());]
+[auto result = test.object_.AppendConditionalSlash();]
+[REQUIRE(result == test.expectedValue_);]
 
 
 
@@ -132,6 +506,56 @@ Tools
 
 
 ############################################################################
+[#pragma once
+class Program {]
+[const ProgramInitializer flagSupport_;]
+[const std::string targetPath_;]
+[const std::string outputPath_;]
+[public:
+explicit Program(const ProgramInitializer& target):
+flagSupport_(target),
+targetPath_(target.getPath()),
+outputPath_("sup.txt")
+{]
+[}
+void execute() {]
+[initializeIgnoreFiles();]
+[ProjectBuilder builder(targetPath_);]
+[auto project = builder.getProduct();]
+[for (const auto& file : project) {]
+[std::cout
+<< file.getDepth() << "\t"
+<< file.countSubFiles() << "\t"
+<< file.countSubFilesRecursive() << "\t"
+<< file.getInitPath() << "\t\t"
+<< file.getPath() << "\t\t"
+<< file.getName() << " \t\t"
+<< file.getFormat() << "\n";]
+[}
+GeneratorTxt generator(targetPath_, project);]
+[Tools::FileIO::saveToFile(outputPath_, generator.buildFile());]
+[}
+private:
+void initializeIgnoreFiles() {]
+[using Tools::Converter;]
+[using Tools::FileIO;]
+[using Tools::IgnoreFiles;]
+[auto fileName = IgnoreFiles::getIgnoreFileName();]
+[if (FileIO::fileExist(fileName)) {]
+[auto data = FileIO::readFile(fileName);]
+[data = IgnoreFiles::pickoutAlwaysIgnored(data);]
+[IgnoreFiles::setIgnoreFiles(Converter::to_set(data));]
+[}
+else {]
+[auto data = IgnoreFiles::getDefaultIgnoreFiles();]
+[FileIO::saveToFile(fileName, Converter::to_fileData(data));]
+[}
+}
+};]
+
+
+
+############################################################################
 
 
 
@@ -140,6 +564,38 @@ string
 
 Tools
 
+
+
+
+############################################################################
+[#pragma once
+/* TODO:
+- napisz obsługę flag. -md -markdown -txt -text
+- flag supprot
+*/
+class ProgramInitializer {]
+[using IgnoreFiles = Tools::IgnoreFiles;]
+[using Converter = Tools::Converter;]
+[const std::string path_;]
+[public:
+explicit ProgramInitializer(const int& argc, const char* const * const argv):
+path_(GenPath(argc, argv))
+{]
+[}
+std::string getPath() const {]
+[ return path_;]
+[ }
+std::string getDefaultPath() const {]
+[ return "../";]
+[ }
+private:
+std::string GenPath(const int& argc, const char* const * const argv) const {]
+[if (argc > 1) {]
+[return Converter::AppendConditionalSlash(argv[1]);]
+[}
+return getDefaultPath();]
+[}
+};]
 
 
 
@@ -160,6 +616,81 @@ Tools
 
 
 ############################################################################
+[#pragma once
+class ProjectBuilder {]
+[using Project = DataStructures::Project;]
+[const std::string initPath_;]
+[const Project product_;]
+[public:
+explicit ProjectBuilder(const std::string& initPath):
+initPath_(initPath),
+product_(BuildProduct())
+{]
+[}
+Project getProduct() const {]
+[ return product_;]
+[ }
+private:
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+Project BuildProduct() const {]
+[auto project = BuildProductStructure();]
+[project = UpdateProjectWithData(project);]
+[return project;]
+[}
+Project UpdateProjectWithData(Project& project) const {]
+[for (auto& file : project) {]
+[FileDataBuilder builder(file);]
+[if (builder.dataExist()) {]
+[file.setData(builder.getProduct());]
+[}
+}
+return project;]
+[}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+Project BuildProductStructure() const {]
+[auto subFiles = BuildRecursive("", 1);]
+[File root = FileBuilder::buildRoot(initPath_, subFiles);]
+[return FlatenRecursive(root);]
+[}
+std::vector<File> BuildRecursive(const std::string& targetPath, int depth) const {]
+[auto paths = Tools::FileIO::readPaths(initPath_ + targetPath);]
+[std::vector<File> files;]
+[for (const auto& path : paths) {]
+[auto subFiles = BuildRecursive(targetPath + path + '/', depth + 1);]
+[FileBuilder builder(initPath_, targetPath, path, subFiles, depth);]
+[files.emplace_back(builder.getProduct());]
+[}
+std::sort(files.begin(), files.end(), SortCriterion_CatalogLast);]
+[return files;]
+[}
+Project FlatenRecursive(const File& root) const {]
+[Project result;]
+[result.emplace_back(root);]
+[for (const auto& file : root.getSubFiles()) {]
+[auto subResult = FlatenRecursive(file);]
+[result.insert(result.end(), subResult.begin(), subResult.end());]
+[}
+return result;]
+[}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+static bool SortCriterion_CatalogLast(const File& f, const File& s) {]
+[int test = f.isCatalog() + s.isCatalog();]
+[if (test % 2 == 0) {]
+[return SortCriterion_Alphabetical(f.getName(), s.getName());]
+[}
+return s.isCatalog();]
+[}
+static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s) {]
+[return (f < s);]
+[}
+};]
+
+
+
+############################################################################
 
 
 
@@ -169,6 +700,15 @@ tools/Converter.hpp
 tools/FileIO.hpp
 tools/IgnoreFiles.hpp
 
+
+
+
+############################################################################
+[#pragma once
+namespace Tools {]
+[class Converter;]
+[class FileIO;]
+[class IgnoreFiles;]
 
 
 
@@ -187,6 +727,10 @@ plugins/catch.hpp
 
 
 
+############################################################################
+
+
+
 ############################################################################  ../source/main.cpp
 iostream
 
@@ -197,12 +741,26 @@ ProgramInitializer.hpp
 
 
 ############################################################################
+[int main(int argc, char* argv[]) {]
+[ProgramInitializer target(argc, argv);]
+[Program program(target);]
+[program.execute();]
+[std::cout << "\n\n";]
+[return 0;]
+
+
+
+############################################################################
 
 
 
 ############################################################################  ../source/data parsers/
 
 
+
+
+
+############################################################################
 
 
 
@@ -221,6 +779,298 @@ plugins/catch.hpp
 
 
 ############################################################################
+[FileParserComments_UnitTest testObject;]
+[TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") {]
+[struct test {]
+[const std::string line_;]
+[const bool expectedValue_;]
+[std::string log() const {]
+[return
+"{]
+[ \"" + line_
++ "\" == " + std::to_string(expectedValue_)
++ " }";]
+[}
+};]
+[//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the IsInsideString()") {]
+[const std::initializer_list<test> tests = {]
+[{]
+[ "", false },
+{]
+[ " abcd", false },
+{]
+[ "abcd", false },
+{]
+[ " \" a\"bcd", false },
+{]
+[ " \' a\'bcd", false },
+{]
+[ " \" \"\" a\"bcd", false },
+{]
+[ " \' \'\' a\'bcd", false },
+{]
+[ " \" \'\' a\"bcd", false },
+{]
+[ " \' \"\" a\'bcd", false },
+{]
+[ " \" \'\" a\'bcd", false },
+{]
+[ " \' \"\' a\"bcd", false },
+{]
+[ " \"\" a\'bcd", true },
+{]
+[ " \'\' a\"bcd", true },
+{]
+[ " \" a\'bcd", true },
+{]
+[ " \' a\"bcd", true },
+{]
+[ " \" abcd", true },
+{]
+[ " \' abcd", true },
+{]
+[ "\"\" \" abcd", true },
+{]
+[ "\'\' ww \' abcd", true }
+};]
+[for (const auto& test : tests) {]
+[THEN(test.log()) {]
+[REQUIRE_NOTHROW(testObject.IsInsideString(test.line_));]
+[auto result = testObject.IsInsideString(test.line_);]
+[REQUIRE(result == test.expectedValue_);]
+[}
+}
+}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the IsAlreadyCommentedByOneline()") {]
+[const std::initializer_list<test> tests = {]
+[{]
+[ "", false },
+{]
+[ "/", false },
+{]
+[ " abcd", false },
+{]
+[ "abcd", false },
+{]
+[ "//", true },
+{]
+[ " abcd//", true },
+{]
+[ " ab//cd", true },
+{]
+[ " // abcd", true },
+{]
+[ "// abcd", true },
+{]
+[ " // abcd//", true },
+{]
+[ " / abcd//", true },
+{]
+[ " / a/bcd//", true },
+{]
+[ "// / abcd", true },
+{]
+[ "// / a/b/c/d", true },
+{]
+[ " / abcd", false },
+{]
+[ "/ / a/bc/d", false },
+};]
+[for (const auto& test : tests) {]
+[THEN(test.log()) {]
+[REQUIRE_NOTHROW(testObject.IsAlreadyCommentedByOneline(test.line_));]
+[auto result = testObject.IsAlreadyCommentedByOneline(test.line_);]
+[REQUIRE(result == test.expectedValue_);]
+[}
+}
+}
+}
+TEST_CASE("FileParserComments: RemoveOneLine operations", "[RemoveOnelineComments], [RemoveAllOnelineComments]") {]
+[struct test {]
+[const std::string line_;]
+[const std::string expectedValue_;]
+[std::string log() const {]
+[return
+"{]
+[ \"" + line_
++ "\" == \"" + expectedValue_
++ "\" }";]
+[}
+};]
+[const std::initializer_list<test> tests = {]
+[{]
+["", ""},
+{]
+[" abcd", " abcd"},
+{]
+[" // abcd", " "},
+{]
+[" a//bcd", " a"},
+{]
+[" abcd//", " abcd"},
+{]
+["// abcd", ""},
+{]
+[" /abcd", " /abcd"},
+{]
+[" /a/b/cd", " /a/b/cd"},
+{]
+[" abcd/", " abcd/"},
+{]
+["/ abcd", "/ abcd"},
+{]
+["/ abcd/", "/ abcd/"},
+{]
+[" \" abcd", " \" abcd"},
+{]
+[" \" abcd\"", " \" abcd\""},
+{]
+[" \"\" abcd", " \"\" abcd"},
+{]
+[" \' abcd", " \' abcd"},
+{]
+[" \' abcd\'", " \' abcd\'"},
+{]
+[" \'\' abcd", " \'\' abcd"},
+{]
+[" \"\' abcd", " \"\' abcd"},
+{]
+[" \"\'\" abcd", " \"\'\" abcd"},
+{]
+[" \" //abcd", " \" //abcd"},
+{]
+[" \" abcd\"//", " \" abcd\""},
+{]
+[" \"\"// abcd", " \"\""},
+{]
+[" //\' abcd", " "},
+{]
+[" \' a/bcd\'", " \' a/bcd\'"},
+{]
+[" \'\' abc//d", " \'\' abc"},
+{]
+[" \"\' a//bcd", " \"\' a//bcd"},
+{]
+[" \"\'\" a//bcd", " \"\'\" a//bcd"},
+{]
+[" \"\' a/bcd", " \"\' a/bcd"},
+{]
+[" \"\'\" a/bcd", " \"\'\" a/bcd"}
+};]
+[//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the RemoveOnelineComments()") {]
+[for (const auto& test : tests) {]
+[THEN(test.log()) {]
+[REQUIRE_NOTHROW(testObject.RemoveOnelineComments(test.line_));]
+[auto result = testObject.RemoveOnelineComments(test.line_);]
+[REQUIRE(result == test.expectedValue_);]
+[}
+}
+}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the RemoveAllOnelineComments()") {]
+[std::vector<std::string> data;]
+[data.reserve(tests.size());]
+[std::for_each(tests.begin(), tests.end(), [&](auto test){]
+[ data.push_back(test.line_);]
+[ });]
+[REQUIRE_NOTHROW(testObject.RemoveAllOnelineComments(data));]
+[auto results = testObject.RemoveAllOnelineComments(data);]
+[size_t i = 0;]
+[for (const auto& test : tests) {]
+[THEN("id: " + std::to_string(i) + " (" + results.at(i) + ") == (" + test.expectedValue_ + ")") {]
+[REQUIRE(results.at(i) == test.expectedValue_);]
+[}
+++i;]
+[}
+}
+}
+TEST_CASE("FileParserComments: RemoveMultiline operations", "[ClearLine]") {]
+[//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+WHEN("Testing the Multiline_ClearLine()") {]
+[struct test {]
+[const std::string line_;]
+[const std::string expectedValue_;]
+[const bool expectedBool_;]
+[std::string log() const {]
+[return
+"{]
+[ \"" + line_
++ "\" == \"" + expectedValue_
++ "\" }";]
+[}
+};]
+[const std::initializer_list<test> tests = {]
+[{]
+["", "", true},
+{]
+["asdfbd", "", true},
+{]
+["asdfbd*/", "", false},
+{]
+["asd*/fbd", "fbd", false},
+{]
+["*/asdfbd", "asdfbd", false},
+{]
+["*/asdfbd*/", "asdfbd*/", false},
+{]
+["asd*/fbd*/", "fbd*/", false},
+{]
+["asd*/*/fbd*/", "*/fbd*/", false},
+{]
+["asd/*/fbd*/", "fbd*/", false},
+{]
+["asd//fbd*/", "", true},
+{]
+["//asd*/fbd", "", true},
+{]
+["asd//*/fbd*/", "", true},
+{]
+["asd*///fbd*/", "//fbd*/", false},
+{]
+["asd*/f//bd*/", "f//bd*/", false},
+{]
+["a/s/d/*/fbd", "fbd", false},
+{]
+["a/s/d*/fbd", "fbd", false},
+{]
+["asd*/fb\"d", "fb\"d", false},
+{]
+["asd*/fb\"\"d", "fb\"\"d", false},
+{]
+["asd*/fb\'d\'", "fb\'d\'", false},
+{]
+["a\"sd*/fb\"d", "", true},
+{]
+["a\'sd*/fb\"d", "", true},
+{]
+["a\"s\"d*/fb\"d", "fb\"d", false},
+{]
+["a\'s\'d*/fb\"d", "fb\"d", false},
+{]
+["a\"s\'d*/fb\"d", "", true},
+{]
+["a\'s\"d*/fb\"d", "", true}
+};]
+[for (const auto& test : tests) {]
+[THEN(test.log()) {]
+[bool isCommented = true;]
+[REQUIRE_NOTHROW(testObject.Multiline_ClearLine(test.line_, isCommented));]
+[isCommented = true;]
+[auto result = testObject.Multiline_ClearLine(test.line_, isCommented);]
+[REQUIRE(result == test.expectedValue_);]
+[REQUIRE(isCommented == test.expectedBool_);]
+
+
+
+############################################################################
 
 
 
@@ -232,12 +1082,130 @@ CommentParser.hpp
 
 
 ############################################################################
+[class CommentParser_UnitTest : CommentParser {]
+[public:
+CommentParser_UnitTest() {]
+[}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+bool IsInsideString(const Line& line) {]
+[return CommentParser::IsInsideString(line);]
+[}
+bool IsAlreadyCommentedByOneline(const Line& subline) {]
+[return CommentParser::IsAlreadyCommentedByOneline(subline);]
+[}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+Line RemoveOnelineComments(const Line& line) {]
+[return CommentParser::RemoveOnelineComments(line);]
+[}
+Data RemoveAllOnelineComments(const Data& data) {]
+[return CommentParser::RemoveAllOnelineComments(data);]
+[}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+Line Multiline_ClearLine(const Line& line, bool& isCommented) {]
+[return CommentParser::Multiline_ClearLine(line, isCommented);]
+[}
+};]
+
+
+
+############################################################################
 
 
 
 ############################################################################  ../source/data parsers/CommentParser.hpp
 
 
+
+
+
+############################################################################
+[#pragma once
+/* TODO:
+- fix multiline comments
+ex: abcd *//* */ /* *** */ /* */ /* abcdc */
+class CommentParser {]
+[protected:
+using Data = DataStructures::Data;]
+[using Line = DataStructures::Line;]
+[CommentParser() {]
+[}
+public:
+static Data removeComments(Data data) {]
+[RemoveAllOnelineComments(data);]
+[RemoveMultilineComments(data);]
+[return data;]
+[}
+protected:
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+static Data RemoveAllOnelineComments(Data data) {]
+[for (auto& line : data) {]
+[line = RemoveOnelineComments(line);]
+[}
+return data;]
+[}
+static Line RemoveOnelineComments(const Line& line) {]
+[auto i = line.find("//");]
+[if (i == std::string::npos) {]
+[return line;]
+[}
+if (IsInsideString(line.substr(0, i))) {]
+[return line;]
+[}
+return line.substr(0, i);]
+[}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+static Data RemoveMultilineComments(Data data) {]
+[bool isCommented = false;]
+[for (auto& line : data) {]
+[if (isCommented) {]
+[Multiline_ClearLine(line, isCommented);]
+[}
+auto begin = line.find("/*");]
+[if (begin != std::string::npos) {]
+[Multiline_FindClosing(line, isCommented, begin);]
+[}
+}
+return data;]
+[}
+static Line Multiline_ClearLine(Line line, bool& isCommented) {]
+[auto end = line.find("*/");]
+[if (end == std::string::npos) {]
+[return "";]
+[}
+if (IsAlreadyCommentedByOneline(line.substr(0, end))) {]
+[return "";]
+[}
+if (IsInsideString(line.substr(0, end))) {]
+[return "";]
+[}
+isCommented = false;]
+[return line.substr(end + 2);]
+[}
+static Line Multiline_FindClosing(Line line, bool& isCommented, const size_t begin) {]
+[auto end = line.find("*/", begin);]
+[if (end != std::string::npos) {]
+[std::string tmp = line.substr(end + 2);]
+[return line.substr(0, begin) + " " + tmp;]
+[}
+isCommented = true;]
+[return line.substr(0, begin);]
+[}
+//_______________________________________________________________________________________________________
+//-------------------------------------------------------------------------------------------------------
+static bool IsInsideString(const Line& subline) {]
+[auto count_a = std::count(subline.begin(), subline.end(), '\"');]
+[auto count_b = std::count(subline.begin(), subline.end(), '\'');]
+[return (count_a % 2) || (count_b % 2);]
+[}
+static bool IsAlreadyCommentedByOneline(const Line& subline) {]
+[return (subline.find("//") != std::string::npos);]
+[}
+};]
 
 
 
@@ -253,13 +1221,141 @@ CommentParser.hpp
 
 
 ############################################################################
+[#pragma once
+class IncludeParser {]
+[using Converter = Tools::Converter;]
+[using Data = DataStructures::Data;]
+[using Line = DataStructures::Line;]
+[Data data_;]
+[Data libIncludes_;]
+[Data projIncludes_;]
+[public:
+IncludeParser(const Data& data):
+data_(data),
+libIncludes_(),
+projIncludes_()
+{]
+[BuildIncludes();]
+[}
+Data getLibIncludes() const {]
+[ return libIncludes_;]
+[ }
+Data getProjIncludes() const {]
+[ return projIncludes_;]
+[ }
+Data getData() const {]
+[ return data_;]
+[ }
+protected:
+void BuildIncludes() {]
+[auto includes = CutoutIncludes();]
+[for (auto str : includes) {]
+[str = Converter::removeWhitespaces(str);]
+[if (str.at(0) == '<') {]
+[libIncludes_.push_back(str.substr(1, str.length() - 2));]
+[}
+else if (str.at(0) == '\"') {]
+[projIncludes_.push_back(str.substr(1, str.length() - 2));]
+[}
+else {]
+[throw std::logic_error("ParsedFile::BuildIncludes(): wrong syntax \"" + str + "\"");]
+[}
+}
+std::sort(libIncludes_.begin(), libIncludes_.end());]
+[std::sort(projIncludes_.begin(), projIncludes_.end());]
+[}
+Data CutoutIncludes() {]
+[Data includes;]
+[for (auto& line : data_) {]
+[if (Tools::Converter::removeWhitespaces(line)[0] != '#') {]
+[continue;]
+[}
+if (line.find("#include") != std::string::npos) {]
+[includes.push_back(line.substr(8));]
+[line = "";]
+[}
+}
+return includes;]
+[}
+};]
+
+
+
+############################################################################
 
 
 
 ############################################################################  ../source/data parsers/SyntaxParser.hpp
+iostream
 
 ../DataStructures
 
+
+
+
+############################################################################
+[#pragma once
+class SyntaxParser {]
+[using Converter = Tools::Converter;]
+[using Data = DataStructures::Data;]
+[using Line = DataStructures::Line;]
+[using Syntax = DataStructures::Syntax;]
+[std::string rawData_;]
+[Syntax product_;]
+[public:
+SyntaxParser(const Data& data):
+rawData_(MergeRawData(data)),
+product_(BuildProduct())
+{]
+[}
+std::string getData() const {]
+[ return rawData_;]
+[ }
+Syntax getProduct() const {]
+[ return product_;]
+[ }
+protected:
+std::string MergeRawData(const Data& data) const {]
+[return Converter::to_string(data);]
+[}
+Syntax BuildProduct() {]
+[Syntax result;]
+[std::string draft = rawData_;]
+[size_t i = ClosestSemicolonOrParenthesis(draft);]
+[while(i != std::string::npos) {]
+[std::string syntaxData = draft.substr(0, i + 1);]
+[syntaxData = ClearFromNewLine(syntaxData);]
+[//std::cout << i << std::endl;]
+[draft = draft.substr(i + 1);]
+[result.emplace_back(std::make_shared<Instruction>(syntaxData));]
+[i = ClosestSemicolonOrParenthesis(draft);]
+[}
+return result;]
+[}
+size_t ClosestSemicolonOrParenthesis(const Line& line) {]
+[// if (line.find(';]
+[') != std::string::npos);]
+[// return line.find(';]
+[');]
+[return std::min(line.find(';]
+['), line.find('{]
+['));]
+[}
+bool hasCoolon(const Line& line) {]
+[return (line.find(';]
+[') == std::string::npos);]
+[}
+bool hasO_Bracket(const Line& line) {]
+[return (line.find('{]
+[') == std::string::npos);]
+[}
+bool hasC_Bracket(const Line& line) {]
+[return (line.find('}') == std::string::npos);]
+[}
+std::string ClearFromNewLine(const std::string& line) {]
+[return (line[0] == '\n')? line.substr(1) : line;]
+[}
+};]
 
 
 
@@ -277,12 +1373,119 @@ CommentParser.hpp
 
 
 
+############################################################################
+
+
+
+############################################################################  ../source/data structures/Class.hpp
+string
+
+iSyntax.hpp
+
+
+
+
+############################################################################
+[#pragma once
+class Class : public iSyntax {]
+[std::string rawData_;]
+[std::vector<std::shared_ptr<iSyntax>> subElements_;]
+[public:
+//enum Type {]
+[ Instruction, Function, Operation, Class, Structure };]
+[//enum Memory {]
+[ Global, Component, Static };]
+[Type getSyntaxType() const override {]
+[ return Type::Class;]
+[ }
+//Memory getMemoryType() const override {]
+[ return Memory:: ;]
+[ }
+};]
+
+
+
+############################################################################
+
+
+
 ############################################################################  ../source/data structures/File.hpp
 string
 vector
 
 FileData.hpp
 
+
+
+
+############################################################################
+[#pragma once
+class File {]
+[size_t depth_;]
+[size_t countRecursive_;]
+[std::string initPath_;]
+[std::string path_;]
+[std::string name_;]
+[std::string format_;]
+[std::vector<File> subFiles_;]
+[FileData data_;]
+[public:
+File(
+const size_t depth,
+const size_t countRecursive,
+const std::string& initPath,
+const std::string& path,
+const std::string& name,
+const std::string& format,
+const std::vector<File>& subFiles
+):
+depth_(depth),
+countRecursive_(countRecursive),
+initPath_(initPath),
+path_(path),
+name_(name),
+format_(format),
+subFiles_(subFiles),
+data_()
+{]
+[}
+std::string getInitPath() const {]
+[ return initPath_;]
+[ }
+std::string getPath() const {]
+[ return path_;]
+[ }
+std::string getName() const {]
+[ return name_;]
+[ }
+std::string getFormat() const {]
+[ return format_;]
+[ }
+std::string getFile() const {]
+[ return initPath_ + path_ + name_ + format_;]
+[ }
+std::vector<File> getSubFiles() const {]
+[ return subFiles_;]
+[ }
+bool isCatalog() const {]
+[ return !subFiles_.empty();]
+[ }
+size_t getDepth() const {]
+[ return depth_;]
+[ }
+size_t countSubFiles() const {]
+[ return subFiles_.size();]
+[ }
+size_t countSubFilesRecursive() const {]
+[ return countRecursive_;]
+[ }
+void setData(const FileData& data) {]
+[ data_ = data;]
+[ }
+FileData getData() const {]
+[ return data_;]
+[ }
+};]
 
 
 
@@ -300,13 +1503,74 @@ iSyntax.hpp
 
 
 ############################################################################
+[#pragma once
+class FileData {]
+[std::vector<std::string> libIncludes_;]
+[std::vector<std::string> projIncludes_;]
+[std::vector<std::shared_ptr<iSyntax>> data_;]
+[public:
+FileData():
+libIncludes_(),
+projIncludes_(),
+data_()
+{]
+[}
+FileData(
+const std::vector<std::string>& libIncludes,
+const std::vector<std::string>& projIncludes,
+const std::vector<std::shared_ptr<iSyntax>>& data
+):
+libIncludes_(libIncludes),
+projIncludes_(projIncludes),
+data_(data)
+{]
+[}
+std::vector<std::string> getLibIncludes() const {]
+[ return libIncludes_;]
+[ }
+std::vector<std::string> getProjIncludes() const {]
+[ return projIncludes_;]
+[ }
+std::vector<std::shared_ptr<iSyntax>> getData() const {]
+[ return data_;]
+[ }
+};]
+
+
+
+############################################################################
 
 
 
 ############################################################################  ../source/data structures/Instruction.hpp
+string
 
 iSyntax.hpp
 
+
+
+
+############################################################################
+[#pragma once
+class Instruction : public iSyntax {]
+[std::string rawData_;]
+[public:
+std::string getResult() const override {]
+[return rawData_;]
+[}
+Instruction(const std::string& data): rawData_(data) {]
+[}
+//enum Type {]
+[ Instruction, Function, Operation, Class, Structure };]
+[//enum Memory {]
+[ Global, Component, Static };]
+[Type getSyntaxType() const override {]
+[ return Type::Instruction;]
+[ }
+//Memory getMemoryType() const override {]
+[ return Memory:: ;]
+[ }
+};]
 
 
 
@@ -317,6 +1581,23 @@ iSyntax.hpp
 ############################################################################  ../source/data structures/iSyntax.hpp
 
 
+
+
+
+############################################################################
+[#pragma once
+class iSyntax {]
+[public:
+enum Type {]
+[ Instruction, Function, Operation, Class, Structure };]
+[enum Memory {]
+[ Global, Component, Static };]
+[virtual ~iSyntax() {]
+[};]
+[virtual std::string getResult() const = 0;]
+[virtual Type getSyntaxType() const = 0;]
+[// virtual Memory getMemoryType() const = 0;]
+[};]
 
 
 
@@ -334,6 +1615,10 @@ iSyntax.hpp
 
 
 
+############################################################################
+
+
+
 ############################################################################  ../source/tools/Converter.hpp
 algorithm
 set
@@ -341,6 +1626,113 @@ sstream
 vector
 
 
+
+
+
+############################################################################
+[#pragma once
+namespace Tools {]
+[class Converter {]
+[public:
+template <class T>
+static std::set<T> to_set(const std::vector<T>& data) {]
+[return std::set<T>(data.begin(), data.end());]
+[}
+static std::string to_fileData(const std::set<std::string>& data) {]
+[std::string result;]
+[std::for_each (data.begin(), data.end(), [&](const auto& val){]
+[result += val + '\n';]
+[});]
+[return result;]
+[}
+static std::string to_string(const std::vector<std::string>& data2) {]
+[std::stringstream result;]
+[auto data = removeEmptyLines(data2);]
+[std::for_each(data.begin(), data.end(), [&](const auto& line){]
+[result << removeWhitespaces(line) << "\n";]
+[});]
+[return result.str();]
+[}
+static std::string AppendConditionalSlash(std::string str) {]
+[if (!str.empty()) {]
+[str += (str.at(str.size()-1) == '/')? "" : "/";]
+[}
+return str;]
+[}
+static std::vector<std::string> removeWhitespaces(std::vector<std::string> data) {]
+[for (auto& line : data) {]
+[line = removeWhitespaces(line);]
+[}
+return data;]
+[}
+static std::string removeWhitespaces(std::string data) {]
+[data = RemoveSpecialChars(data);]
+[data = RemoveFromBegin(data);]
+[data = RemoveFromEnd(data);]
+[data = RemoveAdjacentSpaces(data);]
+[return data;]
+[}
+static std::vector<std::string> removeEmptyLines(const std::vector<std::string>& data) {]
+[std::vector<std::string> result;]
+[result.reserve(data.size());]
+[for (auto record : data) {]
+[record = removeWhitespaces(record);]
+[if (!record.empty()) {]
+[result.push_back(record);]
+[}
+}
+return result;]
+[}
+private:
+static std::string RemoveSpecialChars(const std::string& data) {]
+[std::string result = data;]
+[std::for_each(begin(result), end(result),
+[](auto& ch){]
+[ ch = (ch == '\n' || ch == '\t')? ' ' : ch;]
+[ });]
+[return result;]
+[}
+static std::string RemoveFromBegin(const std::string& data) {]
+[size_t i = 0;]
+[for ( ;]
+[ i < data.size();]
+[ ++i) {]
+[if (data[i] != ' ') {]
+[break;]
+[}
+}
+return data.substr(i);]
+[}
+static std::string RemoveFromEnd(const std::string& data) {]
+[int i = static_cast<int>(data.size()) - 1;]
+[for ( ;]
+[ i >= 0;]
+[ --i) {]
+[if (data[i] != ' ') {]
+[break;]
+[}
+}
+return data.substr(0, i+1);]
+[}
+static std::string RemoveAdjacentSpaces(const std::string& data) {]
+[std::stringstream result;]
+[bool foundSpace = false;]
+[for (size_t i = 0;]
+[ i < data.size();]
+[ ++i) {]
+[if (!foundSpace) {]
+[result << data[i];]
+[foundSpace = (data[i] == ' ');]
+[continue;]
+[}
+foundSpace = (data[i] == ' ');]
+[if (!foundSpace) {]
+[result << data[i];]
+[}
+}
+return result.str();]
+[}
+};]
 
 
 
@@ -361,6 +1753,65 @@ IgnoreFiles.hpp
 
 
 ############################################################################
+[#pragma once
+namespace Tools {]
+[class FileIO {]
+[explicit FileIO() {]
+[}
+public:
+static bool fileExist(const std::string& path) {]
+[std::ifstream readFile(path);]
+[if (!readFile || !readFile.is_open()) {]
+[readFile.close();]
+[return false;]
+[}
+readFile.close();]
+[return true;]
+[}
+static std::vector<std::string> readPaths(const std::string& targetPath) {]
+[std::vector<std::string> result;]
+[DIR* directory;]
+[directory = opendir(targetPath.c_str());]
+[if (!directory) {]
+[return result;]
+[}
+struct dirent* entry;]
+[while ((entry = readdir(directory)) != NULL) {]
+[const std::string data = entry->d_name;]
+[if (IgnoreFiles::isIgnored(data)) {]
+[continue;]
+[}
+result.push_back(data);]
+[}
+closedir(directory);]
+[return result;]
+[}
+static std::vector<std::string> readFile(const std::string& path) {]
+[std::ifstream readFile(path);]
+[if (!readFile || !readFile.is_open()) {]
+[throw std::logic_error("Cannot read given file path: " + path + "\n");]
+[}
+std::vector<std::string> result;]
+[std::string record;]
+[while (std::getline(readFile, record)) {]
+[result.push_back(record);]
+[}
+readFile.close();]
+[return result;]
+[}
+static void saveToFile(const std::string& path, const std::string& data) {]
+[std::ofstream output(path);]
+[if (!output || !output.is_open()) {]
+[throw std::logic_error("Cannot save to file: " + path + "\n");]
+[}
+output << data;]
+[output.close();]
+[}
+};]
+
+
+
+############################################################################
 
 
 
@@ -370,6 +1821,36 @@ vector
 
 IgnoreFiles.hpp
 
+
+
+
+############################################################################
+[namespace Tools {]
+[const std::string IgnoreFiles::filename_ = ".supignore";]
+[const std::set<std::string> IgnoreFiles::formatIgnores_ {]
+[".ut.cpp",
+".ut.hpp"
+};]
+[const std::set<std::string> IgnoreFiles::alwaysIgnores_ {]
+["\n",
+"",
+".",
+"..",
+"./",
+"../"
+};]
+[std::set<std::string> IgnoreFiles::defaultIgnores_ {]
+[".git",
+".gitignore",
+".notes",
+".sup",
+"notes",
+"build",
+"plugins",
+"tags",
+"README.md",
+"CMakeLists.txt"
+};]
 
 
 
@@ -384,6 +1865,54 @@ string
 vector
 
 
+
+
+
+############################################################################
+[#pragma once
+namespace Tools {]
+[class IgnoreFiles {]
+[const static std::string filename_;]
+[const static std::set<std::string> alwaysIgnores_;]
+[const static std::set<std::string> formatIgnores_;]
+[static std::set<std::string> defaultIgnores_;]
+[static std::set<std::string> ignored_;]
+[explicit IgnoreFiles() {]
+[ }
+public:
+static void setIgnoreFiles(const std::set<std::string>& data) {]
+[ defaultIgnores_ = data;]
+[ }
+static std::string getIgnoreFileName() {]
+[ return filename_;]
+[ }
+static std::set<std::string> getDefaultIgnoreFiles() {]
+[ return defaultIgnores_;]
+[ }
+static bool isAlwaysIgnored(const std::string& value) {]
+[return (alwaysIgnores_.find(value) != alwaysIgnores_.end());]
+[}
+static bool isFormatIgnored(const std::string& format) {]
+[return (formatIgnores_.find(format) != formatIgnores_.end());]
+[}
+static bool isIgnored(const std::string& value) {]
+[if (isAlwaysIgnored(value)) {]
+[return true;]
+[}
+if (isFormatIgnored(value)) {]
+[return true;]
+[}
+return (defaultIgnores_.find(value) != defaultIgnores_.end());]
+[}
+static std::vector<std::string> pickoutAlwaysIgnored(const std::vector<std::string>& vctr) {]
+[std::vector<std::string> result;]
+[result.resize(vctr.size());]
+[std::copy_if(vctr.begin(), vctr.end(), result.begin(), [](auto val){]
+[return !isAlwaysIgnored(val);]
+[});]
+[return result;]
+[}
+};]
 
 
 

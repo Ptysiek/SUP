@@ -5,20 +5,18 @@
 #include "iSyntax.hpp"
 
 
-class Instruction : public iSyntax {
+class Class : public iSyntax {
 
     std::string rawData_;
-    
-public:
 
-    std::string getResult() const override {
-        return rawData_;   
-    }
     
-    Instruction(const std::string& data): rawData_(data) {}
+    std::vector<std::shared_ptr<iSyntax>> subElements_;
+
+
+public:
     //enum Type { Instruction, Function, Operation, Class, Structure };
     //enum Memory { Global, Component, Static }; 
 
-    Type getSyntaxType() const override { return Type::Instruction; }
+    Type getSyntaxType() const override { return Type::Class; }
     //Memory getMemoryType() const override { return Memory::  ; } 
 };

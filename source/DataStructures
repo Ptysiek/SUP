@@ -8,6 +8,7 @@
 #include "data structures/FileData.hpp"
 #include "data structures/iSyntax.hpp"
 #include "data structures/Instruction.hpp"
+#include "data structures/Class.hpp"
 
 
 namespace DataStructures {
