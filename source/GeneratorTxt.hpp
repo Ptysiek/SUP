@@ -27,6 +27,11 @@ public:
         for (const auto& file : data_) {
             result << "\n\n\n############################################################################  "; 
             result << file.getFile() << "\n";
+
+            if (file.isCatalog()) {
+            //    continue;
+            }
+
             result << Tools::Converter::to_string(file.getData().getLibIncludes()) << "\n";
             result << Tools::Converter::to_string(file.getData().getProjIncludes()) << "\n";
             result << "\n\n\n############################################################################\n"; 

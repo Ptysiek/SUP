@@ -16,10 +16,3 @@ int main(int argc, char* argv[]) {
 
 
 
-/* TODO:
-    - napisz obsługę flag. -md -markdown -txt -text
-
-    - flag supprot
-*/
-
-

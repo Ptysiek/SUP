@@ -8,16 +8,15 @@ ex:   abcd  *//* */ /* *** */  /* */ /* abcdc */
 
 class CommentParser {
 protected:
- /*
  
- using Data = DataStructures::Data;
+    using Data = DataStructures::Data;
     using Line = DataStructures::Line;
 
-    FileParserComments() {}
+    CommentParser() {}
 
 
 public:
-    static Data modifyData(Data data) {
+    static Data removeComments(Data data) {
         RemoveAllOnelineComments(data);
         RemoveMultilineComments(data);
         return data;
@@ -53,17 +52,15 @@ protected:
             if (isCommented) {
                 Multiline_ClearLine(line, isCommented);
             }
-            auto begin = line.find("/ *");
+            auto begin = line.find("/*");
             if (begin != std::string::npos) {
                 Multiline_FindClosing(line, isCommented, begin);
             }
         }
         return data;
     }
-    */
-    //static Line Multiline_ClearLine(Line line, bool& isCommented) {
-      //  auto end = line.find("*/");
-        /*
+    static Line Multiline_ClearLine(Line line, bool& isCommented) {
+        auto end = line.find("*/");
         
         if (end == std::string::npos) {
             return "";
@@ -77,10 +74,8 @@ protected:
         isCommented = false;
         return line.substr(end + 2);
     }
-*/
-    //static Line Multiline_FindClosing(Line line, bool& isCommented, const size_t begin) {
-        //auto end = line.find("*/", begin);
-        /*
+    static Line Multiline_FindClosing(Line line, bool& isCommented, const size_t begin) {
+        auto end = line.find("*/", begin);
         
         if (end != std::string::npos) {
             std::string tmp = line.substr(end + 2);
@@ -101,7 +96,6 @@ protected:
     static bool IsAlreadyCommentedByOneline(const Line& subline) {
         return (subline.find("//") != std::string::npos);
     }
-    */
 };
 
 

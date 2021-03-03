@@ -8,6 +8,7 @@
 
 
 namespace DataStructures {
+    using Line = std::string;
     using Data = std::vector<std::string>;
     using Project = std::vector<File>;
 }

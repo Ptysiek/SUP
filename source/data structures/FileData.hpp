@@ -28,19 +28,5 @@ public:
 
 
 private:
-/*    void BuildIncludes(const Data& includes) {
-        for (auto str : includes) {
-            str = Converter::removeWhitespaces(str);
-            if (str.at(0) == '<') {
-                libIncludes_.push_back(str.substr(1, str.length() - 2));
-            }
-            else if (str.at(0) == '\"') {
-                projIncludes_.push_back(str.substr(1, str.length() - 2));
-            }
-            else {
-                throw std::logic_error("ParsedFile::BuildIncludes():  wrong syntax \"" + str + "\"");
-            }
-        }
-    }*/
-};
 
+};

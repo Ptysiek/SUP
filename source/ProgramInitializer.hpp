@@ -4,6 +4,13 @@
 
 #include "Tools"
 
+/* TODO:
+    - napisz obsługę flag. -md -markdown -txt -text
+
+    - flag supprot
+*/
+
+
 
 class ProgramInitializer {
     using IgnoreFiles = Tools::IgnoreFiles;

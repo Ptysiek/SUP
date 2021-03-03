@@ -3,6 +3,7 @@
 #include "Tools"
 #include "DataStructures"
 #include "data parsers/CommentParser.hpp"
+#include "data parsers/IncludeParser.hpp"
 
 
 class FileDataBuilder {
@@ -33,11 +34,15 @@ private:
             return BuildEmptyData();
         }
         rawData_ = Tools::FileIO::readFile(fileHeader_.getFile());
+ 
+        rawData_ = CommentParser::removeComments(rawData_);
 
-        //data = FileParserComments::modifyData(data);
+        IncludeParser incParser(rawData_);
+        auto libs = incParser.getLibIncludes();
+        auto projs = incParser.getProjIncludes();
+        rawData_ = incParser.getData();
+
         //auto includes = CutoutIncludes(data);
- 
- 
  
  //       SyntaxedData syntaxedData_;
    //     syntaxedData = FileParserSyntax::generateSyntax(data);
@@ -45,29 +50,14 @@ private:
       //  return ParsedFile(rawFile_, data, syntaxedData, includes);
         //return {data, includes};
         productExist_ = true;
-        return BuildEmptyData();
+        return {libs, projs};
     }
+
 
     FileData BuildEmptyData() {
         productExist_ = false;
         return FileData();
     }
 
-/*
-    std::vector<std::string> CutoutIncludes(Data& data) const {
-        std::vector<std::string> includes;
-        for (auto& line : data) {
-            if (Tools::Converter::removeWhitespaces(line)[0] != '#') {
-                continue;
-            }
-
-            if (line.find("#include") != std::string::npos) {
-                includes.push_back(line.substr(8));
-                line = "";
-            }
-        }
-        return includes;
-    }
-    */
 };
 

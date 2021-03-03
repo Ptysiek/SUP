@@ -1,5 +1,5 @@
   ../  			1
-  source  			14
+  source/  			14
 source/  DataStructures  			0
 source/  FileBuilder  .hpp			0
 source/  FileDataBuilder  .hpp			0
@@ -11,14 +11,15 @@ source/  ProjectBuilder  .hpp			0
 source/  Tools  			0
 source/  catch_main  .cpp			0
 source/  main  .cpp			0
-source/  data parsers  			3
+source/  data parsers/  			4
 source/data parsers/  CommentParser  .ut.cpp			0
 source/data parsers/  CommentParser  .ut.hpp			0
 source/data parsers/  CommentParser  .hpp			0
-source/  data structures  			2
+source/data parsers/  IncludeParser  .hpp			0
+source/  data structures/  			2
 source/data structures/  File  .hpp			0
 source/data structures/  FileData  .hpp			0
-source/  tools  			4
+source/  tools/  			4
 source/tools/  Converter  .hpp			0
 source/tools/  FileIO  .hpp			0
 source/tools/  IgnoreFiles  .cpp			0
@@ -36,7 +37,7 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  ../source
+############################################################################  ../source/
 
 
 
@@ -47,7 +48,11 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/DataStructures
+string
+vector
 
+data structures/File.hpp
+data structures/FileData.hpp
 
 
 
@@ -57,7 +62,10 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/FileBuilder.hpp
+string
 
+DataStructures
+Tools
 
 
 
@@ -68,6 +76,10 @@ source/tools/  IgnoreFiles  .hpp			0
 
 ############################################################################  ../source/FileDataBuilder.hpp
 
+DataStructures
+Tools
+data parsers/CommentParser.hpp
+data parsers/IncludeParser.hpp
 
 
 
@@ -77,7 +89,10 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/GeneratorTxt.hpp
+sstream
 
+DataStructures
+Tools
 
 
 
@@ -88,6 +103,8 @@ source/tools/  IgnoreFiles  .hpp			0
 
 ############################################################################  ../source/PathInitializer.ut.cpp
 
+PathInitializer.ut.hpp
+plugins/catch.hpp
 
 
 
@@ -97,7 +114,12 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/Program.hpp
+iostream
 
+GeneratorTxt.hpp
+ProgramInitializer.hpp
+ProjectBuilder.hpp
+Tools
 
 
 
@@ -107,7 +129,9 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/ProgramInitializer.hpp
+string
 
+Tools
 
 
 
@@ -117,7 +141,13 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/ProjectBuilder.hpp
+algorithm
+string
 
+DataStructures
+FileBuilder.hpp
+FileDataBuilder.hpp
+Tools
 
 
 
@@ -128,6 +158,9 @@ source/tools/  IgnoreFiles  .hpp			0
 
 ############################################################################  ../source/Tools
 
+tools/Converter.hpp
+tools/FileIO.hpp
+tools/IgnoreFiles.hpp
 
 
 
@@ -138,6 +171,7 @@ source/tools/  IgnoreFiles  .hpp			0
 
 ############################################################################  ../source/catch_main.cpp
 
+plugins/catch.hpp
 
 
 
@@ -147,7 +181,10 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/main.cpp
+iostream
 
+Program.hpp
+ProgramInitializer.hpp
 
 
 
@@ -156,7 +193,7 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  ../source/data parsers
+############################################################################  ../source/data parsers/
 
 
 
@@ -167,7 +204,11 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/data parsers/CommentParser.ut.cpp
+algorithm
+numeric
 
+CommentsParser.ut.hpp
+plugins/catch.hpp
 
 
 
@@ -178,6 +219,7 @@ source/tools/  IgnoreFiles  .hpp			0
 
 ############################################################################  ../source/data parsers/CommentParser.ut.hpp
 
+CommentParser.hpp
 
 
 
@@ -196,7 +238,18 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  ../source/data structures
+############################################################################  ../source/data parsers/IncludeParser.hpp
+
+../DataStructures
+
+
+
+
+############################################################################
+
+
+
+############################################################################  ../source/data structures/
 
 
 
@@ -207,7 +260,10 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/data structures/File.hpp
+string
+vector
 
+FileData.hpp
 
 
 
@@ -217,6 +273,8 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/data structures/FileData.hpp
+string
+vector
 
 
 
@@ -226,7 +284,7 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 
-############################################################################  ../source/tools
+############################################################################  ../source/tools/
 
 
 
@@ -237,6 +295,10 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/tools/Converter.hpp
+algorithm
+set
+sstream
+vector
 
 
 
@@ -247,7 +309,13 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/tools/FileIO.hpp
+dirent.h
+exception
+fstream
+string
+vector
 
+IgnoreFiles.hpp
 
 
 
@@ -257,7 +325,10 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/tools/IgnoreFiles.cpp
+string
+vector
 
+IgnoreFiles.hpp
 
 
 
@@ -267,6 +338,10 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################  ../source/tools/IgnoreFiles.hpp
+algorithm
+set
+string
+vector
 
 
 

@@ -3,11 +3,10 @@
 #include <algorithm>
 #include <string>
 
-#include "Tools"
 #include "DataStructures"
-
-#include "FileBuilder.hpp"
 #include "FileDataBuilder.hpp"
+#include "FileBuilder.hpp"
+#include "Tools"
 
 
 class ProjectBuilder {
@@ -39,8 +38,7 @@ private:
         for (auto& file : project) {
             FileDataBuilder builder(file);
             if (builder.dataExist()) {
-                auto data = builder.getProduct();
-                file.setData(data);
+                file.setData(builder.getProduct());
             }
         }
         return project;

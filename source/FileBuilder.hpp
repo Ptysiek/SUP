@@ -27,7 +27,7 @@ public:
         ):
         initPath_(Converter::AppendConditionalSlash(initPath)),
         path_(Converter::AppendConditionalSlash(path)),
-        name_(CutoutName(fullName)),
+        name_(BuildName(fullName, subfiles.empty())),
         format_(CutoutFormat(fullName)),
         product_(BuildProduct(subfiles, depth))
     {}
@@ -52,6 +52,14 @@ protected:
             result += file.countSubFilesRecursive();
         }
         return result;
+    }
+
+    std::string BuildName(const std::string& str, const bool isEmpty) const {
+        auto name = CutoutName(str);
+        if (!isEmpty) {
+            name = Converter::AppendConditionalSlash(name);
+        }
+        return name;
     }
 
     std::string CutoutName(const std::string& str) const {
