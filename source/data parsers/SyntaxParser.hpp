@@ -69,13 +69,14 @@ protected:
                 
                 if (hierarchy.size() < 2) {
                     result.emplace_back(hierarchy.top());
+                    if (!hierarchy.empty()) {
+                        hierarchy.pop();
+                    }
                 }
                 else {
                     auto oldTop = hierarchy.top();
-                    hierarchy.top()->push_back(oldTop);
-                }
-                if (!hierarchy.empty()) {
                     hierarchy.pop();
+                    hierarchy.top()->push_back(oldTop);
                 }
             }
             i = ClosestSemicolonOrParenthesis(draft);

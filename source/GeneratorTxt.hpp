@@ -18,19 +18,17 @@ public:
 
     std::string buildFile() {
         std::stringstream result;       
+        
+        result << "\n\n";
+        result << BuildTableOfContents();
+        
         for (const auto& file : data_) {
-            result << file.getPath() << "  "; 
-            result << file.getName() << "  "; 
-            result << file.getFormat() << "\t\t\t"; 
-            result << std::to_string(file.getSubFiles().size()) << "\n"; 
-        }
-        for (const auto& file : data_) {
-            result << "\n\n\n############################################################################  "; 
-            result << file.getFile();
-
             if (file.isCatalog()) {
                 continue;
             }
+            result << "\n\n\n############################################################################  "; 
+            result << file.getFile();
+
             result << "\n";
             result << Tools::Converter::to_string(file.getData().getLibIncludes()) << "\n";
             result << Tools::Converter::to_string(file.getData().getProjIncludes()) << "\n";
@@ -45,5 +43,33 @@ public:
         }
         return result.str();
     }
+
+private:
+    std::string BuildTableOfContents() {
+        std::stringstream result;       
+
+        result << "### Table Of Contents: #####################################################\n"; 
+        result << "############################################################################\n"; 
+        for (size_t f = 1; f < data_.size(); ++f) {
+            const auto& file = data_[f];
+
+            if (file.isCatalog()) {
+                result << "\n";
+            }
+            for (size_t i = 0; i < file.getDepth(); ++i) {
+                result << "\t";
+            }
+            if (file.isCatalog()) {
+                result << "[" << file.getPath() << file.getName() << "]\n";
+            }
+            else {
+                result << file.getName() << file.getFormat() << "\n"; 
+            }
+        }
+        return result.str();
+    }
+    
+
+
 };
 

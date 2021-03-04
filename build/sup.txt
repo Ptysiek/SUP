@@ -1,42 +1,44 @@
-  ../  			1
-  source/  			15
-source/  DataParsers  			0
-source/  DataStructures  			0
-source/  FileBuilder  .hpp			0
-source/  FileDataBuilder  .hpp			0
-source/  GeneratorTxt  .hpp			0
-source/  PathInitializer  .ut.cpp			0
-source/  Program  .hpp			0
-source/  ProgramInitializer  .hpp			0
-source/  ProjectBuilder  .hpp			0
-source/  Tools  			0
-source/  catch_main  .cpp			0
-source/  main  .cpp			0
-source/  data parsers/  			6
-source/data parsers/  CommentParser  .ut.cpp			0
-source/data parsers/  CommentParser  .ut.hpp			0
-source/data parsers/  CommentParser  .hpp			0
-source/data parsers/  DirectiveParser  .hpp			0
-source/data parsers/  IncludeParser  .hpp			0
-source/data parsers/  SyntaxParser  .hpp			0
-source/  data structures/  			5
-source/data structures/  Class  .hpp			0
-source/data structures/  File  .hpp			0
-source/data structures/  FileData  .hpp			0
-source/data structures/  Instruction  .hpp			0
-source/data structures/  iSyntax  .hpp			0
-source/  tools/  			4
-source/tools/  Converter  .hpp			0
-source/tools/  FileIO  .hpp			0
-source/tools/  IgnoreFiles  .cpp			0
-source/tools/  IgnoreFiles  .hpp			0
 
 
+### Table Of Contents: #####################################################
+############################################################################
 
-############################################################################  ../
+	[source/]
+		DataParsers
+		DataStructures
+		FileBuilder.hpp
+		FileDataBuilder.hpp
+		GeneratorTxt.hpp
+		PathInitializer.ut.cpp
+		Program.hpp
+		ProgramInitializer.hpp
+		ProjectBuilder.hpp
+		Tools
+		catch_main.cpp
+		iSyntaxBuilder.hpp
+		main.cpp
 
+		[source/data parsers/]
+			CommentParser.ut.cpp
+			CommentParser.ut.hpp
+			CommentParser.hpp
+			DirectiveParser.hpp
+			IncludeParser.hpp
+			SyntaxParser.hpp
 
-############################################################################  ../source/
+		[source/data structures/]
+			Class.hpp
+			File.hpp
+			FileData.hpp
+			Instruction.hpp
+			iSyntax.hpp
+
+		[source/tools/]
+			Converter.hpp
+			FileIO.hpp
+			IgnoreFiles.cpp
+			IgnoreFiles.hpp
+
 
 
 ############################################################################  ../source/DataParsers
@@ -50,7 +52,11 @@ data parsers/SyntaxParser.hpp
 
 
 ############################################################################
-[namespace DataParsers {]
+[namespace DataParsers {
+Has 5 instructions
+Has 0 classes
+
+]
 
 
 
@@ -73,7 +79,11 @@ data structures/iSyntax.hpp
 
 
 ############################################################################
-[namespace DataStructures {]
+[namespace DataStructures {
+Has 5 instructions
+Has 0 classes
+
+]
 
 
 
@@ -91,7 +101,121 @@ Tools
 
 
 ############################################################################
-[class FileBuilder {]
+[class FileBuilder {
+Has 8 instructions
+Has 8 classes
+
+	public:
+explicit FileBuilder(
+const std::string& initPath,
+const std::string& path,
+const std::string& fullName,
+const std::vector<File>& subfiles,
+const size_t depth
+):
+initPath_(Converter::AppendConditionalSlash(initPath)),
+path_(Converter::AppendConditionalSlash(path)),
+name_(BuildName(fullName, subfiles.empty())),
+format_(CutoutFormat(fullName)),
+product_(BuildProduct(subfiles, depth))
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	File getProduct() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	static File buildRoot(const std::string& initPath, const std::vector<File>& subFiles) {
+Has 2 instructions
+Has 1 classes
+
+	return {
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	protected:
+File BuildProduct(const std::vector<File>& subFiles, size_t depth) {
+Has 2 instructions
+Has 1 classes
+
+	return {
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	static size_t CountRecursive(const std::vector<File>& subFiles) {
+Has 3 instructions
+Has 1 classes
+
+	for (const auto& file : subFiles) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	std::string BuildName(const std::string& str, const bool isEmpty) const {
+Has 3 instructions
+Has 1 classes
+
+	if (!isEmpty) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	std::string CutoutName(const std::string& str) const {
+Has 6 instructions
+Has 2 classes
+
+	if (Tools::IgnoreFiles::isIgnored(str)) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	if (index == std::string::npos) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	std::string CutoutFormat(const std::string& str) const {
+Has 5 instructions
+Has 2 classes
+
+	if (Tools::IgnoreFiles::isIgnored(str)) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	if (index == std::string::npos) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+]
 
 
 
@@ -110,7 +234,68 @@ Tools
 
 ############################################################################
 [using namespace DataParsers;]
-[class FileDataBuilder {]
+[class FileDataBuilder {
+Has 10 instructions
+Has 6 classes
+
+	public:
+FileDataBuilder(const File& file):
+productExist_(false),
+rawData_(),
+fileHeader_(file),
+product_(BuildProduct()),
+libIncludes_(),
+projIncludes_()
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	bool dataExist() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	FileData getProduct() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	private:
+FileData BuildProduct() {
+Has 6 instructions
+Has 2 classes
+
+	if (fileHeader_.isCatalog()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	return {
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	FileData BuildEmptyData() {
+Has 3 instructions
+Has 0 classes
+
+
+
+	Data PrepareData(Data rawData) {
+Has 10 instructions
+Has 0 classes
+
+
+
+]
 
 
 
@@ -128,7 +313,82 @@ Tools
 
 
 ############################################################################
-[class GeneratorTxt {]
+[class GeneratorTxt {
+Has 3 instructions
+Has 3 classes
+
+	public:
+explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data):
+targetPath_(targetPath),
+data_(data)
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	std::string buildFile() {
+Has 5 instructions
+Has 1 classes
+
+	for (const auto& file : data_) {
+Has 8 instructions
+Has 2 classes
+
+	if (file.isCatalog()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	for (const auto& ptr : file.getData().getData()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	private:
+std::string BuildTableOfContents() {
+Has 7 instructions
+Has 1 classes
+
+	 ++f) {
+Has 4 instructions
+Has 4 classes
+
+	if (file.isCatalog()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	 ++i) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	if (file.isCatalog()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	else {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+]
 
 
 
@@ -145,7 +405,515 @@ plugins/catch.hpp
 
 
 ############################################################################
-[TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {]
+[TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {
+Has 1 instructions
+Has 3 classes
+
+	WHEN("Testing the CutoutName()") {
+Has 1 instructions
+Has 3 classes
+
+	struct test {
+Has 3 instructions
+Has 1 classes
+
+	std::string log() const {
+Has 2 instructions
+Has 1 classes
+
+	return
+"{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	const std::initializer_list<test> tests = {
+Has 1 instructions
+Has 18 classes
+
+	{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	for (const auto& test : tests) {
+Has 1 instructions
+Has 1 classes
+
+	THEN(test.log()) {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	WHEN("Testing the CutoutFormat()") {
+Has 1 instructions
+Has 3 classes
+
+	struct test {
+Has 3 instructions
+Has 1 classes
+
+	std::string log() const {
+Has 2 instructions
+Has 1 classes
+
+	return
+"{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	const std::initializer_list<test> tests = {
+Has 1 instructions
+Has 18 classes
+
+	{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	for (const auto& test : tests) {
+Has 1 instructions
+Has 1 classes
+
+	THEN(test.log()) {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	WHEN("Testing the AppendConditionalSlash()") {
+Has 1 instructions
+Has 3 classes
+
+	struct test {
+Has 3 instructions
+Has 1 classes
+
+	std::string log() const {
+Has 2 instructions
+Has 1 classes
+
+	return
+"{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	const std::initializer_list<test> tests = {
+Has 1 instructions
+Has 18 classes
+
+	{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	for (const auto& test : tests) {
+Has 1 instructions
+Has 1 classes
+
+	THEN(test.log()) {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+
+
+]
 
 
 
@@ -165,7 +933,53 @@ Tools
 
 
 ############################################################################
-[class Program {]
+[class Program {
+Has 4 instructions
+Has 3 classes
+
+	public:
+explicit Program(const ProgramInitializer& target):
+flagSupport_(target),
+targetPath_(target.getPath()),
+outputPath_("sup.txt")
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	void execute() {
+Has 6 instructions
+Has 1 classes
+
+	for (const auto& file : project) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	private:
+void initializeIgnoreFiles() {
+Has 5 instructions
+Has 2 classes
+
+	if (FileIO::fileExist(fileName)) {
+Has 4 instructions
+Has 0 classes
+
+
+
+	else {
+Has 3 instructions
+Has 0 classes
+
+
+
+
+
+]
 
 
 
@@ -186,7 +1000,45 @@ Tools
 - napisz obsługę flag. -md -markdown -txt -text
 - flag supprot
 */
-class ProgramInitializer {]
+class ProgramInitializer {
+Has 4 instructions
+Has 4 classes
+
+	public:
+explicit ProgramInitializer(const int& argc, const char* const * const argv):
+path_(GenPath(argc, argv))
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	std::string getPath() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	std::string getDefaultPath() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	private:
+std::string GenPath(const int& argc, const char* const * const argv) const {
+Has 2 instructions
+Has 1 classes
+
+	if (argc > 1) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+]
 
 
 
@@ -207,7 +1059,100 @@ Tools
 
 
 ############################################################################
-[class ProjectBuilder {]
+[class ProjectBuilder {
+Has 4 instructions
+Has 9 classes
+
+	public:
+explicit ProjectBuilder(const std::string& initPath):
+initPath_(initPath),
+product_(BuildProduct())
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	Project getProduct() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	private:
+Project BuildProduct() const {
+Has 4 instructions
+Has 0 classes
+
+
+
+	Project UpdateProjectWithData(Project& project) const {
+Has 2 instructions
+Has 1 classes
+
+	for (auto& file : project) {
+Has 2 instructions
+Has 1 classes
+
+	if (builder.dataExist()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	Project BuildProductStructure() const {
+Has 4 instructions
+Has 0 classes
+
+
+
+	std::vector<File> BuildRecursive(const std::string& targetPath, int depth) const {
+Has 5 instructions
+Has 1 classes
+
+	for (const auto& path : paths) {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+	Project FlatenRecursive(const File& root) const {
+Has 4 instructions
+Has 1 classes
+
+	for (const auto& file : root.getSubFiles()) {
+Has 3 instructions
+Has 0 classes
+
+
+
+
+
+	static bool SortCriterion_CatalogLast(const File& f, const File& s) {
+Has 3 instructions
+Has 1 classes
+
+	if (test % 2 == 0) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s) {
+Has 2 instructions
+Has 0 classes
+
+
+
+]
 
 
 
@@ -225,7 +1170,11 @@ tools/IgnoreFiles.hpp
 
 
 ############################################################################
-[namespace Tools {]
+[namespace Tools {
+Has 4 instructions
+Has 0 classes
+
+]
 
 
 
@@ -248,6 +1197,26 @@ plugins/catch.hpp
 
 
 
+############################################################################  ../source/iSyntaxBuilder.hpp
+
+DataStructures
+
+
+
+
+############################################################################
+[class iSyntaxBuilder {
+Has 1 instructions
+Has 0 classes
+
+]
+
+
+
+############################################################################
+
+
+
 ############################################################################  ../source/main.cpp
 iostream
 
@@ -258,15 +1227,16 @@ ProgramInitializer.hpp
 
 
 ############################################################################
-[int main(int argc, char* argv[]) {]
+[int main(int argc, char* argv[]) {
+Has 6 instructions
+Has 0 classes
+
+]
 
 
 
 ############################################################################
 
-
-
-############################################################################  ../source/data parsers/
 
 
 ############################################################################  ../source/data parsers/CommentParser.ut.cpp
@@ -281,7 +1251,321 @@ plugins/catch.hpp
 
 ############################################################################
 [FileParserComments_UnitTest testObject;]
-[TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") {]
+[TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") {
+Has 1 instructions
+Has 3 classes
+
+	struct test {
+Has 3 instructions
+Has 1 classes
+
+	std::string log() const {
+Has 2 instructions
+Has 1 classes
+
+	return
+"{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	WHEN("Testing the IsInsideString()") {
+Has 1 instructions
+Has 2 classes
+
+	const std::initializer_list<test> tests = {
+Has 1 instructions
+Has 19 classes
+
+	{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	for (const auto& test : tests) {
+Has 1 instructions
+Has 1 classes
+
+	THEN(test.log()) {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	WHEN("Testing the IsAlreadyCommentedByOneline()") {
+Has 1 instructions
+Has 2 classes
+
+	const std::initializer_list<test> tests = {
+Has 1 instructions
+Has 16 classes
+
+	{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	for (const auto& test : tests) {
+Has 1 instructions
+Has 1 classes
+
+	THEN(test.log()) {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+
+
+]
 
 
 
@@ -297,7 +1581,48 @@ CommentParser.hpp
 
 
 ############################################################################
-[class CommentParser_UnitTest : CommentParser {]
+[class CommentParser_UnitTest : CommentParser {
+Has 1 instructions
+Has 6 classes
+
+	public:
+CommentParser_UnitTest() {
+Has 1 instructions
+Has 0 classes
+
+
+
+	bool IsInsideString(const Line& line) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	bool IsAlreadyCommentedByOneline(const Line& subline) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	Line RemoveOnelineComments(const Line& line) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	Data RemoveAllOnelineComments(const Data& data) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	Line Multiline_ClearLine(const Line& line, bool& isCommented) {
+Has 2 instructions
+Has 0 classes
+
+
+
+]
 
 
 
@@ -315,7 +1640,133 @@ CommentParser.hpp
 [/* TODO:
 - fix multiline comments
 ex: abcd *
-namespace DataParsers {]
+namespace DataParsers {
+Has 1 instructions
+Has 1 classes
+
+	class CommentParser {
+Has 3 instructions
+Has 9 classes
+
+	CommentParser() {
+Has 1 instructions
+Has 0 classes
+
+
+
+	public:
+static Data removeComments(Data data) {
+Has 4 instructions
+Has 0 classes
+
+
+
+	protected:
+static Data RemoveAllOnelineComments(Data data) {
+Has 2 instructions
+Has 1 classes
+
+	for (auto& line : data) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static Line RemoveOnelineComments(const Line& line) {
+Has 3 instructions
+Has 2 classes
+
+	if (i == std::string::npos) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	if (IsInsideString(line.substr(0, i))) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static Data RemoveMultilineComments(Data data) {
+Has 3 instructions
+Has 1 classes
+
+	for (auto& line : data) {
+Has 2 instructions
+Has 2 classes
+
+	if (isCommented) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	if (begin != std::string::npos) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	static Line Multiline_ClearLine(Line line, bool& isCommented) {
+Has 4 instructions
+Has 3 classes
+
+	if (end == std::string::npos) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	if (IsAlreadyCommentedByOneline(line.substr(0, end))) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	if (IsInsideString(line.substr(0, end))) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static Line Multiline_FindClosing(Line line, bool& isCommented, const size_t begin) {
+Has 4 instructions
+Has 1 classes
+
+	if (end != std::string::npos) {
+Has 3 instructions
+Has 0 classes
+
+
+
+
+
+	static bool IsInsideString(const Line& subline) {
+Has 4 instructions
+Has 0 classes
+
+
+
+	static bool IsAlreadyCommentedByOneline(const Line& subline) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+]
 
 
 
@@ -332,7 +1783,48 @@ namespace DataParsers {]
 
 
 ############################################################################
-[namespace DataParsers {]
+[namespace DataParsers {
+Has 1 instructions
+Has 1 classes
+
+	class DirectiveParser {
+Has 4 instructions
+Has 2 classes
+
+	DirectiveParser() {
+Has 1 instructions
+Has 0 classes
+
+
+
+	public:
+static Data removeDirectives(Data data) {
+Has 2 instructions
+Has 1 classes
+
+	for (auto& line : data) {
+Has 2 instructions
+Has 2 classes
+
+	if (tmp.empty()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	if (tmp[0] == '#') {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+
+
+]
 
 
 
@@ -349,7 +1841,95 @@ namespace DataParsers {]
 
 
 ############################################################################
-[namespace DataParsers {]
+[namespace DataParsers {
+Has 1 instructions
+Has 1 classes
+
+	class IncludeParser {
+Has 7 instructions
+Has 6 classes
+
+	public:
+IncludeParser(const Data& data):
+data_(data),
+libIncludes_(),
+projIncludes_()
+{
+Has 2 instructions
+Has 0 classes
+
+
+
+	Data getLibIncludes() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	Data getProjIncludes() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	Data getData() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	protected:
+void BuildIncludes() {
+Has 4 instructions
+Has 1 classes
+
+	for (auto str : includes) {
+Has 1 instructions
+Has 3 classes
+
+	if (str.at(0) == '<') {
+Has 2 instructions
+Has 0 classes
+
+
+
+	else if (str.at(0) == '\"') {
+Has 2 instructions
+Has 0 classes
+
+
+
+	else {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	Data CutoutIncludes() {
+Has 3 instructions
+Has 1 classes
+
+	for (auto& line : data_) {
+Has 6 instructions
+Has 1 classes
+
+	if (i == std::string::npos) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+
+
+]
 
 
 
@@ -368,7 +1948,179 @@ stack
 
 
 ############################################################################
-[namespace DataParsers {]
+[namespace DataParsers {
+Has 1 instructions
+Has 1 classes
+
+	class SyntaxParser {
+Has 7 instructions
+Has 9 classes
+
+	public:
+SyntaxParser(const Data& data):
+rawData_(MergeRawData(data)),
+product_(BuildProduct())
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	std::string getData() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	Syntax getProduct() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	protected:
+std::string MergeRawData(const Data& data) const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	Syntax BuildProduct() {
+Has 6 instructions
+Has 2 classes
+
+	while(i != std::string::npos) {
+Has 6 instructions
+Has 3 classes
+
+	') {
+Has 1 instructions
+Has 2 classes
+
+	if (hierarchy.empty()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	else {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	else if (syntaxData[syntaxData.size() - 1] == '{
+Has 1 instructions
+Has 1 classes
+
+	') {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	') {
+Has 2 instructions
+Has 3 classes
+
+	if (!draft.empty()) {
+Has 2 instructions
+Has 1 classes
+
+	') {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+	if (hierarchy.size() < 2) {
+Has 2 instructions
+Has 1 classes
+
+	if (!hierarchy.empty()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	else {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	/*
+while (!hierarchy.empty()) {
+Has 3 instructions
+Has 0 classes
+
+
+
+
+
+	size_t ClosestSemicolonOrParenthesis(const Line& line) {
+Has 3 instructions
+Has 1 classes
+
+	'), line.find('{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	bool hasCoolon(const Line& line) {
+Has 3 instructions
+Has 0 classes
+
+
+
+	bool hasO_Bracket(const Line& line) {
+Has 2 instructions
+Has 2 classes
+
+	return (line.find('{
+Has 2 instructions
+Has 0 classes
+
+
+
+	bool hasC_Bracket(const Line& line) {
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	std::string RemoveNewLineCharacter( const std::string& line) {
+Has 2 instructions
+Has 1 classes
+
+	if (line.empty()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+]
 
 
 
@@ -376,10 +2128,8 @@ stack
 
 
 
-############################################################################  ../source/data structures/
-
-
 ############################################################################  ../source/data structures/Class.hpp
+numeric
 string
 
 iSyntax.hpp
@@ -388,7 +2138,72 @@ iSyntax.hpp
 
 
 ############################################################################
-[class Class : public iSyntax {]
+[class Class : public iSyntax {
+Has 4 instructions
+Has 6 classes
+
+	public:
+Class(const std::string& data):
+header_(data),
+subElements_(),
+subClasses_()
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	std::string getResult() const override {
+Has 4 instructions
+Has 1 classes
+
+	for (const auto& element : subClasses_) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	void push_back(const std::shared_ptr<iSyntax>& subElement) {
+Has 2 instructions
+Has 1 classes
+
+	if (subElement->getSyntaxType() == Type::Class) {
+Has 3 instructions
+Has 0 classes
+
+
+
+
+
+	Type getSyntaxType() const override {
+Has 2 instructions
+Has 0 classes
+
+
+
+	private:
+size_t CountInstructions() const {
+Has 2 instructions
+Has 1 classes
+
+	return std::accumulate(subElements_.begin(), subElements_.end(), 0,
+[](int sum, auto e){
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	size_t CountClasses() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+]
 
 
 
@@ -406,7 +2221,107 @@ FileData.hpp
 
 
 ############################################################################
-[class File {]
+[class File {
+Has 9 instructions
+Has 13 classes
+
+	public:
+File(
+const size_t depth,
+const size_t countRecursive,
+const std::string& initPath,
+const std::string& path,
+const std::string& name,
+const std::string& format,
+const std::vector<File>& subFiles
+):
+depth_(depth),
+countRecursive_(countRecursive),
+initPath_(initPath),
+path_(path),
+name_(name),
+format_(format),
+subFiles_(subFiles),
+data_()
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	std::string getInitPath() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	std::string getPath() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	std::string getName() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	std::string getFormat() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	std::string getFile() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	std::vector<File> getSubFiles() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	bool isCatalog() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	size_t getDepth() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	size_t countSubFiles() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	size_t countSubFilesRecursive() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	void setData(const FileData& data) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	FileData getData() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+]
 
 
 
@@ -424,7 +2339,54 @@ iSyntax.hpp
 
 
 ############################################################################
-[class FileData {]
+[class FileData {
+Has 4 instructions
+Has 5 classes
+
+	public:
+FileData():
+libIncludes_(),
+projIncludes_(),
+data_()
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	FileData(
+const std::vector<std::string>& libIncludes,
+const std::vector<std::string>& projIncludes,
+const std::vector<std::shared_ptr<iSyntax>>& data
+):
+libIncludes_(libIncludes),
+projIncludes_(projIncludes),
+data_(data)
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	std::vector<std::string> getLibIncludes() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	std::vector<std::string> getProjIncludes() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	std::vector<std::shared_ptr<iSyntax>> getData() const {
+Has 2 instructions
+Has 0 classes
+
+
+
+]
 
 
 
@@ -441,7 +2403,30 @@ iSyntax.hpp
 
 
 ############################################################################
-[class Instruction : public iSyntax {]
+[class Instruction : public iSyntax {
+Has 2 instructions
+Has 3 classes
+
+	public:
+Instruction(const std::string& data): rawData_(data) {
+Has 1 instructions
+Has 0 classes
+
+
+
+	std::string getResult() const override {
+Has 2 instructions
+Has 0 classes
+
+
+
+	Type getSyntaxType() const override {
+Has 2 instructions
+Has 0 classes
+
+
+
+]
 
 
 
@@ -456,15 +2441,35 @@ iSyntax.hpp
 
 
 ############################################################################
-[class iSyntax {]
+[class iSyntax {
+Has 3 instructions
+Has 3 classes
+
+	public:
+enum Type {
+Has 1 instructions
+Has 0 classes
+
+
+
+	enum Memory {
+Has 1 instructions
+Has 0 classes
+
+
+
+	virtual ~iSyntax() {
+Has 1 instructions
+Has 0 classes
+
+
+
+]
 
 
 
 ############################################################################
 
-
-
-############################################################################  ../source/tools/
 
 
 ############################################################################  ../source/tools/Converter.hpp
@@ -478,7 +2483,171 @@ vector
 
 
 ############################################################################
-[namespace Tools {]
+[namespace Tools {
+Has 1 instructions
+Has 1 classes
+
+	class Converter {
+Has 1 instructions
+Has 11 classes
+
+	public:
+template <class T>
+static std::set<T> to_set(const std::vector<T>& data) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	static std::string to_fileData(const std::set<std::string>& data) {
+Has 4 instructions
+Has 1 classes
+
+	std::for_each (data.begin(), data.end(), [&](const auto& val){
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static std::string to_string(const std::vector<std::string>& data2) {
+Has 5 instructions
+Has 1 classes
+
+	std::for_each(data.begin(), data.end(), [&](const auto& line){
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static std::string AppendConditionalSlash(std::string str) {
+Has 2 instructions
+Has 1 classes
+
+	if (!str.empty()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static std::vector<std::string> removeWhitespaces(std::vector<std::string> data) {
+Has 2 instructions
+Has 1 classes
+
+	for (auto& line : data) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static std::string removeWhitespaces(std::string data) {
+Has 6 instructions
+Has 0 classes
+
+
+
+	static std::vector<std::string> removeEmptyLines(const std::vector<std::string>& data) {
+Has 4 instructions
+Has 1 classes
+
+	for (auto record : data) {
+Has 2 instructions
+Has 1 classes
+
+	if (!record.empty()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	private:
+static std::string RemoveSpecialChars(const std::string& data) {
+Has 4 instructions
+Has 1 classes
+
+	std::for_each(begin(result), end(result),
+[](auto& ch){
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static std::string RemoveFromBegin(const std::string& data) {
+Has 5 instructions
+Has 1 classes
+
+	 ++i) {
+Has 1 instructions
+Has 1 classes
+
+	if (data[i] != ' ') {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	static std::string RemoveFromEnd(const std::string& data) {
+Has 5 instructions
+Has 1 classes
+
+	 --i) {
+Has 1 instructions
+Has 1 classes
+
+	if (data[i] != ' ') {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	static std::string RemoveAdjacentSpaces(const std::string& data) {
+Has 6 instructions
+Has 1 classes
+
+	 ++i) {
+Has 2 instructions
+Has 2 classes
+
+	if (!foundSpace) {
+Has 4 instructions
+Has 0 classes
+
+
+
+	if (!foundSpace) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+
+
+]
 
 
 
@@ -499,7 +2668,90 @@ IgnoreFiles.hpp
 
 
 ############################################################################
-[namespace Tools {]
+[namespace Tools {
+Has 1 instructions
+Has 1 classes
+
+	class FileIO {
+Has 1 instructions
+Has 5 classes
+
+	explicit FileIO() {
+Has 1 instructions
+Has 0 classes
+
+
+
+	public:
+static bool fileExist(const std::string& path) {
+Has 4 instructions
+Has 1 classes
+
+	if (!readFile || !readFile.is_open()) {
+Has 3 instructions
+Has 0 classes
+
+
+
+
+
+	static std::vector<std::string> readPaths(const std::string& targetPath) {
+Has 7 instructions
+Has 2 classes
+
+	if (!directory) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	while ((entry = readdir(directory)) != NULL) {
+Has 3 instructions
+Has 1 classes
+
+	if (IgnoreFiles::isIgnored(data)) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	static std::vector<std::string> readFile(const std::string& path) {
+Has 6 instructions
+Has 2 classes
+
+	if (!readFile || !readFile.is_open()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	while (std::getline(readFile, record)) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static void saveToFile(const std::string& path, const std::string& data) {
+Has 4 instructions
+Has 1 classes
+
+	if (!output || !output.is_open()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+]
 
 
 
@@ -517,7 +2769,29 @@ IgnoreFiles.hpp
 
 
 ############################################################################
-[namespace Tools {]
+[namespace Tools {
+Has 2 instructions
+Has 3 classes
+
+	const std::set<std::string> IgnoreFiles::formatIgnores_ {
+Has 1 instructions
+Has 0 classes
+
+
+
+	const std::set<std::string> IgnoreFiles::alwaysIgnores_ {
+Has 1 instructions
+Has 0 classes
+
+
+
+	std::set<std::string> IgnoreFiles::defaultIgnores_ {
+Has 1 instructions
+Has 0 classes
+
+
+
+]
 
 
 
@@ -536,7 +2810,84 @@ vector
 
 
 ############################################################################
-[namespace Tools {]
+[namespace Tools {
+Has 1 instructions
+Has 1 classes
+
+	class IgnoreFiles {
+Has 6 instructions
+Has 8 classes
+
+	explicit IgnoreFiles() {
+Has 1 instructions
+Has 0 classes
+
+
+
+	public:
+static void setIgnoreFiles(const std::set<std::string>& data) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	static std::string getIgnoreFileName() {
+Has 2 instructions
+Has 0 classes
+
+
+
+	static std::set<std::string> getDefaultIgnoreFiles() {
+Has 2 instructions
+Has 0 classes
+
+
+
+	static bool isAlwaysIgnored(const std::string& value) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	static bool isFormatIgnored(const std::string& format) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	static bool isIgnored(const std::string& value) {
+Has 2 instructions
+Has 2 classes
+
+	if (isAlwaysIgnored(value)) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	if (isFormatIgnored(value)) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	static std::vector<std::string> pickoutAlwaysIgnored(const std::vector<std::string>& vctr) {
+Has 5 instructions
+Has 1 classes
+
+	std::copy_if(vctr.begin(), vctr.end(), result.begin(), [](auto val){
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+]
 
 
 
