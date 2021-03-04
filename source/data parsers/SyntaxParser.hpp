@@ -3,6 +3,7 @@
 #include "../DataStructures"
 
 #include <iostream>
+#include <stack>
 
 
 namespace DataParsers {
@@ -15,6 +16,7 @@ class SyntaxParser {
     std::string rawData_;
     Syntax product_;
 
+
 public:
     SyntaxParser(const Data& data):
         rawData_(MergeRawData(data)),
@@ -23,6 +25,7 @@ public:
 
     std::string getData() const { return rawData_; }
     Syntax getProduct() const { return product_; }
+
 
 protected:
     std::string MergeRawData(const Data& data) const {
@@ -35,17 +38,36 @@ protected:
         std::string draft = rawData_;
         size_t i = ClosestSemicolonOrParenthesis(draft);
         
+        std::stack<std::shared_ptr<Class>> hierarchy;
+
         while(i != std::string::npos) {
-            
             std::string syntaxData = draft.substr(0, i + 1);
-            syntaxData = ClearFromNewLine(syntaxData);
-            //std::cout << i << std::endl;
+            syntaxData = RemoveNewLineCharacter(syntaxData);
             draft = draft.substr(i + 1);
             
-            
-            result.emplace_back(std::make_shared<Instruction>(syntaxData));
+            if (syntaxData[syntaxData.size() - 1] == ';') {
+                if (hierarchy.empty()) {
+                    result.emplace_back(std::make_shared<Instruction>(syntaxData));
+                }
+                else {
+                    hierarchy.top()->push_back(std::make_shared<Instruction>(syntaxData));
+                }
+            }
+            else if (syntaxData[syntaxData.size() - 1] == '{') {
+                if (hierarchy.empty()) {
+                    //result.emplace_back(std::make_shared<Class>(syntaxData));
+                    hierarchy.push(std::make_shared<Class>(syntaxData));
+                }
+            }
+
             i = ClosestSemicolonOrParenthesis(draft);
         }
+
+        while (!hierarchy.empty()) {
+            result.emplace_back(hierarchy.top());
+            hierarchy.pop();
+        }
+
 
         return result; 
     }
@@ -67,7 +89,10 @@ protected:
         return (line.find('}') == std::string::npos);
     }
 
-    std::string ClearFromNewLine(const std::string& line) {
+    std::string RemoveNewLineCharacter( const std::string& line) { 
+        if (line.empty()) {
+            return line;
+        }
         return (line[0] == '\n')? line.substr(1) : line;
     }
 

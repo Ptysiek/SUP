@@ -56,16 +56,17 @@ private:
     }
 
     Data PrepareData(Data rawData) {
-        rawData = CommentParser::removeComments(rawData_);
-        rawData = DirectiveParser::removeDirectives(rawData_);
+        rawData = CommentParser::removeComments(rawData);
 
-        IncludeParser incParser(rawData_);
+        IncludeParser incParser(rawData);
         libIncludes_ = incParser.getLibIncludes();
         projIncludes_ =  incParser.getProjIncludes();
         rawData = incParser.getData();
+        
+        rawData = DirectiveParser::removeDirectives(rawData);
 
-        rawData = Converter::removeWhitespaces(rawData_);
-        rawData = Converter::removeEmptyLines(rawData_);
+        rawData = Converter::removeWhitespaces(rawData);
+        rawData = Converter::removeEmptyLines(rawData);
         return rawData;
     }
 };

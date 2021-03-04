@@ -18,8 +18,8 @@ protected:
 
 public:
     static Data removeComments(Data data) {
-        RemoveAllOnelineComments(data);
-        RemoveMultilineComments(data);
+        data = RemoveAllOnelineComments(data);
+        data = RemoveMultilineComments(data);
         return data;
     }
 

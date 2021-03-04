@@ -32,7 +32,6 @@ protected:
         auto includes = CutoutIncludes();
 
         for (auto str : includes) {
-            str = Converter::removeWhitespaces(str);
             if (str.at(0) == '<') {
                 libIncludes_.push_back(str.substr(1, str.length() - 2));
             }
@@ -50,14 +49,17 @@ protected:
     Data CutoutIncludes() {
         Data includes;
         for (auto& line : data_) {
-            if (Tools::Converter::removeWhitespaces(line)[0] != '#') {
+            size_t i = line.find("#include");
+            
+            if (i == std::string::npos) {
                 continue;
             }
+            std::string str; 
+            str = line.substr(i + 8);
+            str = Converter::removeWhitespaces(str);
 
-            if (line.find("#include") != std::string::npos) {
-                includes.push_back(line.substr(8));
-                line = "";
-            }
+            includes.push_back(str);
+            line = "";
         }
         return includes;
     }
