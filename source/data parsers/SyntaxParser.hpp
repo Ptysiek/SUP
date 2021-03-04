@@ -2,6 +2,7 @@
 
 #include "../DataStructures"
 
+#include <algorithm>
 #include <iostream>
 #include <stack>
 
@@ -54,26 +55,43 @@ protected:
                 }
             }
             else if (syntaxData[syntaxData.size() - 1] == '{') {
-                if (hierarchy.empty()) {
-                    //result.emplace_back(std::make_shared<Class>(syntaxData));
-                    hierarchy.push(std::make_shared<Class>(syntaxData));
+                hierarchy.push(std::make_shared<Class>(syntaxData));
+            }
+            else if (syntaxData[syntaxData.size() - 1] == '}') {
+                if (!draft.empty()) {
+                    if (draft[0] == ';') {
+                        syntaxData += ';';
+                        draft = draft.substr(1);
+                    }
+                }
+                
+                hierarchy.top()->push_back(std::make_shared<Instruction>(syntaxData));
+                
+                if (hierarchy.size() < 2) {
+                    result.emplace_back(hierarchy.top());
+                }
+                else {
+                    auto oldTop = hierarchy.top();
+                    hierarchy.top()->push_back(oldTop);
+                }
+                if (!hierarchy.empty()) {
+                    hierarchy.pop();
                 }
             }
-
             i = ClosestSemicolonOrParenthesis(draft);
         }
-
+/*
         while (!hierarchy.empty()) {
             result.emplace_back(hierarchy.top());
             hierarchy.pop();
         }
-
+//*/
 
         return result; 
     }
 
     size_t ClosestSemicolonOrParenthesis(const Line& line) {
-        return std::min(line.find(';'), line.find('{'));
+        return std::min(std::min(line.find(';'), line.find('{')), line.find('}'));
     }
     
 
