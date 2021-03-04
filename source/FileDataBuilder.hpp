@@ -7,6 +7,7 @@ using namespace DataParsers;
 
 
 class FileDataBuilder {
+    using FileIO = Tools::FileIO;
     using Converter = Tools::Converter;
     using Data = DataStructures::Data;
 
@@ -15,13 +16,18 @@ class FileDataBuilder {
     const File& fileHeader_;    
     const FileData product_;
 
+    std::vector<std::string> libIncludes_;
+    std::vector<std::string> projIncludes_;
+
 
 public:
     FileDataBuilder(const File& file):
         productExist_(false),
         rawData_(),
         fileHeader_(file),
-        product_(BuildProduct())
+        product_(BuildProduct()),
+        libIncludes_(),
+        projIncludes_()
     {}
 
     bool dataExist() const { return productExist_; }
@@ -33,26 +39,14 @@ private:
         if (fileHeader_.isCatalog()) {
             return BuildEmptyData();
         }
-        rawData_ = Tools::FileIO::readFile(fileHeader_.getFile());
- 
-        rawData_ = CommentParser::removeComments(rawData_);
-
-        rawData_ = DirectiveParser::removeDirectives(rawData_);
-
-        IncludeParser incParser(rawData_);
-        auto libs = incParser.getLibIncludes();
-        auto projs = incParser.getProjIncludes();
-        rawData_ = incParser.getData();
-
-        rawData_ = Converter::removeWhitespaces(rawData_);
-        rawData_ = Converter::removeEmptyLines(rawData_);
+        rawData_ = FileIO::readFile(fileHeader_.getFile());
+        rawData_ = PrepareData(rawData_);
 
         SyntaxParser synParser(rawData_);
         auto syntaxData = synParser.getProduct();
  
         productExist_ = true;
-        return {libs, projs, syntaxData};
-        return FileData();
+        return {libIncludes_, projIncludes_, syntaxData};
     }
 
 
@@ -61,5 +55,18 @@ private:
         return FileData();
     }
 
+    Data PrepareData(Data rawData) {
+        rawData = CommentParser::removeComments(rawData_);
+        rawData = DirectiveParser::removeDirectives(rawData_);
+
+        IncludeParser incParser(rawData_);
+        libIncludes_ = incParser.getLibIncludes();
+        projIncludes_ =  incParser.getProjIncludes();
+        rawData = incParser.getData();
+
+        rawData = Converter::removeWhitespaces(rawData_);
+        rawData = Converter::removeEmptyLines(rawData_);
+        return rawData;
+    }
 };
 
