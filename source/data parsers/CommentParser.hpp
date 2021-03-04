@@ -6,6 +6,7 @@
 ex:   abcd  *//* */ /* *** */  /* */ /* abcdc */
 
 
+namespace DataParsers {
 class CommentParser {
 protected:
  
@@ -97,6 +98,9 @@ protected:
         return (subline.find("//") != std::string::npos);
     }
 };
+} // namespace DataParsers
+
+
 
 
 

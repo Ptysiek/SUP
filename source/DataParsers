@@ -1,0 +1,17 @@
+#pragma once
+
+
+#include "data parsers/CommentParser.hpp"
+#include "data parsers/IncludeParser.hpp"
+#include "data parsers/SyntaxParser.hpp"
+#include "data parsers/DirectiveParser.hpp"
+
+
+namespace DataParsers {
+    class CommentParser;
+    class IncludeParser;
+    class SyntaxParser;
+    class DirectiveParser;
+}
+
+

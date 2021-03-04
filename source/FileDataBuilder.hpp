@@ -2,15 +2,13 @@
 
 #include "Tools"
 #include "DataStructures"
-#include "data parsers/CommentParser.hpp"
-#include "data parsers/IncludeParser.hpp"
-#include "data parsers/SyntaxParser.hpp"
-#include "data parsers/DirectiveParser.hpp"
+#include "DataParsers"
+using namespace DataParsers;
 
 
 class FileDataBuilder {
-    using Data = DataStructures::Data;
     using Converter = Tools::Converter;
+    using Data = DataStructures::Data;
 
     bool productExist_;
     Data rawData_;

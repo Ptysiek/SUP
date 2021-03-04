@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+
+namespace DataParsers {
 class SyntaxParser {
     using Converter = Tools::Converter;
     using Data = DataStructures::Data;
@@ -70,6 +72,7 @@ protected:
     }
 
 };
+} // namespace DataParsers
 
 
 

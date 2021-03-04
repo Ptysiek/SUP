@@ -3,7 +3,7 @@
 #include "../Tools"
 #include "../DataStructures"
 
-
+namespace DataParsers {
 class DirectiveParser {
 protected:
     using Converter = Tools::Converter;
@@ -27,6 +27,6 @@ public:
         return data;
     }
 };
-
+} // namespace DataParsers
 
 

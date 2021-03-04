@@ -1,5 +1,6 @@
   ../  			1
-  source/  			14
+  source/  			15
+source/  DataParsers  			0
 source/  DataStructures  			0
 source/  FileBuilder  .hpp			0
 source/  FileDataBuilder  .hpp			0
@@ -53,6 +54,25 @@ source/tools/  IgnoreFiles  .hpp			0
 
 
 ############################################################################
+
+
+
+############################################################################
+
+
+
+############################################################################  ../source/DataParsers
+
+
+
+
+
+############################################################################
+[namespace DataParsers {]
+[class CommentParser;]
+[class IncludeParser;]
+[class SyntaxParser;]
+[class DirectiveParser;]
 
 
 
@@ -178,8 +198,12 @@ std::string result;]
 
 ############################################################################
 [class FileDataBuilder {]
-[using Data = DataStructures::Data;]
 [using Converter = Tools::Converter;]
+[using Data = DataStructures::Data;]
+[using CommentParser = DataParsers::CommentParser;]
+[using IncludeParser = DataParsers::IncludeParser;]
+[using SyntaxParser = DataParsers::SyntaxParser;]
+[using DirectiveParser = DataParsers::DirectiveParser;]
 [bool productExist_;]
 [Data rawData_;]
 [const File& fileHeader_;]
@@ -1073,7 +1097,8 @@ Line Multiline_ClearLine(const Line& line, bool& isCommented) {]
 [/* TODO:
 - fix multiline comments
 ex: abcd *//* */ /* *** */ /* */ /* abcdc */
-class CommentParser {]
+namespace DataParsers {]
+[class CommentParser {]
 [protected:
 using Data = DataStructures::Data;]
 [using Line = DataStructures::Line;]
@@ -1167,6 +1192,7 @@ static bool IsAlreadyCommentedByOneline(const Line& subline) {]
 
 
 ############################################################################
+[namespace DataParsers {]
 [class DirectiveParser {]
 [protected:
 using Converter = Tools::Converter;]
@@ -1202,6 +1228,7 @@ return data;]
 
 
 ############################################################################
+[namespace DataParsers {]
 [class IncludeParser {]
 [using Converter = Tools::Converter;]
 [using Data = DataStructures::Data;]
@@ -1272,6 +1299,7 @@ return includes;]
 
 
 ############################################################################
+[namespace DataParsers {]
 [class SyntaxParser {]
 [using Converter = Tools::Converter;]
 [using Data = DataStructures::Data;]

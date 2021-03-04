@@ -2,7 +2,7 @@
 
 #include "../DataStructures"
 
-
+namespace DataParsers {
 class IncludeParser {
     using Converter = Tools::Converter;
     using Data = DataStructures::Data;
@@ -62,7 +62,7 @@ protected:
         return includes;
     }
 };
-
+} // namespace DataParsers
 
 
 
