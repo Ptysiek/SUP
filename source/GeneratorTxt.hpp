@@ -52,10 +52,8 @@ private:
 
     std::string BuildTableOfContents() {
         std::stringstream result;       
-        const std::string header = "### Table Of Contents: ";
 
-        result << header << separator_.substr(header.size());
-        result << separator_;
+        result << BuildSeparator("### Table Of Contents: ");
         for (size_t f = 1; f < data_.size(); ++f) {
             const auto& file = data_[f];
 
@@ -78,10 +76,8 @@ private:
     std::string BuildFile(const File& file) {
         std::stringstream result;       
 
-        result << "### " << file.getFile() << " " << separator_.substr(file.getFile().size() + 5);
-        result << separator_;
-
-        result << "This file summary:\n";
+        result << BuildSeparator("### " + file.getFile() + " ");
+        result << "This file summary:";
         if (!file.getData().getLibIncludes().empty()) {
             result << "\n\tLibraries included:  [" << file.getData().getLibIncludes().size() << "]\n";;
             for (const auto& line : file.getData().getLibIncludes()) {
@@ -101,6 +97,15 @@ private:
         }
         return result.str();
     }
-    
+ 
+    std::string BuildSeparator(const std::string& title) {
+        std::stringstream result;       
+        result << title;
+        if (title.size() < separator_.size()) {
+            result << separator_.substr(title.size());
+        }
+        result << separator_;
+        return result.str();
+    }
 };
 

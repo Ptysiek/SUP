@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Fri Mar  5 00:44:16 2021
+File generation date:  Fri Mar  5 00:52:25 2021
 
 
 ### Table Of Contents: #####################################################
@@ -47,7 +47,6 @@ File generation date:  Fri Mar  5 00:44:16 2021
 ### ../source/DataParsers ##################################################
 ############################################################################
 This file summary:
-
 	Files included:  [4]
 		data parsers/CommentParser.hpp
 		data parsers/DirectiveParser.hpp
@@ -65,7 +64,6 @@ Has 0 classes
 ### ../source/DataStructures ###############################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [3]
 		<memory>
 		<string>
@@ -89,7 +87,6 @@ Has 0 classes
 ### ../source/FileBuilder.hpp ##############################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [1]
 		<string>
 
@@ -218,7 +215,6 @@ Has 0 classes
 ### ../source/FileDataBuilder.hpp ##########################################
 ############################################################################
 This file summary:
-
 	Files included:  [3]
 		DataParsers
 		DataStructures
@@ -293,7 +289,6 @@ Has 0 classes
 ### ../source/GeneratorTxt.hpp #############################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [2]
 		<chrono>
 		<sstream>
@@ -306,7 +301,7 @@ This file summary:
 This file documentation:
 [class GeneratorTxt {
 Has 4 instructions
-Has 6 classes
+Has 7 classes
 
 	public:
 explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data):
@@ -351,7 +346,7 @@ Has 0 classes
 
 
 	std::string BuildTableOfContents() {
-Has 8 instructions
+Has 6 instructions
 Has 1 classes
 
 	 ++f) {
@@ -387,7 +382,7 @@ Has 0 classes
 
 
 	std::string BuildFile(const File& file) {
-Has 8 instructions
+Has 7 instructions
 Has 3 classes
 
 	if (!file.getData().getLibIncludes().empty()) {
@@ -422,12 +417,23 @@ Has 0 classes
 
 
 
+	std::string BuildSeparator(const std::string& title) {
+Has 5 instructions
+Has 1 classes
+
+	if (title.size() < separator_.size()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
 ]
 
 ### ../source/PathInitializer.ut.cpp #######################################
 ############################################################################
 This file summary:
-
 	Files included:  [2]
 		PathInitializer.ut.hpp
 		plugins/catch.hpp
@@ -947,7 +953,6 @@ Has 0 classes
 ### ../source/Program.hpp ##################################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [1]
 		<iostream>
 
@@ -1010,7 +1015,6 @@ Has 0 classes
 ### ../source/ProgramInitializer.hpp #######################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [1]
 		<string>
 
@@ -1066,7 +1070,6 @@ Has 0 classes
 ### ../source/ProjectBuilder.hpp ###########################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [2]
 		<algorithm>
 		<string>
@@ -1177,7 +1180,6 @@ Has 0 classes
 ### ../source/Tools ########################################################
 ############################################################################
 This file summary:
-
 	Files included:  [3]
 		tools/Converter.hpp
 		tools/FileIO.hpp
@@ -1194,7 +1196,6 @@ Has 0 classes
 ### ../source/catch_main.cpp ###############################################
 ############################################################################
 This file summary:
-
 	Files included:  [1]
 		plugins/catch.hpp
 
@@ -1204,7 +1205,6 @@ This file documentation:
 ### ../source/iSyntaxBuilder.hpp ###########################################
 ############################################################################
 This file summary:
-
 	Files included:  [1]
 		DataStructures
 
@@ -1219,7 +1219,6 @@ Has 0 classes
 ### ../source/main.cpp #####################################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [1]
 		<iostream>
 
@@ -1238,7 +1237,6 @@ Has 0 classes
 ### ../source/data parsers/CommentParser.ut.cpp ############################
 ############################################################################
 This file summary:
-
 	Libraries included:  [2]
 		<algorithm>
 		<numeric>
@@ -1569,7 +1567,6 @@ Has 0 classes
 ### ../source/data parsers/CommentParser.ut.hpp ############################
 ############################################################################
 This file summary:
-
 	Files included:  [1]
 		CommentParser.hpp
 
@@ -1621,7 +1618,6 @@ Has 0 classes
 ### ../source/data parsers/CommentParser.hpp ###############################
 ############################################################################
 This file summary:
-
 
 This file documentation:
 [/* TODO:
@@ -1758,7 +1754,6 @@ Has 0 classes
 ### ../source/data parsers/DirectiveParser.hpp #############################
 ############################################################################
 This file summary:
-
 	Files included:  [2]
 		../DataStructures
 		../Tools
@@ -1811,7 +1806,6 @@ Has 0 classes
 ### ../source/data parsers/IncludeParser.hpp ###############################
 ############################################################################
 This file summary:
-
 	Files included:  [2]
 		)
 		../DataStructures
@@ -1911,7 +1905,6 @@ Has 0 classes
 ### ../source/data parsers/SyntaxParser.hpp ################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [3]
 		<algorithm>
 		<iostream>
@@ -2099,7 +2092,6 @@ Has 0 classes
 ### ../source/data structures/Class.hpp ####################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [2]
 		<numeric>
 		<string>
@@ -2179,7 +2171,6 @@ Has 0 classes
 ### ../source/data structures/File.hpp #####################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [2]
 		<string>
 		<vector>
@@ -2294,7 +2285,6 @@ Has 0 classes
 ### ../source/data structures/FileData.hpp #################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [2]
 		<string>
 		<vector>
@@ -2356,7 +2346,6 @@ Has 0 classes
 ### ../source/data structures/Instruction.hpp ##############################
 ############################################################################
 This file summary:
-
 	Libraries included:  [1]
 		<string>
 
@@ -2394,7 +2383,6 @@ Has 0 classes
 ############################################################################
 This file summary:
 
-
 This file documentation:
 [class iSyntax {
 Has 3 instructions
@@ -2424,7 +2412,6 @@ Has 0 classes
 ### ../source/tools/Converter.hpp ##########################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [4]
 		<algorithm>
 		<set>
@@ -2602,7 +2589,6 @@ Has 0 classes
 ### ../source/tools/FileIO.hpp #############################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [5]
 		<dirent.h>
 		<exception>
@@ -2703,7 +2689,6 @@ Has 0 classes
 ### ../source/tools/IgnoreFiles.cpp ########################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [2]
 		<string>
 		<vector>
@@ -2740,7 +2725,6 @@ Has 0 classes
 ### ../source/tools/IgnoreFiles.hpp ########################################
 ############################################################################
 This file summary:
-
 	Libraries included:  [4]
 		<algorithm>
 		<set>
