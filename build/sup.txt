@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Thu Mar  4 22:43:02 2021
+File generation date:  Fri Mar  5 00:44:16 2021
 
 
 ### Table Of Contents: #####################################################
@@ -43,54 +43,62 @@ File generation date:  Thu Mar  4 22:43:02 2021
 
 
 
-############################################################################  ../source/DataParsers
 
-data parsers/CommentParser.hpp
-data parsers/DirectiveParser.hpp
-data parsers/IncludeParser.hpp
-data parsers/SyntaxParser.hpp
+### ../source/DataParsers ##################################################
+############################################################################
+This file summary:
 
+	Files included:  [4]
+		data parsers/CommentParser.hpp
+		data parsers/DirectiveParser.hpp
+		data parsers/IncludeParser.hpp
+		data parsers/SyntaxParser.hpp
+
+
+This file documentation:
 [namespace DataParsers {
 Has 5 instructions
 Has 0 classes
 
 ]
 
-
-
+### ../source/DataStructures ###############################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [3]
+		<memory>
+		<string>
+		<vector>
+
+	Files included:  [5]
+		data structures/Class.hpp
+		data structures/File.hpp
+		data structures/FileData.hpp
+		data structures/Instruction.hpp
+		data structures/iSyntax.hpp
 
 
-
-############################################################################  ../source/DataStructures
-memory
-string
-vector
-
-data structures/Class.hpp
-data structures/File.hpp
-data structures/FileData.hpp
-data structures/Instruction.hpp
-data structures/iSyntax.hpp
-
+This file documentation:
 [namespace DataStructures {
 Has 5 instructions
 Has 0 classes
 
 ]
 
-
-
+### ../source/FileBuilder.hpp ##############################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [1]
+		<string>
+
+	Files included:  [2]
+		DataStructures
+		Tools
 
 
-
-############################################################################  ../source/FileBuilder.hpp
-string
-
-DataStructures
-Tools
-
+This file documentation:
 [class FileBuilder {
 Has 8 instructions
 Has 8 classes
@@ -207,18 +215,17 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/FileDataBuilder.hpp ##########################################
 ############################################################################
+This file summary:
+
+	Files included:  [3]
+		DataParsers
+		DataStructures
+		Tools
 
 
-
-############################################################################  ../source/FileDataBuilder.hpp
-
-DataParsers
-DataStructures
-Tools
-
+This file documentation:
 [using namespace DataParsers;]
 [class FileDataBuilder {
 Has 10 instructions
@@ -283,25 +290,27 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/GeneratorTxt.hpp #############################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [2]
+		<chrono>
+		<sstream>
+
+	Files included:  [2]
+		DataStructures
+		Tools
 
 
-
-############################################################################  ../source/GeneratorTxt.hpp
-chrono
-sstream
-
-DataStructures
-Tools
-
+This file documentation:
 [class GeneratorTxt {
-Has 3 instructions
-Has 5 classes
+Has 4 instructions
+Has 6 classes
 
 	public:
 explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data):
+separator_("############################################################################\n"),
 targetPath_(targetPath),
 data_(data)
 {
@@ -311,20 +320,14 @@ Has 0 classes
 
 
 	std::string buildFile() {
-Has 7 instructions
+Has 8 instructions
 Has 1 classes
 
 	for (const auto& file : data_) {
-Has 7 instructions
-Has 2 classes
+Has 2 instructions
+Has 1 classes
 
 	if (file.isCatalog()) {
-Has 2 instructions
-Has 0 classes
-
-
-
-	for (const auto& ptr : file.getData().getData()) {
 Has 2 instructions
 Has 0 classes
 
@@ -348,7 +351,7 @@ Has 0 classes
 
 
 	std::string BuildTableOfContents() {
-Has 7 instructions
+Has 8 instructions
 Has 1 classes
 
 	 ++f) {
@@ -383,19 +386,54 @@ Has 0 classes
 
 
 
+	std::string BuildFile(const File& file) {
+Has 8 instructions
+Has 3 classes
+
+	if (!file.getData().getLibIncludes().empty()) {
+Has 3 instructions
+Has 1 classes
+
+	for (const auto& line : file.getData().getLibIncludes()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	if (!file.getData().getProjIncludes().empty()) {
+Has 2 instructions
+Has 1 classes
+
+	for (const auto& line : file.getData().getProjIncludes()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	for (const auto& ptr : file.getData().getData()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
 ]
 
-
-
+### ../source/PathInitializer.ut.cpp #######################################
 ############################################################################
+This file summary:
+
+	Files included:  [2]
+		PathInitializer.ut.hpp
+		plugins/catch.hpp
 
 
-
-############################################################################  ../source/PathInitializer.ut.cpp
-
-PathInitializer.ut.hpp
-plugins/catch.hpp
-
+This file documentation:
 [TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {
 Has 1 instructions
 Has 3 classes
@@ -906,20 +944,21 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/Program.hpp ##################################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [1]
+		<iostream>
+
+	Files included:  [4]
+		GeneratorTxt.hpp
+		ProgramInitializer.hpp
+		ProjectBuilder.hpp
+		Tools
 
 
-
-############################################################################  ../source/Program.hpp
-iostream
-
-GeneratorTxt.hpp
-ProgramInitializer.hpp
-ProjectBuilder.hpp
-Tools
-
+This file documentation:
 [class Program {
 Has 4 instructions
 Has 3 classes
@@ -968,17 +1007,18 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/ProgramInitializer.hpp #######################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [1]
+		<string>
+
+	Files included:  [1]
+		Tools
 
 
-
-############################################################################  ../source/ProgramInitializer.hpp
-string
-
-Tools
-
+This file documentation:
 [/* TODO:
 - napisz obsługę flag. -md -markdown -txt -text
 - flag supprot
@@ -1023,21 +1063,22 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/ProjectBuilder.hpp ###########################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [2]
+		<algorithm>
+		<string>
+
+	Files included:  [4]
+		DataStructures
+		FileBuilder.hpp
+		FileDataBuilder.hpp
+		Tools
 
 
-
-############################################################################  ../source/ProjectBuilder.hpp
-algorithm
-string
-
-DataStructures
-FileBuilder.hpp
-FileDataBuilder.hpp
-Tools
-
+This file documentation:
 [class ProjectBuilder {
 Has 4 instructions
 Has 9 classes
@@ -1133,82 +1174,81 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/Tools ########################################################
 ############################################################################
+This file summary:
+
+	Files included:  [3]
+		tools/Converter.hpp
+		tools/FileIO.hpp
+		tools/IgnoreFiles.hpp
 
 
-
-############################################################################  ../source/Tools
-
-tools/Converter.hpp
-tools/FileIO.hpp
-tools/IgnoreFiles.hpp
-
+This file documentation:
 [namespace Tools {
 Has 4 instructions
 Has 0 classes
 
 ]
 
-
-
+### ../source/catch_main.cpp ###############################################
 ############################################################################
+This file summary:
+
+	Files included:  [1]
+		plugins/catch.hpp
 
 
+This file documentation:
 
-############################################################################  ../source/catch_main.cpp
-
-plugins/catch.hpp
-
-
-
-
+### ../source/iSyntaxBuilder.hpp ###########################################
 ############################################################################
+This file summary:
+
+	Files included:  [1]
+		DataStructures
 
 
-
-############################################################################  ../source/iSyntaxBuilder.hpp
-
-DataStructures
-
+This file documentation:
 [class iSyntaxBuilder {
 Has 1 instructions
 Has 0 classes
 
 ]
 
-
-
+### ../source/main.cpp #####################################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [1]
+		<iostream>
+
+	Files included:  [2]
+		Program.hpp
+		ProgramInitializer.hpp
 
 
-
-############################################################################  ../source/main.cpp
-iostream
-
-Program.hpp
-ProgramInitializer.hpp
-
+This file documentation:
 [int main(int argc, char* argv[]) {
 Has 6 instructions
 Has 0 classes
 
 ]
 
-
-
+### ../source/data parsers/CommentParser.ut.cpp ############################
 ############################################################################
+This file summary:
+
+	Libraries included:  [2]
+		<algorithm>
+		<numeric>
+
+	Files included:  [2]
+		CommentsParser.ut.hpp
+		plugins/catch.hpp
 
 
-
-############################################################################  ../source/data parsers/CommentParser.ut.cpp
-algorithm
-numeric
-
-CommentsParser.ut.hpp
-plugins/catch.hpp
-
+This file documentation:
 [FileParserComments_UnitTest testObject;]
 [TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") {
 Has 1 instructions
@@ -1526,16 +1566,15 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/data parsers/CommentParser.ut.hpp ############################
 ############################################################################
+This file summary:
+
+	Files included:  [1]
+		CommentParser.hpp
 
 
-
-############################################################################  ../source/data parsers/CommentParser.ut.hpp
-
-CommentParser.hpp
-
+This file documentation:
 [class CommentParser_UnitTest : CommentParser {
 Has 1 instructions
 Has 6 classes
@@ -1579,15 +1618,12 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/data parsers/CommentParser.hpp ###############################
 ############################################################################
+This file summary:
 
 
-
-############################################################################  ../source/data parsers/CommentParser.hpp
-
-
+This file documentation:
 [/* TODO:
 - fix multiline comments
 ex: abcd *
@@ -1719,17 +1755,16 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/data parsers/DirectiveParser.hpp #############################
 ############################################################################
+This file summary:
+
+	Files included:  [2]
+		../DataStructures
+		../Tools
 
 
-
-############################################################################  ../source/data parsers/DirectiveParser.hpp
-
-../DataStructures
-../Tools
-
+This file documentation:
 [namespace DataParsers {
 Has 1 instructions
 Has 1 classes
@@ -1773,17 +1808,16 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/data parsers/IncludeParser.hpp ###############################
 ############################################################################
+This file summary:
+
+	Files included:  [2]
+		)
+		../DataStructures
 
 
-
-############################################################################  ../source/data parsers/IncludeParser.hpp
-
-)
-../DataStructures
-
+This file documentation:
 [namespace DataParsers {
 Has 1 instructions
 Has 1 classes
@@ -1874,19 +1908,20 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/data parsers/SyntaxParser.hpp ################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [3]
+		<algorithm>
+		<iostream>
+		<stack>
+
+	Files included:  [1]
+		../DataStructures
 
 
-
-############################################################################  ../source/data parsers/SyntaxParser.hpp
-algorithm
-iostream
-stack
-
-../DataStructures
-
+This file documentation:
 [namespace DataParsers {
 Has 1 instructions
 Has 1 classes
@@ -2061,18 +2096,19 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/data structures/Class.hpp ####################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [2]
+		<numeric>
+		<string>
+
+	Files included:  [1]
+		iSyntax.hpp
 
 
-
-############################################################################  ../source/data structures/Class.hpp
-numeric
-string
-
-iSyntax.hpp
-
+This file documentation:
 [class Class : public iSyntax {
 Has 4 instructions
 Has 6 classes
@@ -2140,18 +2176,19 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/data structures/File.hpp #####################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [2]
+		<string>
+		<vector>
+
+	Files included:  [1]
+		FileData.hpp
 
 
-
-############################################################################  ../source/data structures/File.hpp
-string
-vector
-
-FileData.hpp
-
+This file documentation:
 [class File {
 Has 9 instructions
 Has 13 classes
@@ -2254,18 +2291,19 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/data structures/FileData.hpp #################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [2]
+		<string>
+		<vector>
+
+	Files included:  [1]
+		iSyntax.hpp
 
 
-
-############################################################################  ../source/data structures/FileData.hpp
-string
-vector
-
-iSyntax.hpp
-
+This file documentation:
 [class FileData {
 Has 4 instructions
 Has 5 classes
@@ -2315,17 +2353,18 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/data structures/Instruction.hpp ##############################
 ############################################################################
+This file summary:
+
+	Libraries included:  [1]
+		<string>
+
+	Files included:  [1]
+		iSyntax.hpp
 
 
-
-############################################################################  ../source/data structures/Instruction.hpp
-string
-
-iSyntax.hpp
-
+This file documentation:
 [class Instruction : public iSyntax {
 Has 2 instructions
 Has 3 classes
@@ -2351,15 +2390,12 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/data structures/iSyntax.hpp ##################################
 ############################################################################
+This file summary:
 
 
-
-############################################################################  ../source/data structures/iSyntax.hpp
-
-
+This file documentation:
 [class iSyntax {
 Has 3 instructions
 Has 3 classes
@@ -2385,19 +2421,18 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/tools/Converter.hpp ##########################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [4]
+		<algorithm>
+		<set>
+		<sstream>
+		<vector>
 
 
-
-############################################################################  ../source/tools/Converter.hpp
-algorithm
-set
-sstream
-vector
-
-
+This file documentation:
 [namespace Tools {
 Has 1 instructions
 Has 1 classes
@@ -2564,21 +2599,22 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/tools/FileIO.hpp #############################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [5]
+		<dirent.h>
+		<exception>
+		<fstream>
+		<string>
+		<vector>
+
+	Files included:  [1]
+		IgnoreFiles.hpp
 
 
-
-############################################################################  ../source/tools/FileIO.hpp
-dirent.h
-exception
-fstream
-string
-vector
-
-IgnoreFiles.hpp
-
+This file documentation:
 [namespace Tools {
 Has 1 instructions
 Has 1 classes
@@ -2664,18 +2700,19 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/tools/IgnoreFiles.cpp ########################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [2]
+		<string>
+		<vector>
+
+	Files included:  [1]
+		IgnoreFiles.hpp
 
 
-
-############################################################################  ../source/tools/IgnoreFiles.cpp
-string
-vector
-
-IgnoreFiles.hpp
-
+This file documentation:
 [namespace Tools {
 Has 2 instructions
 Has 3 classes
@@ -2700,19 +2737,18 @@ Has 0 classes
 
 ]
 
-
-
+### ../source/tools/IgnoreFiles.hpp ########################################
 ############################################################################
+This file summary:
+
+	Libraries included:  [4]
+		<algorithm>
+		<set>
+		<string>
+		<vector>
 
 
-
-############################################################################  ../source/tools/IgnoreFiles.hpp
-algorithm
-set
-string
-vector
-
-
+This file documentation:
 [namespace Tools {
 Has 1 instructions
 Has 1 classes
@@ -2792,6 +2828,3 @@ Has 0 classes
 
 ]
 
-
-
-############################################################################

@@ -8,11 +8,13 @@
 
 
 class GeneratorTxt {
+    const std::string separator_;
     const std::string targetPath_;
     std::vector<File> data_;
 
 public:
     explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data):
+        separator_("############################################################################\n"),
         targetPath_(targetPath),
         data_(data)
     {}
@@ -24,24 +26,13 @@ public:
         result << "File generation date:  " << BuildDate();
         result << "\n\n";
         result << BuildTableOfContents();
-        
+        result << "\n\n\n\n";
+
         for (const auto& file : data_) {
             if (file.isCatalog()) {
                 continue;
             }
-            result << "\n\n\n############################################################################  "; 
-            result << file.getFile();
-
-            result << "\n";
-            result << Tools::Converter::to_string(file.getData().getLibIncludes()) << "\n";
-            result << Tools::Converter::to_string(file.getData().getProjIncludes()) << "\n";
-            
-            for (const auto& ptr : file.getData().getData()) {
-                result << "[" << ptr->getResult() << "]\n";
-
-            }
-
-            result << "\n\n\n############################################################################\n"; 
+            result << BuildFile(file) << "\n";
         }
         return result.str();
     }
@@ -61,9 +52,10 @@ private:
 
     std::string BuildTableOfContents() {
         std::stringstream result;       
+        const std::string header = "### Table Of Contents: ";
 
-        result << "### Table Of Contents: #####################################################\n"; 
-        result << "############################################################################\n"; 
+        result << header << separator_.substr(header.size());
+        result << separator_;
         for (size_t f = 1; f < data_.size(); ++f) {
             const auto& file = data_[f];
 
@@ -79,6 +71,33 @@ private:
             else {
                 result << file.getName() << file.getFormat() << "\n"; 
             }
+        }
+        return result.str();
+    }
+
+    std::string BuildFile(const File& file) {
+        std::stringstream result;       
+
+        result << "### " << file.getFile() << " " << separator_.substr(file.getFile().size() + 5);
+        result << separator_;
+
+        result << "This file summary:\n";
+        if (!file.getData().getLibIncludes().empty()) {
+            result << "\n\tLibraries included:  [" << file.getData().getLibIncludes().size() << "]\n";;
+            for (const auto& line : file.getData().getLibIncludes()) {
+                result << "\t\t<" << line << ">\n"; 
+            }
+        }
+        if (!file.getData().getProjIncludes().empty()) {
+            result << "\n\tFiles included:  [" << file.getData().getProjIncludes().size() << "]\n";
+            for (const auto& line : file.getData().getProjIncludes()) {
+                result << "\t\t" << line << "\n";
+            }
+        }
+        result << "\n\n";
+        result << "This file documentation:\n";
+        for (const auto& ptr : file.getData().getData()) {
+            result << "[" << ptr->getResult() << "]\n";
         }
         return result.str();
     }
