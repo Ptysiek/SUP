@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <sstream>
 
 #include "Tools"
@@ -19,8 +20,8 @@ public:
     std::string buildFile() {
         std::stringstream result;       
         
-        result << "\n\n";
         result << BuildHeader();
+        result << "File generation date:  " << BuildDate();
         result << "\n\n";
         result << BuildTableOfContents();
         
@@ -34,7 +35,6 @@ public:
             result << "\n";
             result << Tools::Converter::to_string(file.getData().getLibIncludes()) << "\n";
             result << Tools::Converter::to_string(file.getData().getProjIncludes()) << "\n";
-            result << "\n\n\n############################################################################\n"; 
             
             for (const auto& ptr : file.getData().getData()) {
                 result << "[" << ptr->getResult() << "]\n";
@@ -47,6 +47,18 @@ public:
     }
 
 private:
+    std::string BuildHeader() {
+        return "Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]\n";
+    }
+
+    std::string BuildDate() {
+        using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
+        TimePoint thisPoint = std::chrono::system_clock::now();
+        std::time_t t = std::chrono::system_clock::to_time_t(thisPoint);
+        std::string date = std::ctime(&t);
+        return date;
+    }
+
     std::string BuildTableOfContents() {
         std::stringstream result;       
 
@@ -71,10 +83,5 @@ private:
         return result.str();
     }
     
-    std::string BuildHeader() {
-        return "Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]\n";
-    }
-
-
 };
 

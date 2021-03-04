@@ -1,3 +1,5 @@
+Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
+File generation date:  Thu Mar  4 22:43:02 2021
 
 
 ### Table Of Contents: #####################################################
@@ -48,10 +50,6 @@ data parsers/DirectiveParser.hpp
 data parsers/IncludeParser.hpp
 data parsers/SyntaxParser.hpp
 
-
-
-
-############################################################################
 [namespace DataParsers {
 Has 5 instructions
 Has 0 classes
@@ -75,10 +73,6 @@ data structures/FileData.hpp
 data structures/Instruction.hpp
 data structures/iSyntax.hpp
 
-
-
-
-############################################################################
 [namespace DataStructures {
 Has 5 instructions
 Has 0 classes
@@ -97,10 +91,6 @@ string
 DataStructures
 Tools
 
-
-
-
-############################################################################
 [class FileBuilder {
 Has 8 instructions
 Has 8 classes
@@ -229,10 +219,6 @@ DataParsers
 DataStructures
 Tools
 
-
-
-
-############################################################################
 [using namespace DataParsers;]
 [class FileDataBuilder {
 Has 10 instructions
@@ -304,18 +290,15 @@ Has 0 classes
 
 
 ############################################################################  ../source/GeneratorTxt.hpp
+chrono
 sstream
 
 DataStructures
 Tools
 
-
-
-
-############################################################################
 [class GeneratorTxt {
 Has 3 instructions
-Has 3 classes
+Has 5 classes
 
 	public:
 explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data):
@@ -328,11 +311,11 @@ Has 0 classes
 
 
 	std::string buildFile() {
-Has 5 instructions
+Has 7 instructions
 Has 1 classes
 
 	for (const auto& file : data_) {
-Has 8 instructions
+Has 7 instructions
 Has 2 classes
 
 	if (file.isCatalog()) {
@@ -352,7 +335,19 @@ Has 0 classes
 
 
 	private:
-std::string BuildTableOfContents() {
+std::string BuildHeader() {
+Has 2 instructions
+Has 0 classes
+
+
+
+	std::string BuildDate() {
+Has 6 instructions
+Has 0 classes
+
+
+
+	std::string BuildTableOfContents() {
 Has 7 instructions
 Has 1 classes
 
@@ -401,10 +396,6 @@ Has 0 classes
 PathInitializer.ut.hpp
 plugins/catch.hpp
 
-
-
-
-############################################################################
 [TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {
 Has 1 instructions
 Has 3 classes
@@ -929,10 +920,6 @@ ProgramInitializer.hpp
 ProjectBuilder.hpp
 Tools
 
-
-
-
-############################################################################
 [class Program {
 Has 4 instructions
 Has 3 classes
@@ -992,10 +979,6 @@ string
 
 Tools
 
-
-
-
-############################################################################
 [/* TODO:
 - napisz obsługę flag. -md -markdown -txt -text
 - flag supprot
@@ -1055,10 +1038,6 @@ FileBuilder.hpp
 FileDataBuilder.hpp
 Tools
 
-
-
-
-############################################################################
 [class ProjectBuilder {
 Has 4 instructions
 Has 9 classes
@@ -1166,10 +1145,6 @@ tools/Converter.hpp
 tools/FileIO.hpp
 tools/IgnoreFiles.hpp
 
-
-
-
-############################################################################
 [namespace Tools {
 Has 4 instructions
 Has 0 classes
@@ -1193,18 +1168,10 @@ plugins/catch.hpp
 
 
 
-############################################################################
-
-
-
 ############################################################################  ../source/iSyntaxBuilder.hpp
 
 DataStructures
 
-
-
-
-############################################################################
 [class iSyntaxBuilder {
 Has 1 instructions
 Has 0 classes
@@ -1223,10 +1190,6 @@ iostream
 Program.hpp
 ProgramInitializer.hpp
 
-
-
-
-############################################################################
 [int main(int argc, char* argv[]) {
 Has 6 instructions
 Has 0 classes
@@ -1246,10 +1209,6 @@ numeric
 CommentsParser.ut.hpp
 plugins/catch.hpp
 
-
-
-
-############################################################################
 [FileParserComments_UnitTest testObject;]
 [TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") {
 Has 1 instructions
@@ -1577,10 +1536,6 @@ Has 0 classes
 
 CommentParser.hpp
 
-
-
-
-############################################################################
 [class CommentParser_UnitTest : CommentParser {
 Has 1 instructions
 Has 6 classes
@@ -1633,10 +1588,6 @@ Has 0 classes
 ############################################################################  ../source/data parsers/CommentParser.hpp
 
 
-
-
-
-############################################################################
 [/* TODO:
 - fix multiline comments
 ex: abcd *
@@ -1779,10 +1730,6 @@ Has 0 classes
 ../DataStructures
 ../Tools
 
-
-
-
-############################################################################
 [namespace DataParsers {
 Has 1 instructions
 Has 1 classes
@@ -1837,10 +1784,6 @@ Has 0 classes
 )
 ../DataStructures
 
-
-
-
-############################################################################
 [namespace DataParsers {
 Has 1 instructions
 Has 1 classes
@@ -1944,10 +1887,6 @@ stack
 
 ../DataStructures
 
-
-
-
-############################################################################
 [namespace DataParsers {
 Has 1 instructions
 Has 1 classes
@@ -2134,10 +2073,6 @@ string
 
 iSyntax.hpp
 
-
-
-
-############################################################################
 [class Class : public iSyntax {
 Has 4 instructions
 Has 6 classes
@@ -2217,10 +2152,6 @@ vector
 
 FileData.hpp
 
-
-
-
-############################################################################
 [class File {
 Has 9 instructions
 Has 13 classes
@@ -2335,10 +2266,6 @@ vector
 
 iSyntax.hpp
 
-
-
-
-############################################################################
 [class FileData {
 Has 4 instructions
 Has 5 classes
@@ -2399,10 +2326,6 @@ string
 
 iSyntax.hpp
 
-
-
-
-############################################################################
 [class Instruction : public iSyntax {
 Has 2 instructions
 Has 3 classes
@@ -2437,10 +2360,6 @@ Has 0 classes
 ############################################################################  ../source/data structures/iSyntax.hpp
 
 
-
-
-
-############################################################################
 [class iSyntax {
 Has 3 instructions
 Has 3 classes
@@ -2479,10 +2398,6 @@ sstream
 vector
 
 
-
-
-
-############################################################################
 [namespace Tools {
 Has 1 instructions
 Has 1 classes
@@ -2664,10 +2579,6 @@ vector
 
 IgnoreFiles.hpp
 
-
-
-
-############################################################################
 [namespace Tools {
 Has 1 instructions
 Has 1 classes
@@ -2765,10 +2676,6 @@ vector
 
 IgnoreFiles.hpp
 
-
-
-
-############################################################################
 [namespace Tools {
 Has 2 instructions
 Has 3 classes
@@ -2806,10 +2713,6 @@ string
 vector
 
 
-
-
-
-############################################################################
 [namespace Tools {
 Has 1 instructions
 Has 1 classes
