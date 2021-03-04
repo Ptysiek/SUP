@@ -20,6 +20,8 @@ public:
         std::stringstream result;       
         
         result << "\n\n";
+        result << BuildHeader();
+        result << "\n\n";
         result << BuildTableOfContents();
         
         for (const auto& file : data_) {
@@ -69,6 +71,9 @@ private:
         return result.str();
     }
     
+    std::string BuildHeader() {
+        return "Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]\n";
+    }
 
 
 };
