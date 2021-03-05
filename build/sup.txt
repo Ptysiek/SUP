@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Fri Mar  5 00:52:25 2021
+File generation date:  Fri Mar  5 11:08:39 2021
 
 
 ### Table Of Contents: #####################################################
@@ -17,7 +17,7 @@ File generation date:  Fri Mar  5 00:52:25 2021
 		ProjectBuilder.hpp
 		Tools
 		catch_main.cpp
-		iSyntaxBuilder.hpp
+		iSyntaxCascadeBuilder.hpp
 		main.cpp
 
 		[source/data parsers/]
@@ -79,7 +79,7 @@ This file summary:
 
 This file documentation:
 [namespace DataStructures {
-Has 5 instructions
+Has 6 instructions
 Has 0 classes
 
 ]
@@ -1202,17 +1202,115 @@ This file summary:
 
 This file documentation:
 
-### ../source/iSyntaxBuilder.hpp ###########################################
+### ../source/iSyntaxCascadeBuilder.hpp ####################################
 ############################################################################
 This file summary:
+	Libraries included:  [1]
+		<memory>
+
 	Files included:  [1]
 		DataStructures
 
 
 This file documentation:
-[class iSyntaxBuilder {
+[class iSyntaxCascadeBuilder {
+Has 3 instructions
+Has 3 classes
+
+	public:
+iSyntaxCascadeBuilder(const std::string& syntaxData):
+product_(BuildProduct(syntaxData))
+{
 Has 1 instructions
 Has 0 classes
+
+
+
+	private:
+Syntax BuildProduct(const std::string& syntaxData) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	/*
+Syntaxes BuildProduct() {
+Has 6 instructions
+Has 1 classes
+
+	while(i != std::string::npos) {
+Has 6 instructions
+Has 3 classes
+
+	') {
+Has 1 instructions
+Has 2 classes
+
+	if (hierarchy.empty()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+	else {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	else if (syntaxData[syntaxData.size() - 1] == '{
+Has 1 instructions
+Has 1 classes
+
+	') {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	') {
+Has 2 instructions
+Has 3 classes
+
+	if (!draft.empty()) {
+Has 2 instructions
+Has 1 classes
+
+	') {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+	if (hierarchy.size() < 2) {
+Has 2 instructions
+Has 1 classes
+
+	if (!hierarchy.empty()) {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+	else {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+
+
+
 
 ]
 
@@ -1910,8 +2008,9 @@ This file summary:
 		<iostream>
 		<stack>
 
-	Files included:  [1]
+	Files included:  [2]
 		../DataStructures
+		../iSyntaxCascadeBuilder.hpp
 
 
 This file documentation:
@@ -1939,7 +2038,7 @@ Has 0 classes
 
 
 
-	Syntax getProduct() const {
+	Syntaxes getProduct() const {
 Has 2 instructions
 Has 0 classes
 
@@ -1952,15 +2051,28 @@ Has 0 classes
 
 
 
-	Syntax BuildProduct() {
+	Syntaxes BuildProduct() {
 Has 6 instructions
-Has 2 classes
+Has 1 classes
 
 	while(i != std::string::npos) {
 Has 6 instructions
+Has 0 classes
+
+
+
+
+
+	void BuildSyntax(
+Syntaxes& result,
+std::stack<std::shared_ptr<Class>>& hierarchy,
+std::string& syntaxData,
+std::string& draft)
+{
+Has 2 instructions
 Has 3 classes
 
-	') {
+	', syntaxData)) {
 Has 1 instructions
 Has 2 classes
 
@@ -1978,11 +2090,11 @@ Has 0 classes
 
 
 
-	else if (syntaxData[syntaxData.size() - 1] == '{
+	else if (LastCharEquals('{
 Has 1 instructions
 Has 1 classes
 
-	') {
+	', syntaxData)) {
 Has 2 instructions
 Has 0 classes
 
@@ -1990,7 +2102,7 @@ Has 0 classes
 
 
 
-	') {
+	', syntaxData)) {
 Has 2 instructions
 Has 3 classes
 
@@ -2028,12 +2140,9 @@ Has 0 classes
 
 
 
-	/*
-while (!hierarchy.empty()) {
-Has 3 instructions
+	bool LastCharEquals(const char ch, const std::string& str) {
+Has 2 instructions
 Has 0 classes
-
-
 
 
 
@@ -2042,30 +2151,6 @@ Has 3 instructions
 Has 1 classes
 
 	'), line.find('{
-Has 1 instructions
-Has 0 classes
-
-
-
-
-
-	bool hasCoolon(const Line& line) {
-Has 3 instructions
-Has 0 classes
-
-
-
-	bool hasO_Bracket(const Line& line) {
-Has 2 instructions
-Has 2 classes
-
-	return (line.find('{
-Has 2 instructions
-Has 0 classes
-
-
-
-	bool hasC_Bracket(const Line& line) {
 Has 1 instructions
 Has 0 classes
 

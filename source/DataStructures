@@ -16,7 +16,8 @@ namespace DataStructures {
     using Data = std::vector<std::string>;
     using Project = std::vector<File>;
 
-    using Syntax = std::vector<std::shared_ptr<iSyntax>>;
+    using Syntax = std::shared_ptr<iSyntax>;
+    using Syntaxes = std::vector<Syntax>;
 }
 
 

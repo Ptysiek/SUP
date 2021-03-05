@@ -12,6 +12,7 @@ class GeneratorTxt {
     const std::string targetPath_;
     std::vector<File> data_;
 
+
 public:
     explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data):
         separator_("############################################################################\n"),
@@ -36,6 +37,7 @@ public:
         }
         return result.str();
     }
+
 
 private:
     std::string BuildHeader() {
