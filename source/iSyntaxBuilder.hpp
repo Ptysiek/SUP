@@ -13,8 +13,6 @@ public:
 
 
     static Syntax buildInstruction(const std::string& syntaxData) {
-
-        
         return std::make_shared<Instruction>(syntaxData);
     }
 /*

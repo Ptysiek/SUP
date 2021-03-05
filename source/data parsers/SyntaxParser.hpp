@@ -82,10 +82,12 @@ protected:
     //#######################################################################################################
     void AddInstruction(Workspace& w) {
         if (w.hierarchy_.empty()) {
-            w.result_.emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+            //w.result_.emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+            w.result_.emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
             return;
         }
-        w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+        //w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+        w.hierarchy_.top()->emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
     }
     
     void AddBlockOpen(Workspace& w) {
@@ -94,10 +96,12 @@ protected:
     
     void AddBlockClose(Workspace& w) {
         if (w.hierarchy_.size() == 0) {
-            w.result_.emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+            //w.result_.emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+            w.result_.emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
             return;
         }
-        w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+        //w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+        w.hierarchy_.top()->emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
 
         if (w.hierarchy_.size() == 1) {
             w.result_.emplace_back(w.hierarchy_.top());
