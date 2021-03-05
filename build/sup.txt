@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Fri Mar  5 11:48:30 2021
+File generation date:  Fri Mar  5 11:57:54 2021
 
 
 ### Table Of Contents: #####################################################
@@ -2508,7 +2508,7 @@ Has 1 classes
 
 	class SyntaxParser {
 Has 7 instructions
-Has 11 classes
+Has 12 classes
 
 	struct Workspace {
 Has 5 instructions
@@ -2568,19 +2568,13 @@ Has 0 classes
 
 
 
-	void BuildSyntax(Workspace& w) {
+	void BuildSingleSyntax(Workspace& w) {
 Has 2 instructions
 Has 3 classes
 
 	', w.syntaxData_)) {
 Has 3 instructions
-Has 1 classes
-
-	if (w.hierarchy_.empty()) {
-Has 3 instructions
 Has 0 classes
-
-
 
 
 
@@ -2617,6 +2611,18 @@ Has 0 classes
 
 
 
+
+
+
+
+
+	void AddInstruction(Workspace& w) {
+Has 2 instructions
+Has 1 classes
+
+	if (w.hierarchy_.empty()) {
+Has 3 instructions
+Has 0 classes
 
 
 

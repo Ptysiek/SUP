@@ -50,18 +50,12 @@ protected:
     Syntaxes BuildProduct() {
         Workspace w(rawData_);
 
-        //Syntaxes result;
-        //std::stack<std::shared_ptr<Class>> hierarchy;
-        //std::string draft = rawData_;
-        
         size_t i = ClosestSemicolonOrParenthesis(w.draft_);
         while(i != std::string::npos) {
-            //std::string syntaxData = w.draft_.substr(0, i + 1);
             w.syntaxData_ = w.draft_.substr(0, i + 1);
             w.syntaxData_ = RemoveNewLineCharacter(w.syntaxData_);
             w.draft_ = w.draft_.substr(i + 1);
-            //BuildSyntax(result, hierarchy, syntaxData, draft); 
-            BuildSyntax(w);
+            BuildSingleSyntax(w);
 
             i = ClosestSemicolonOrParenthesis(w.draft_);
         }
@@ -72,19 +66,9 @@ protected:
         return w.result_; 
     }
 
-    void BuildSyntax(Workspace& w) {
-    //void BuildSyntax(
-    //    Syntaxes& result, 
-    //    std::stack<std::shared_ptr<Class>>& hierarchy, 
-    //    std::string& syntaxData,
-    //    std::string& draft)
-    //{
+    void BuildSingleSyntax(Workspace& w) {
         if (LastCharEquals(';', w.syntaxData_)) {
-            if (w.hierarchy_.empty()) {
-                w.result_.emplace_back(std::make_shared<Instruction>(w.syntaxData_));
-                return;
-            }
-            w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+            AddInstruction(w);
             return;
         }
         
@@ -114,6 +98,13 @@ protected:
         }
     }
     //#######################################################################################################
+    void AddInstruction(Workspace& w) {
+        if (w.hierarchy_.empty()) {
+            w.result_.emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+            return;
+        }
+        w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+    }
 
     //#######################################################################################################
     bool LastCharEquals(const char ch, const std::string& str) {  
