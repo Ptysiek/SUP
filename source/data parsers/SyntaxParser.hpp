@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../DataStructures"
-#include "../iSyntaxCascadeBuilder.hpp"
+#include "../iSyntaxBuilder.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -17,6 +17,20 @@ class SyntaxParser {
     using Line = DataStructures::Line;
     using Syntaxes = DataStructures::Syntaxes;
     
+    struct Workspace {
+        Syntaxes result_;
+        std::stack<std::shared_ptr<Class>> hierarchy_;
+        std::string draft_; 
+        std::string syntaxData_; 
+
+        Workspace(const std::string& rawData):
+            result_(),
+            hierarchy_(),
+            draft_(rawData),
+            syntaxData_()
+        {}
+    };
+
     const std::string rawData_;
     Syntaxes product_;
 
@@ -32,95 +46,101 @@ public:
 
 
 protected:
-    std::string MergeRawData(const Data& data) const {
-        return Converter::to_string(data);
-    }
-
+    //#######################################################################################################
     Syntaxes BuildProduct() {
-        Syntaxes result;
+        Workspace w(rawData_);
 
-        std::string draft = rawData_;
-        size_t i = ClosestSemicolonOrParenthesis(draft);
+        //Syntaxes result;
+        //std::stack<std::shared_ptr<Class>> hierarchy;
+        //std::string draft = rawData_;
         
-        std::stack<std::shared_ptr<Class>> hierarchy;
-
+        size_t i = ClosestSemicolonOrParenthesis(w.draft_);
         while(i != std::string::npos) {
-            std::string syntaxData = draft.substr(0, i + 1);
-            syntaxData = RemoveNewLineCharacter(syntaxData);
-            draft = draft.substr(i + 1);
-            BuildSyntax(result, hierarchy, syntaxData, draft); 
-            
-            i = ClosestSemicolonOrParenthesis(draft);
-        }
-        //while (!hierarchy.empty()) {
-        //    result.emplace_back(hierarchy.top());
-        //    hierarchy.pop();
-        //}
+            //std::string syntaxData = w.draft_.substr(0, i + 1);
+            w.syntaxData_ = w.draft_.substr(0, i + 1);
+            w.syntaxData_ = RemoveNewLineCharacter(w.syntaxData_);
+            w.draft_ = w.draft_.substr(i + 1);
+            //BuildSyntax(result, hierarchy, syntaxData, draft); 
+            BuildSyntax(w);
 
-        return result; 
+            i = ClosestSemicolonOrParenthesis(w.draft_);
+        }
+        while (!w.hierarchy_.empty()) {
+            w.result_.emplace_back(w.hierarchy_.top());
+            w.hierarchy_.pop();
+        }
+        return w.result_; 
     }
 
-    void BuildSyntax(
-        Syntaxes& result, 
-        std::stack<std::shared_ptr<Class>>& hierarchy, 
-        std::string& syntaxData,
-        std::string& draft)
-    {
-        //if (syntaxData[syntaxData.size() - 1] == ';') {
-        if (LastCharEquals(';', syntaxData)) {
-            if (hierarchy.empty()) {
-                result.emplace_back(std::make_shared<Instruction>(syntaxData));
+    void BuildSyntax(Workspace& w) {
+    //void BuildSyntax(
+    //    Syntaxes& result, 
+    //    std::stack<std::shared_ptr<Class>>& hierarchy, 
+    //    std::string& syntaxData,
+    //    std::string& draft)
+    //{
+        if (LastCharEquals(';', w.syntaxData_)) {
+            if (w.hierarchy_.empty()) {
+                w.result_.emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+                return;
             }
-            else {
-                hierarchy.top()->push_back(std::make_shared<Instruction>(syntaxData));
-            }
+            w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+            return;
         }
-        //else if (syntaxData[syntaxData.size() - 1] == '{') {
-        else if (LastCharEquals('{', syntaxData)) {
-            hierarchy.push(std::make_shared<Class>(syntaxData));
+        
+        if (LastCharEquals('{', w.syntaxData_)) {
+            w.hierarchy_.push(std::make_shared<Class>(w.syntaxData_));
+            return;
         }
-        //else if (syntaxData[syntaxData.size() - 1] == '}') {
-        else if (LastCharEquals('}', syntaxData)) {
-            if (!draft.empty()) {
-                if (draft[0] == ';') {
-                    syntaxData += ';';
-                    draft = draft.substr(1);
-                }
+        
+        if (LastCharEquals('}', w.syntaxData_)) {
+            AppendSemicolon(w.syntaxData_, w.draft_);
+            if (w.hierarchy_.size() == 0) {
+                w.result_.emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+                return;
             }
+            w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
 
-            hierarchy.top()->push_back(std::make_shared<Instruction>(syntaxData));
-
-            if (hierarchy.size() < 2) {
-                result.emplace_back(hierarchy.top());
-                if (!hierarchy.empty()) {
-                    hierarchy.pop();
+            if (w.hierarchy_.size() == 1) {
+                w.result_.emplace_back(w.hierarchy_.top());
+                if (!w.hierarchy_.empty()) {
+                    w.hierarchy_.pop();
                 }
+                return;
             }
-            else {
-                auto oldTop = hierarchy.top();
-                hierarchy.pop();
-                hierarchy.top()->push_back(oldTop);
-            }
+            auto oldTop = w.hierarchy_.top();
+            w.hierarchy_.pop();
+            w.hierarchy_.top()->emplace_back(oldTop);
         }
     }
+    //#######################################################################################################
 
+    //#######################################################################################################
     bool LastCharEquals(const char ch, const std::string& str) {  
         return (str[str.size() - 1] == ch); 
     }
-
-
     size_t ClosestSemicolonOrParenthesis(const Line& line) {
         return std::min(std::min(line.find(';'), line.find('{')), line.find('}'));
     }
-    
-
+    //#######################################################################################################
+    std::string MergeRawData(const Data& data) const {
+        return Converter::to_string(data);
+    }
+    void AppendSemicolon(std::string& syntaxData, std::string& draft) {
+        if (!draft.empty()) {
+            if (draft[0] == ';') {
+                syntaxData += ';';
+                draft = draft.substr(1);
+            }
+        }
+    }
     std::string RemoveNewLineCharacter( const std::string& line) { 
         if (line.empty()) {
             return line;
         }
         return (line[0] == '\n')? line.substr(1) : line;
     }
-
+    //#######################################################################################################
 };
 } // namespace DataParsers
 

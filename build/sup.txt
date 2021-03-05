@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Fri Mar  5 11:08:39 2021
+File generation date:  Fri Mar  5 11:48:30 2021
 
 
 ### Table Of Contents: #####################################################
@@ -17,7 +17,7 @@ File generation date:  Fri Mar  5 11:08:39 2021
 		ProjectBuilder.hpp
 		Tools
 		catch_main.cpp
-		iSyntaxCascadeBuilder.hpp
+		iSyntaxBuilder.hpp
 		main.cpp
 
 		[source/data parsers/]
@@ -1202,7 +1202,7 @@ This file summary:
 
 This file documentation:
 
-### ../source/iSyntaxCascadeBuilder.hpp ####################################
+### ../source/iSyntaxBuilder.hpp ###########################################
 ############################################################################
 This file summary:
 	Libraries included:  [1]
@@ -1213,21 +1213,12 @@ This file summary:
 
 
 This file documentation:
-[class iSyntaxCascadeBuilder {
-Has 3 instructions
-Has 3 classes
+[class iSyntaxBuilder {
+Has 2 instructions
+Has 2 classes
 
 	public:
-iSyntaxCascadeBuilder(const std::string& syntaxData):
-product_(BuildProduct(syntaxData))
-{
-Has 1 instructions
-Has 0 classes
-
-
-
-	private:
-Syntax BuildProduct(const std::string& syntaxData) {
+static Syntax buildInstruction(const std::string& syntaxData) {
 Has 2 instructions
 Has 0 classes
 
@@ -1661,6 +1652,503 @@ Has 0 classes
 
 
 ]
+[TEST_CASE("FileParserComments: RemoveOneLine operations", "[RemoveOnelineComments], [RemoveAllOnelineComments]") {
+Has 0 instructions
+Has 3 classes
+
+	struct test {
+Has 3 instructions
+Has 1 classes
+
+	std::string log() const {
+Has 2 instructions
+Has 1 classes
+
+	return
+"{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	const std::initializer_list<test> tests = {
+Has 1 instructions
+Has 22 classes
+
+	{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 9 classes
+
+	" \"
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	WHEN("Testing the RemoveOnelineComments()") {
+Has 1 instructions
+Has 1 classes
+
+	for (const auto& test : tests) {
+Has 1 instructions
+Has 1 classes
+
+	THEN(test.log()) {
+Has 4 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	WHEN("Testing the RemoveAllOnelineComments()") {
+Has 7 instructions
+Has 2 classes
+
+	std::for_each(tests.begin(), tests.end(), [&](auto test){
+Has 2 instructions
+Has 0 classes
+
+
+
+	for (const auto& test : tests) {
+Has 2 instructions
+Has 1 classes
+
+	THEN("id: " + std::to_string(i) + " (" + results.at(i) + ") == (" + test.expectedValue_ + ")") {
+Has 2 instructions
+Has 0 classes
+
+
+
+
+
+
+
+
+
+	TEST_CASE("FileParserComments: RemoveMultiline operations", "[ClearLine]") {
+Has 1 instructions
+Has 1 classes
+
+	WHEN("Testing the Multiline_ClearLine()") {
+Has 1 instructions
+Has 3 classes
+
+	struct test {
+Has 4 instructions
+Has 1 classes
+
+	std::string log() const {
+Has 2 instructions
+Has 1 classes
+
+	return
+"{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+
+
+	const std::initializer_list<test> tests = {
+Has 1 instructions
+Has 25 classes
+
+	{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+	,
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+
+
+	for (const auto& test : tests) {
+Has 1 instructions
+Has 1 classes
+
+	THEN(test.log()) {
+Has 7 instructions
+Has 0 classes
+
+
+
+
+
+
+
+
+
+]
 
 ### ../source/data parsers/CommentParser.ut.hpp ############################
 ############################################################################
@@ -2010,7 +2498,7 @@ This file summary:
 
 	Files included:  [2]
 		../DataStructures
-		../iSyntaxCascadeBuilder.hpp
+		../iSyntaxBuilder.hpp
 
 
 This file documentation:
@@ -2020,7 +2508,24 @@ Has 1 classes
 
 	class SyntaxParser {
 Has 7 instructions
-Has 9 classes
+Has 11 classes
+
+	struct Workspace {
+Has 5 instructions
+Has 1 classes
+
+	Workspace(const std::string& rawData):
+result_(),
+hierarchy_(),
+draft_(rawData),
+syntaxData_()
+{
+Has 1 instructions
+Has 0 classes
+
+
+
+
 
 	public:
 SyntaxParser(const Data& data):
@@ -2045,15 +2550,9 @@ Has 0 classes
 
 
 	protected:
-std::string MergeRawData(const Data& data) const {
-Has 2 instructions
-Has 0 classes
-
-
-
-	Syntaxes BuildProduct() {
-Has 6 instructions
-Has 1 classes
+Syntaxes BuildProduct() {
+Has 4 instructions
+Has 2 classes
 
 	while(i != std::string::npos) {
 Has 6 instructions
@@ -2061,78 +2560,61 @@ Has 0 classes
 
 
 
+	while (!w.hierarchy_.empty()) {
+Has 3 instructions
+Has 0 classes
 
 
-	void BuildSyntax(
-Syntaxes& result,
-std::stack<std::shared_ptr<Class>>& hierarchy,
-std::string& syntaxData,
-std::string& draft)
-{
+
+
+
+	void BuildSyntax(Workspace& w) {
 Has 2 instructions
 Has 3 classes
 
-	', syntaxData)) {
+	', w.syntaxData_)) {
+Has 3 instructions
+Has 1 classes
+
+	if (w.hierarchy_.empty()) {
+Has 3 instructions
+Has 0 classes
+
+
+
+
+
+	if (LastCharEquals('{
 Has 1 instructions
+Has 1 classes
+
+	', w.syntaxData_)) {
+Has 3 instructions
+Has 0 classes
+
+
+
+
+
+	', w.syntaxData_)) {
+Has 6 instructions
 Has 2 classes
 
-	if (hierarchy.empty()) {
-Has 2 instructions
+	if (w.hierarchy_.size() == 0) {
+Has 3 instructions
 Has 0 classes
 
 
 
-	else {
-Has 2 instructions
-Has 0 classes
-
-
-
-
-
-	else if (LastCharEquals('{
-Has 1 instructions
+	if (w.hierarchy_.size() == 1) {
+Has 3 instructions
 Has 1 classes
 
-	', syntaxData)) {
+	if (!w.hierarchy_.empty()) {
 Has 2 instructions
 Has 0 classes
 
 
-
-
-
-	', syntaxData)) {
-Has 2 instructions
-Has 3 classes
-
-	if (!draft.empty()) {
-Has 2 instructions
-Has 1 classes
-
-	') {
-Has 4 instructions
-Has 0 classes
-
-
-
-
-
-	if (hierarchy.size() < 2) {
-Has 2 instructions
-Has 1 classes
-
-	if (!hierarchy.empty()) {
-Has 2 instructions
-Has 0 classes
-
-
-
-
-
-	else {
-Has 4 instructions
-Has 0 classes
 
 
 
@@ -2153,6 +2635,30 @@ Has 1 classes
 	'), line.find('{
 Has 1 instructions
 Has 0 classes
+
+
+
+
+
+	std::string MergeRawData(const Data& data) const {
+Has 2 instructions
+Has 0 classes
+
+
+
+	void AppendSemicolon(std::string& syntaxData, std::string& draft) {
+Has 1 instructions
+Has 1 classes
+
+	if (!draft.empty()) {
+Has 2 instructions
+Has 1 classes
+
+	') {
+Has 4 instructions
+Has 0 classes
+
+
 
 
 
@@ -2213,7 +2719,7 @@ Has 0 classes
 
 
 
-	void push_back(const std::shared_ptr<iSyntax>& subElement) {
+	void emplace_back(const std::shared_ptr<iSyntax>& subElement) {
 Has 2 instructions
 Has 1 classes
 

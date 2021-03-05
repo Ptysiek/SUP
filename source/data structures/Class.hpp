@@ -35,12 +35,12 @@ public:
         return result;
     }
     
-    void push_back(const std::shared_ptr<iSyntax>& subElement) {
+    void emplace_back(const std::shared_ptr<iSyntax>& subElement) {
         if (subElement->getSyntaxType() == Type::Class) {
-            subClasses_.push_back(subElement);
+            subClasses_.emplace_back(subElement);
             return;
         }
-        subElements_.push_back(subElement);
+        subElements_.emplace_back(subElement);
     }
 
     Type getSyntaxType() const override { return Type::Class; }

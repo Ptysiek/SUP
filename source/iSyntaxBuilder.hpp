@@ -5,19 +5,14 @@
 #include "DataStructures"
 
 
-class iSyntaxCascadeBuilder {
+class iSyntaxBuilder {
     using Syntax = DataStructures::Syntax;
-    const Syntax product_;
 
 
 public:
-    iSyntaxCascadeBuilder(const std::string& syntaxData):
-        product_(BuildProduct(syntaxData))
-    {}
 
 
-private:
-    Syntax BuildProduct(const std::string& syntaxData) {
+    static Syntax buildInstruction(const std::string& syntaxData) {
 
         
         return std::make_shared<Instruction>(syntaxData);
