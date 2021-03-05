@@ -8,8 +8,6 @@
 #include <stack>
 
 
-
-
 namespace DataParsers {
 class SyntaxParser {
     using Converter = Tools::Converter;
@@ -19,7 +17,7 @@ class SyntaxParser {
     
     struct Workspace {
         Syntaxes result_;
-        std::stack<std::shared_ptr<Class>> hierarchy_;
+        std::stack<std::shared_ptr<Block>> hierarchy_;
         std::string draft_; 
         std::string syntaxData_; 
 
@@ -82,25 +80,22 @@ protected:
     //#######################################################################################################
     void AddInstruction(Workspace& w) {
         if (w.hierarchy_.empty()) {
-            //w.result_.emplace_back(std::make_shared<Instruction>(w.syntaxData_));
             w.result_.emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
             return;
         }
-        //w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
         w.hierarchy_.top()->emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
     }
     
     void AddBlockOpen(Workspace& w) {
-        w.hierarchy_.push(std::make_shared<Class>(w.syntaxData_));
+        //w.hierarchy_.push(std::make_shared<Class>(w.syntaxData_));
+        w.hierarchy_.push(iSyntaxBuilder::buildBlock(w.syntaxData_));
     }
     
     void AddBlockClose(Workspace& w) {
         if (w.hierarchy_.size() == 0) {
-            //w.result_.emplace_back(std::make_shared<Instruction>(w.syntaxData_));
             w.result_.emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
             return;
         }
-        //w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
         w.hierarchy_.top()->emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
 
         if (w.hierarchy_.size() == 1) {
@@ -148,7 +143,5 @@ protected:
     //#######################################################################################################
 };
 } // namespace DataParsers
-
-
 
 

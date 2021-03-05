@@ -6,7 +6,7 @@ class iSyntax {
 
 
 public:
-    enum Type { Instruction, Function, Operation, Class, Structure };
+    enum Type { Instruction, Block, Function, Operation, Class, Structure };
     enum Memory { Global, Component, Static }; 
 
     virtual ~iSyntax() {};
