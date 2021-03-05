@@ -79,7 +79,7 @@ private:
         std::stringstream result;       
 
         result << BuildSeparator("### " + file.getFile() + " ");
-        result << "This file summary:";
+        result << "File summary:";
         if (!file.getData().getLibIncludes().empty()) {
             result << "\n\tLibraries included:  [" << file.getData().getLibIncludes().size() << "]\n";;
             for (const auto& line : file.getData().getLibIncludes()) {
@@ -93,7 +93,7 @@ private:
             }
         }
         result << "\n\n";
-        result << "This file documentation:\n";
+        result << "File content:\n";
         for (const auto& ptr : file.getData().getData()) {
             result << "[" << ptr->getResult() << "]\n";
         }

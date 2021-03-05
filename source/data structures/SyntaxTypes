@@ -1,0 +1,8 @@
+#pragma once
+
+
+namespace SyntaxTypes {
+    enum Type { Instruction, Block, Function, Operation, Class, Structure };
+    enum Memory { Global, Component, Static }; 
+}
+

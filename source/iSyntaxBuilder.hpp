@@ -13,9 +13,12 @@ class iSyntaxBuilder {
 
 
 public:
-
     static BlockSyntax buildBlock(std::string syntaxData) {
         auto temp = CutOutTemplate(syntaxData);      
+
+        if (syntaxData.find("class") != std::string::npos) {
+            return std::make_shared<Class>(temp, syntaxData);
+        }
 
         return std::make_shared<Block>(temp, syntaxData);
     }
@@ -25,7 +28,6 @@ public:
     }
 
 private:
-
     static std::string CutOutTemplate(std::string& syntaxData) {
         auto begin = syntaxData.find("template");
         if (begin == std::string::npos) {

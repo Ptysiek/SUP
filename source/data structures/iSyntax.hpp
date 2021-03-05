@@ -1,13 +1,13 @@
 #pragma once
 
+#include "SyntaxTypes"
 
 
 class iSyntax {
-
+protected:
+    using Type = SyntaxTypes::Type;
 
 public:
-    enum Type { Instruction, Block, Function, Operation, Class, Structure };
-    enum Memory { Global, Component, Static }; 
 
     virtual ~iSyntax() {};
 
