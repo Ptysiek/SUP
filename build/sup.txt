@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Fri Mar  5 11:57:54 2021
+File generation date:  Fri Mar  5 12:00:19 2021
 
 
 ### Table Of Contents: #####################################################
@@ -2508,7 +2508,7 @@ Has 1 classes
 
 	class SyntaxParser {
 Has 7 instructions
-Has 12 classes
+Has 13 classes
 
 	struct Workspace {
 Has 5 instructions
@@ -2625,6 +2625,12 @@ Has 3 instructions
 Has 0 classes
 
 
+
+
+
+	void AddOpen(Workspace& w) {
+Has 2 instructions
+Has 0 classes
 
 
 

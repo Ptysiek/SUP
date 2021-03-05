@@ -71,9 +71,8 @@ protected:
             AddInstruction(w);
             return;
         }
-        
         if (LastCharEquals('{', w.syntaxData_)) {
-            w.hierarchy_.push(std::make_shared<Class>(w.syntaxData_));
+            AddOpen(w);
             return;
         }
         
@@ -104,6 +103,9 @@ protected:
             return;
         }
         w.hierarchy_.top()->emplace_back(std::make_shared<Instruction>(w.syntaxData_));
+    }
+    void AddOpen(Workspace& w) {
+        w.hierarchy_.push(std::make_shared<Class>(w.syntaxData_));
     }
 
     //#######################################################################################################
