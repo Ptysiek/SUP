@@ -33,7 +33,7 @@ public:
             if (file.isCatalog()) {
                 continue;
             }
-            result << BuildFile(file) << "\n";
+            result << BuildFile(file) << "\n\n\n\n";
         }
         return result.str();
     }
@@ -79,6 +79,24 @@ private:
         std::stringstream result;       
 
         result << BuildSeparator("### " + file.getFile() + " ");
+        result << BuildFileContent(file);
+        result << "\n\n";
+        result << BuildFileSummary(file);
+
+        return result.str();
+    }
+ 
+    std::string BuildFileContent(const File& file) {
+        std::stringstream result;       
+        result << "File content:\n";
+        for (const auto& ptr : file.getData().getData()) {
+            result << "[" << ptr->getResult(1) << "]\n";
+        }
+        return result.str();
+    }
+
+    std::string BuildFileSummary(const File& file) {
+        std::stringstream result;       
         result << "File summary:";
         if (!file.getData().getLibIncludes().empty()) {
             result << "\n\tLibraries included:  [" << file.getData().getLibIncludes().size() << "]\n";;
@@ -92,14 +110,9 @@ private:
                 result << "\t\t" << line << "\n";
             }
         }
-        result << "\n\n";
-        result << "File content:\n";
-        for (const auto& ptr : file.getData().getData()) {
-            result << "[" << ptr->getResult() << "]\n";
-        }
         return result.str();
     }
- 
+
     std::string BuildSeparator(const std::string& title) {
         std::stringstream result;       
         result << title;

@@ -12,8 +12,12 @@ class Instruction : public iSyntax {
 public:
     Instruction(const std::string& data): rawData_(data) {}
 
+    
     std::string getResult() const override {
         return rawData_;   
+    }
+    std::string getResult(size_t tabs) const override {
+        return std::string(tabs, '\t') + rawData_;   
     }
     
     //enum Type { Instruction, Function, Operation, Class, Structure };

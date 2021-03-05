@@ -19,6 +19,12 @@ public:
         if (syntaxData.find("class") != std::string::npos) {
             return std::make_shared<Class>(temp, syntaxData);
         }
+        if (syntaxData.find("struct") != std::string::npos) {
+            //return std::make_shared<Struct>(temp, syntaxData);
+        }
+        if (syntaxData.find("(") != std::string::npos) {
+            //return BuildOperation(syntaxData); 
+        }
 
         return std::make_shared<Block>(temp, syntaxData);
     }
@@ -26,6 +32,7 @@ public:
     static Syntax buildInstruction(const std::string& syntaxData) {
         return std::make_shared<Instruction>(syntaxData);
     }
+
 
 private:
     static std::string CutOutTemplate(std::string& syntaxData) {
