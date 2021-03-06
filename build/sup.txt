@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Sat Mar  6 00:57:36 2021
+File generation date:  Sat Mar  6 02:54:18 2021
 
 
 ### Table Of Contents: #####################################################
@@ -34,6 +34,7 @@ File generation date:  Sat Mar  6 00:57:36 2021
 			File.hpp
 			FileData.hpp
 			Instruction.hpp
+			Namespace.hpp
 			SyntaxTypes
 			iSyntax.hpp
 
@@ -49,7 +50,7 @@ File generation date:  Sat Mar  6 00:57:36 2021
 ### ../source/DataParsers ##################################################
 ############################################################################
 File includes:
-	Files included:  [4]
+	Files included:
 		 1] data parsers/CommentParser.hpp
 		 2] data parsers/DirectiveParser.hpp
 		 3] data parsers/IncludeParser.hpp
@@ -57,7 +58,12 @@ File includes:
 
 
 File content:
-	namespace DataParsers {
+	Namespace `DataParsers` {
+		class CommentParser;
+		class IncludeParser;
+		class SyntaxParser;
+		class DirectiveParser;
+	};
 
 
 
@@ -65,23 +71,31 @@ File content:
 ### ../source/DataStructures ###############################################
 ############################################################################
 File includes:
-	Libraries included:  [3]
+	Libraries included:
 		 1] <memory>
 		 2] <string>
 		 3] <vector>
 
-	Files included:  [7]
+	Files included:
 		 1] data structures/Block.hpp
 		 2] data structures/Class.hpp
 		 3] data structures/File.hpp
 		 4] data structures/FileData.hpp
 		 5] data structures/Instruction.hpp
-		 6] data structures/SyntaxTypes
-		 7] data structures/iSyntax.hpp
+		 6] data structures/Namespace.hpp
+		 7] data structures/SyntaxTypes
+		 8] data structures/iSyntax.hpp
 
 
 File content:
-	namespace DataStructures {
+	Namespace `DataStructures` {
+		using Line = std::string;
+		using Data = std::vector<std::string>;
+		using Project = std::vector<File>;
+		using Syntax = std::shared_ptr<iSyntax>;
+		using BlockSyntax = std::shared_ptr<Block>;
+		using Syntaxes = std::vector<Syntax>;
+	};
 
 
 
@@ -89,10 +103,10 @@ File content:
 ### ../source/FileBuilder.hpp ##############################################
 ############################################################################
 File includes:
-	Libraries included:  [1]
+	Libraries included:
 		 1] <string>
 
-	Files included:  [2]
+	Files included:
 		 1] DataStructures
 		 2] Tools
 
@@ -123,7 +137,7 @@ File content:
 ### ../source/FileDataBuilder.hpp ##########################################
 ############################################################################
 File includes:
-	Files included:  [3]
+	Files included:
 		 1] DataParsers
 		 2] DataStructures
 		 3] Tools
@@ -154,11 +168,11 @@ File content:
 ### ../source/GeneratorTxt.hpp #############################################
 ############################################################################
 File includes:
-	Libraries included:  [2]
+	Libraries included:
 		 1] <chrono>
 		 2] <sstream>
 
-	Files included:  [2]
+	Files included:
 		 1] DataStructures
 		 2] Tools
 
@@ -185,27 +199,13 @@ File content:
 
 
 
-### ../source/PathInitializer.ut.cpp #######################################
-############################################################################
-File includes:
-	Files included:  [2]
-		 1] PathInitializer.ut.hpp
-		 2] plugins/catch.hpp
-
-
-File content:
-	TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {
-
-
-
-
 ### ../source/Program.hpp ##################################################
 ############################################################################
 File includes:
-	Libraries included:  [1]
+	Libraries included:
 		 1] <iostream>
 
-	Files included:  [4]
+	Files included:
 		 1] GeneratorTxt.hpp
 		 2] ProgramInitializer.hpp
 		 3] ProjectBuilder.hpp
@@ -231,10 +231,10 @@ File content:
 ### ../source/ProgramInitializer.hpp #######################################
 ############################################################################
 File includes:
-	Libraries included:  [1]
+	Libraries included:
 		 1] <string>
 
-	Files included:  [1]
+	Files included:
 		 1] Tools
 
 
@@ -256,11 +256,11 @@ File content:
 ### ../source/ProjectBuilder.hpp ###########################################
 ############################################################################
 File includes:
-	Libraries included:  [2]
+	Libraries included:
 		 1] <algorithm>
 		 2] <string>
 
-	Files included:  [4]
+	Files included:
 		 1] DataStructures
 		 2] FileBuilder.hpp
 		 3] FileDataBuilder.hpp
@@ -291,14 +291,18 @@ File content:
 ### ../source/Tools ########################################################
 ############################################################################
 File includes:
-	Files included:  [3]
+	Files included:
 		 1] tools/Converter.hpp
 		 2] tools/FileIO.hpp
 		 3] tools/IgnoreFiles.hpp
 
 
 File content:
-	namespace Tools {
+	Namespace `Tools` {
+		class Converter;
+		class FileIO;
+		class IgnoreFiles;
+	};
 
 
 
@@ -306,7 +310,7 @@ File content:
 ### ../source/catch_main.cpp ###############################################
 ############################################################################
 File includes:
-	Files included:  [1]
+	Files included:
 		 1] plugins/catch.hpp
 
 
@@ -318,10 +322,10 @@ File content:
 ### ../source/iSyntaxBuilder.hpp ###########################################
 ############################################################################
 File includes:
-	Libraries included:  [1]
+	Libraries included:
 		 1] <memory>
 
-	Files included:  [2]
+	Files included:
 		 1] DataStructures
 		 2] Tools
 
@@ -329,6 +333,7 @@ File includes:
 File content:
 	Class `iSyntaxBuilder` {
 		Class Fields:
+			This class has no Fields
 
 		Class Operations:
 			1] static BlockSyntax buildBlock(std::string syntaxData)
@@ -342,10 +347,10 @@ File content:
 ### ../source/main.cpp #####################################################
 ############################################################################
 File includes:
-	Libraries included:  [1]
+	Libraries included:
 		 1] <iostream>
 
-	Files included:  [2]
+	Files included:
 		 1] Program.hpp
 		 2] ProgramInitializer.hpp
 
@@ -356,57 +361,28 @@ File content:
 
 
 
-### ../source/data parsers/CommentParser.ut.cpp ############################
-############################################################################
-File includes:
-	Libraries included:  [2]
-		 1] <algorithm>
-		 2] <numeric>
-
-	Files included:  [2]
-		 1] CommentsParser.ut.hpp
-		 2] plugins/catch.hpp
-
-
-File content:
-	TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") {
-	TEST_CASE("FileParserComments: RemoveOneLine operations", "[RemoveOnelineComments], [RemoveAllOnelineComments]") {
-
-
-
-
-### ../source/data parsers/CommentParser.ut.hpp ############################
-############################################################################
-File includes:
-	Files included:  [1]
-		 1] CommentParser.hpp
-
-
-File content:
-	Class `CommentParser_UnitTest : CommentParser` {
-		Class Fields:
-
-		Class Operations:
-			1] CommentParser_UnitTest()
-			2] bool IsInsideString(const Line& line)
-			3] bool IsAlreadyCommentedByOneline(const Line& subline)
-			4] Line RemoveOnelineComments(const Line& line)
-			5] Data RemoveAllOnelineComments(const Data& data)
-			6] Line Multiline_ClearLine(const Line& line, bool& isCommented)
-	};
-
-
-
-
 ### ../source/data parsers/CommentParser.hpp ###############################
 ############################################################################
 File includes:
 
 File content:
-	/* TODO:
-- fix multiline comments
-ex: abcd *
-namespace DataParsers {
+	Namespace `DataParsers` {
+		Class `CommentParser` {
+			Class Fields:
+				This class has no Fields
+
+			Class Operations:
+				1] CommentParser()
+				2] static Data removeComments(Data data)
+				3] static Data RemoveAllOnelineComments(Data data)
+				4] static Line RemoveOnelineComments(const Line& line)
+				5] static Data RemoveMultilineComments(Data data)
+				6] static Line Multiline_ClearLine(Line line, bool& isCommented)
+				7] static Line Multiline_FindClosing(Line line, bool& isCommented, const size_t begin)
+				8] static bool IsInsideString(const Line& subline)
+				9] static bool IsAlreadyCommentedByOneline(const Line& subline)
+		};
+	};
 
 
 
@@ -414,13 +390,22 @@ namespace DataParsers {
 ### ../source/data parsers/DirectiveParser.hpp #############################
 ############################################################################
 File includes:
-	Files included:  [2]
+	Files included:
 		 1] ../DataStructures
 		 2] ../Tools
 
 
 File content:
-	namespace DataParsers {
+	Namespace `DataParsers` {
+		Class `DirectiveParser` {
+			Class Fields:
+				This class has no Fields
+
+			Class Operations:
+				1] DirectiveParser()
+				2] static Data removeDirectives(Data data)
+		};
+	};
 
 
 
@@ -428,13 +413,28 @@ File content:
 ### ../source/data parsers/IncludeParser.hpp ###############################
 ############################################################################
 File includes:
-	Files included:  [2]
+	Files included:
 		 1] )
 		 2] ../DataStructures
 
 
 File content:
-	namespace DataParsers {
+	Namespace `DataParsers` {
+		Class `IncludeParser` {
+			Class Fields:
+				1] Data data_;
+				2] Data libIncludes_;
+				3] Data projIncludes_;
+
+			Class Operations:
+				1] IncludeParser(const Data& data)
+				2] Data getLibIncludes()
+				3] Data getProjIncludes()
+				4] Data getData()
+				5] void BuildIncludes()
+				6] Data CutoutIncludes()
+		};
+	};
 
 
 
@@ -442,18 +442,40 @@ File content:
 ### ../source/data parsers/SyntaxParser.hpp ################################
 ############################################################################
 File includes:
-	Libraries included:  [3]
+	Libraries included:
 		 1] <algorithm>
 		 2] <iostream>
 		 3] <stack>
 
-	Files included:  [2]
+	Files included:
 		 1] ../DataStructures
 		 2] ../iSyntaxBuilder.hpp
 
 
 File content:
-	namespace DataParsers {
+	Namespace `DataParsers` {
+		Class `SyntaxParser` {
+			Class Fields:
+				1] const std::string rawData_;
+				2] Syntaxes product_;
+
+			Class Operations:
+				1] struct Workspace {
+				2] SyntaxParser(const Data& data)
+				3] std::string getData()
+				4] Syntaxes getProduct()
+				5] Syntaxes BuildProduct()
+				6] void BuildSingleSyntax(Workspace& w)
+				7] void AddInstruction(Workspace& w)
+				8] void AddBlockOpen(Workspace& w)
+				9] void AddBlockClose(Workspace& w)
+				10] bool LastCharEquals(const char ch, const std::string& str)
+				11] size_t ClosestSemicolonOrParenthesis(const Line& line)
+				12] std::string MergeRawData(const Data& data)
+				13] void AppendSemicolon(std::string& syntaxData, std::string& draft)
+				14] std::string RemoveNewLineCharacter( const std::string& line)
+		};
+	};
 
 
 
@@ -461,19 +483,18 @@ File content:
 ### ../source/data structures/Block.hpp ####################################
 ############################################################################
 File includes:
-	Libraries included:  [2]
+	Libraries included:
 		 1] <numeric>
 		 2] <string>
 
-	Files included:  [1]
+	Files included:
 		 1] iSyntax.hpp
 
 
 File content:
 	Class `Block : public iSyntax` {
 		Class Fields:
-			1] protected:
-std::string template_;
+			1] std::string template_;
 			2] std::string header_;
 			3] std::vector<std::shared_ptr<iSyntax>> subElements_;
 			4] std::vector<std::shared_ptr<iSyntax>> subClasses_;
@@ -497,12 +518,12 @@ std::string template_;
 ### ../source/data structures/Class.hpp ####################################
 ############################################################################
 File includes:
-	Libraries included:  [3]
+	Libraries included:
 		 1] <numeric>
 		 2] <sstream>
 		 3] <string>
 
-	Files included:  [3]
+	Files included:
 		 1] ../Tools
 		 2] Block.hpp
 		 3] iSyntax.hpp
@@ -529,11 +550,11 @@ File content:
 ### ../source/data structures/File.hpp #####################################
 ############################################################################
 File includes:
-	Libraries included:  [2]
+	Libraries included:
 		 1] <string>
 		 2] <vector>
 
-	Files included:  [1]
+	Files included:
 		 1] FileData.hpp
 
 
@@ -571,12 +592,12 @@ File content:
 ### ../source/data structures/FileData.hpp #################################
 ############################################################################
 File includes:
-	Libraries included:  [3]
+	Libraries included:
 		 1] <numeric>
 		 2] <string>
 		 3] <vector>
 
-	Files included:  [2]
+	Files included:
 		 1] SyntaxTypes
 		 2] iSyntax.hpp
 
@@ -604,10 +625,10 @@ File content:
 ### ../source/data structures/Instruction.hpp ##############################
 ############################################################################
 File includes:
-	Libraries included:  [1]
+	Libraries included:
 		 1] <string>
 
-	Files included:  [1]
+	Files included:
 		 1] iSyntax.hpp
 
 
@@ -626,12 +647,48 @@ File content:
 
 
 
+### ../source/data structures/Namespace.hpp ################################
+############################################################################
+File includes:
+	Libraries included:
+		 1] <numeric>
+		 2] <sstream>
+		 3] <string>
+
+	Files included:
+		 1] ../Tools
+		 2] Block.hpp
+		 3] iSyntax.hpp
+
+
+File content:
+	Class `Namespace : public Block` {
+		Class Fields:
+			1] std::string header_;
+			2] ";
+			3] return result.str();
+			4] }
+
+		Class Operations:
+			1] Namespace(const std::string& templateData, const std::string& headerData)
+			2] Type getSyntaxType()
+			3] std::string getResult(size_t tabs = 0)
+	};
+	private:
+std::string BuildHeaderName(std::string header) const {
+
+
+
+
 ### ../source/data structures/SyntaxTypes ##################################
 ############################################################################
 File includes:
 
 File content:
-	namespace SyntaxTypes {
+	Namespace `SyntaxTypes` {
+		enum Type {
+		enum Memory {
+	};
 
 
 
@@ -639,7 +696,7 @@ File content:
 ### ../source/data structures/iSyntax.hpp ##################################
 ############################################################################
 File includes:
-	Files included:  [1]
+	Files included:
 		 1] SyntaxTypes
 
 
@@ -660,7 +717,7 @@ File content:
 ### ../source/tools/Converter.hpp ##########################################
 ############################################################################
 File includes:
-	Libraries included:  [4]
+	Libraries included:
 		 1] <algorithm>
 		 2] <set>
 		 3] <sstream>
@@ -668,7 +725,25 @@ File includes:
 
 
 File content:
-	namespace Tools {
+	Namespace `Tools` {
+		Class `Converter` {
+			Class Fields:
+				This class has no Fields
+
+			Class Operations:
+				1] static std::set<T> to_set(const std::vector<T>& data)
+				2] static std::string to_fileData(const std::set<std::string>& data)
+				3] static std::string to_string(const std::vector<std::string>& data2)
+				4] static std::string AppendConditionalSlash(std::string str)
+				5] static std::vector<std::string> removeWhitespaces(std::vector<std::string> data)
+				6] static std::string removeWhitespaces(std::string data)
+				7] static std::vector<std::string> removeEmptyLines(const std::vector<std::string>& data)
+				8] static std::string RemoveSpecialChars(const std::string& data)
+				9] static std::string RemoveFromBegin(const std::string& data)
+				10] static std::string RemoveFromEnd(const std::string& data)
+				11] static std::string RemoveAdjacentSpaces(const std::string& data)
+		};
+	};
 
 
 
@@ -676,19 +751,31 @@ File content:
 ### ../source/tools/FileIO.hpp #############################################
 ############################################################################
 File includes:
-	Libraries included:  [5]
+	Libraries included:
 		 1] <dirent.h>
 		 2] <exception>
 		 3] <fstream>
 		 4] <string>
 		 5] <vector>
 
-	Files included:  [1]
+	Files included:
 		 1] IgnoreFiles.hpp
 
 
 File content:
-	namespace Tools {
+	Namespace `Tools` {
+		Class `FileIO` {
+			Class Fields:
+				This class has no Fields
+
+			Class Operations:
+				1] explicit FileIO()
+				2] static bool fileExist(const std::string& path)
+				3] static std::vector<std::string> readPaths(const std::string& targetPath)
+				4] static std::vector<std::string> readFile(const std::string& path)
+				5] static void saveToFile(const std::string& path, const std::string& data)
+		};
+	};
 
 
 
@@ -696,16 +783,21 @@ File content:
 ### ../source/tools/IgnoreFiles.cpp ########################################
 ############################################################################
 File includes:
-	Libraries included:  [2]
+	Libraries included:
 		 1] <string>
 		 2] <vector>
 
-	Files included:  [1]
+	Files included:
 		 1] IgnoreFiles.hpp
 
 
 File content:
-	namespace Tools {
+	Namespace `Tools` {
+		const std::string IgnoreFiles::filename_ = ".supignore";
+		const std::set<std::string> IgnoreFiles::formatIgnores_ {
+		const std::set<std::string> IgnoreFiles::alwaysIgnores_ {
+		std::set<std::string> IgnoreFiles::defaultIgnores_ {
+	};
 
 
 
@@ -713,7 +805,7 @@ File content:
 ### ../source/tools/IgnoreFiles.hpp ########################################
 ############################################################################
 File includes:
-	Libraries included:  [4]
+	Libraries included:
 		 1] <algorithm>
 		 2] <set>
 		 3] <string>
@@ -721,7 +813,26 @@ File includes:
 
 
 File content:
-	namespace Tools {
+	Namespace `Tools` {
+		Class `IgnoreFiles` {
+			Class Fields:
+				1] const static std::string filename_;
+				2] const static std::set<std::string> alwaysIgnores_;
+				3] const static std::set<std::string> formatIgnores_;
+				4] static std::set<std::string> defaultIgnores_;
+				5] static std::set<std::string> ignored_;
+
+			Class Operations:
+				1] explicit IgnoreFiles()
+				2] static void setIgnoreFiles(const std::set<std::string>& data)
+				3] static std::string getIgnoreFileName()
+				4] static std::set<std::string> getDefaultIgnoreFiles()
+				5] static bool isAlwaysIgnored(const std::string& value)
+				6] static bool isFormatIgnored(const std::string& format)
+				7] static bool isIgnored(const std::string& value)
+				8] static std::vector<std::string> pickoutAlwaysIgnored(const std::vector<std::string>& vctr)
+		};
+	};
 
 
 

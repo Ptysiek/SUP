@@ -8,6 +8,7 @@
 
 
 class GeneratorTxt {
+    using IgnoreFiles = Tools::IgnoreFiles;
     const std::string separator_;
     const std::string targetPath_;
     std::vector<File> data_;
@@ -31,6 +32,9 @@ public:
 
         for (const auto& file : data_) {
             if (file.isCatalog()) {
+                continue;
+            }
+            if (IgnoreFiles::isFormatIgnored(file.getFormat())) {
                 continue;
             }
             result << BuildFile(file) << "\n\n\n\n";
@@ -103,14 +107,14 @@ private:
         std::stringstream result;       
         result << "File includes:";
         if (!file.getData().getLibIncludes().empty()) {
-            result << "\n\tLibraries included:  [" << file.getData().getLibIncludes().size() << "]\n";;
+            result << "\n\tLibraries included:\n"; //"  [" << file.getData().getLibIncludes().size() << "]\n";;
             size_t count = 0;
             for (const auto& line : file.getData().getLibIncludes()) {
                 result << "\t\t " << ++count << "] <" << line << ">\n"; 
             }
         }
         if (!file.getData().getProjIncludes().empty()) {
-            result << "\n\tFiles included:  [" << file.getData().getProjIncludes().size() << "]\n";
+            result << "\n\tFiles included:\n";  //  [" << file.getData().getProjIncludes().size() << "]\n";
             size_t count = 0;
             for (const auto& line : file.getData().getProjIncludes()) {
                 result << "\t\t " << ++count << "] " << line << "\n";

@@ -2,7 +2,7 @@
 
 
 namespace SyntaxTypes {
-    enum Type { Instruction, Block, Function, Operation, Class, Structure };
+    enum Type { Instruction, Block, Function, Operation, Class, Structure, Namespace };
     enum Memory { Global, Component, Static }; 
 }
 

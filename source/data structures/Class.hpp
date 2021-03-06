@@ -72,13 +72,18 @@ private:
         std::stringstream result;
         size_t count = 0;
         for (const auto& element : fields_) {
-            if (element->getResult().find("using") != std::string::npos) {
+            std::string data = RemoveLabel(element->getResult());
+            if (data.find("using") != std::string::npos) {
                 continue;
             }
-            if (element->getResult().find("};") != std::string::npos) {
+            if (data.find("};") != std::string::npos) {
                 continue;
             }
-            result << "\n" << tab << ++count << "] " << element->getResult();
+            data = Converter::removeWhitespaces(data);
+            result << "\n" << tab << ++count << "] " << data;
+        }
+        if (count == 0) {
+            result << "\n" << tab << "This class has no Fields";
         }
         return result.str();
     }

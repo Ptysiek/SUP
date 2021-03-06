@@ -16,6 +16,9 @@ public:
     static BlockSyntax buildBlock(std::string syntaxData) {
         auto temp = CutOutTemplate(syntaxData);      
 
+        if (auto i = syntaxData.find("namespace"); i != std::string::npos) {
+            return std::make_shared<Namespace>(temp, syntaxData);
+        }
         if (syntaxData.find("class") != std::string::npos) {
             return std::make_shared<Class>(temp, syntaxData);
         }

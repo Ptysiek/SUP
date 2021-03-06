@@ -87,7 +87,6 @@ protected:
     }
     
     void AddBlockOpen(Workspace& w) {
-        //w.hierarchy_.push(std::make_shared<Class>(w.syntaxData_));
         w.hierarchy_.push(iSyntaxBuilder::buildBlock(w.syntaxData_));
     }
     
