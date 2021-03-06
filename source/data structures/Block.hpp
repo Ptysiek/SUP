@@ -32,10 +32,10 @@ public:
         return getResult(0);
     }
     std::string getResult(size_t tabs) const override {
-        std::string result = std::string(tabs, '\t') + header_ 
-            + "\n" + std::string(tabs + 1, '\t') + "Has " + std::to_string(CountInstructions()) + " instructions"
-            + "\n" + std::string(tabs + 1, '\t') + "Has " + std::to_string(CountClasses()) + " classes"
-            + "\n" + std::string(tabs + 1, '\t') + "Has " + std::to_string(CountBlocks()) + " blocks";
+        std::string result = std::string(tabs, '\t') + header_; 
+         //   + "\n" + std::string(tabs + 1, '\t') + "Has " + std::to_string(CountInstructions()) + " instructions"
+         //   + "\n" + std::string(tabs + 1, '\t') + "Has " + std::to_string(CountClasses()) + " classes"
+         //   + "\n" + std::string(tabs + 1, '\t') + "Has " + std::to_string(CountBlocks()) + " blocks";
         
         /*
         if (!subClasses_.empty()) {

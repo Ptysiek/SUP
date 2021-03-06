@@ -28,16 +28,18 @@ public:
         std::stringstream result;
         const std::string tab = std::string(tabs, '\t');
         
-        result << tab << "Class `" << className_ << "` ";
+        result << tab << "Class `" << className_ << "` {";
         //result << std::string(tabs, '\t') << header_ << "  " << className_;
         //result << "\n" << std::string(tabs + 1, '\t') + "Has " + std::to_string(CountInstructions()) + " instructions"
         //result << "\n" << std::string(tabs + 1, '\t') + "Has " + std::to_string(CountClasses()) + " classes"
         //result << "\n" << std::string(tabs + 1, '\t') + "Has " + std::to_string(CountBlocks()) + " blocks";
         
-        result << "\n\n" << tab << "Class Fields:";
-        result << BuildFields(tab + '\t');
-        result << "\n\n" << tab << "Class Operations:";
-        result << BuildOperations(tab + '\t');
+        result << "\n" << tab << '\t' << "Class Fields:";
+        result << BuildFields(tab + "\t\t");
+        result << "\n\n" << tab << '\t' << "Class Operations:";
+        result << BuildOperations(tab + "\t\t");
+
+        result << "\n" << tab << "};";
 
         /*
         if (!subClasses_.empty()) {
@@ -68,6 +70,7 @@ private:
 
     std::string BuildFields(const std::string& tab) const {
         std::stringstream result;
+        size_t count = 0;
         for (const auto& element : fields_) {
             if (element->getResult().find("using") != std::string::npos) {
                 continue;
@@ -75,34 +78,39 @@ private:
             if (element->getResult().find("};") != std::string::npos) {
                 continue;
             }
-            result << "\n" << tab << element->getResult();
+            result << "\n" << tab << ++count << "] " << element->getResult();
         }
-
         return result.str();
     }
 
     std::string BuildOperations(const std::string& tab) const {
         std::stringstream result;
+        size_t count = 0;
         for (const auto& element : subOperations_) {
-            if (element->getResult().find("using") != std::string::npos) {
-                continue;
-            }
-            if (element->getResult().find("};") != std::string::npos) {
-                continue;
-            }
-            result << "\n" << tab << BuildOperation(element->getResult());
+            result << "\n" << tab << ++count << "] " << BuildOperation(element->getResult());
         }
-
         return result.str();
     }
 
     std::string BuildOperation(std::string data) const {
+        data = RemoveLabel(data);
         if (auto i = data.find(')'); i != std::string::npos) {
             data = data.substr(0, i + 1);
         }
-        //data += "()";
         return Converter::removeWhitespaces(data);
     }
 
+    std::string RemoveLabel(std::string data) const {
+        if (auto i = data.find("public:"); i != std::string::npos) {
+            data = data.substr(i + 7);
+        }
+        if (auto i = data.find("private:"); i != std::string::npos) {
+            data = data.substr(i + 8);
+        }
+        if (auto i = data.find("protected:"); i != std::string::npos) {
+            data = data.substr(i + 10);
+        }
+        return data;
+    }
 
 };

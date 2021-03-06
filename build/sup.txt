@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Sat Mar  6 00:29:41 2021
+File generation date:  Sat Mar  6 00:57:36 2021
 
 
 ### Table Of Contents: #####################################################
@@ -48,734 +48,680 @@ File generation date:  Sat Mar  6 00:29:41 2021
 
 ### ../source/DataParsers ##################################################
 ############################################################################
-File content:
-[	namespace DataParsers {
-		Has 0 instructions
-		Has 0 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Files included:  [4]
-		data parsers/CommentParser.hpp
-		data parsers/DirectiveParser.hpp
-		data parsers/IncludeParser.hpp
-		data parsers/SyntaxParser.hpp
+		 1] data parsers/CommentParser.hpp
+		 2] data parsers/DirectiveParser.hpp
+		 3] data parsers/IncludeParser.hpp
+		 4] data parsers/SyntaxParser.hpp
+
+
+File content:
+	namespace DataParsers {
 
 
 
 
 ### ../source/DataStructures ###############################################
 ############################################################################
-File content:
-[	namespace DataStructures {
-		Has 0 instructions
-		Has 0 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Libraries included:  [3]
-		<memory>
-		<string>
-		<vector>
+		 1] <memory>
+		 2] <string>
+		 3] <vector>
 
-	Files included:  [6]
-		data structures/Block.hpp
-		data structures/Class.hpp
-		data structures/File.hpp
-		data structures/FileData.hpp
-		data structures/Instruction.hpp
-		data structures/iSyntax.hpp
+	Files included:  [7]
+		 1] data structures/Block.hpp
+		 2] data structures/Class.hpp
+		 3] data structures/File.hpp
+		 4] data structures/FileData.hpp
+		 5] data structures/Instruction.hpp
+		 6] data structures/SyntaxTypes
+		 7] data structures/iSyntax.hpp
+
+
+File content:
+	namespace DataStructures {
 
 
 
 
 ### ../source/FileBuilder.hpp ##############################################
 ############################################################################
-File content:
-[	Class `FileBuilder` 
-
-	Class Fields:
-		const std::string initPath_;
-		const std::string path_;
-		const std::string name_;
-		const std::string format_;
-		const File product_;
-
-	Class Operations:
-		public: explicit FileBuilder( const std::string& initPath, const std::string& path, const std::string& fullName, const std::vector<File>& subfiles, const size_t depth )
-		File getProduct()
-		static File buildRoot(const std::string& initPath, const std::vector<File>& subFiles)
-		protected: File BuildProduct(const std::vector<File>& subFiles, size_t depth)
-		static size_t CountRecursive(const std::vector<File>& subFiles)
-		std::string BuildName(const std::string& str, const bool isEmpty)
-		std::string CutoutName(const std::string& str)
-		std::string CutoutFormat(const std::string& str)]
-
-
-File summary:
+File includes:
 	Libraries included:  [1]
-		<string>
+		 1] <string>
 
 	Files included:  [2]
-		DataStructures
-		Tools
+		 1] DataStructures
+		 2] Tools
+
+
+File content:
+	Class `FileBuilder` {
+		Class Fields:
+			1] const std::string initPath_;
+			2] const std::string path_;
+			3] const std::string name_;
+			4] const std::string format_;
+			5] const File product_;
+
+		Class Operations:
+			1] explicit FileBuilder( const std::string& initPath, const std::string& path, const std::string& fullName, const std::vector<File>& subfiles, const size_t depth )
+			2] File getProduct()
+			3] static File buildRoot(const std::string& initPath, const std::vector<File>& subFiles)
+			4] File BuildProduct(const std::vector<File>& subFiles, size_t depth)
+			5] static size_t CountRecursive(const std::vector<File>& subFiles)
+			6] std::string BuildName(const std::string& str, const bool isEmpty)
+			7] std::string CutoutName(const std::string& str)
+			8] std::string CutoutFormat(const std::string& str)
+	};
 
 
 
 
 ### ../source/FileDataBuilder.hpp ##########################################
 ############################################################################
-File content:
-[	using namespace DataParsers;]
-[	Class `FileDataBuilder` 
-
-	Class Fields:
-		bool productExist_;
-		Data rawData_;
-		const File& fileHeader_;
-		const FileData product_;
-		std::vector<std::string> libIncludes_;
-		std::vector<std::string> projIncludes_;
-
-	Class Operations:
-		public: FileDataBuilder(const File& file)
-		bool dataExist()
-		FileData getProduct()
-		private: FileData BuildProduct()
-		FileData BuildEmptyData()
-		Data PrepareData(Data rawData)]
-
-
-File summary:
+File includes:
 	Files included:  [3]
-		DataParsers
-		DataStructures
-		Tools
+		 1] DataParsers
+		 2] DataStructures
+		 3] Tools
+
+
+File content:
+	Class `FileDataBuilder` {
+		Class Fields:
+			1] bool productExist_;
+			2] Data rawData_;
+			3] const File& fileHeader_;
+			4] const FileData product_;
+			5] std::vector<std::string> libIncludes_;
+			6] std::vector<std::string> projIncludes_;
+
+		Class Operations:
+			1] FileDataBuilder(const File& file)
+			2] bool dataExist()
+			3] FileData getProduct()
+			4] FileData BuildProduct()
+			5] FileData BuildEmptyData()
+			6] Data PrepareData(Data rawData)
+	};
 
 
 
 
 ### ../source/GeneratorTxt.hpp #############################################
 ############################################################################
-File content:
-[	Class `GeneratorTxt` 
-
-	Class Fields:
-		const std::string separator_;
-		const std::string targetPath_;
-		std::vector<File> data_;
-
-	Class Operations:
-		public: explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data)
-		std::string buildFile()
-		private: std::string BuildHeader()
-		std::string BuildDate()
-		std::string BuildTableOfContents()
-		std::string BuildFile(const File& file)
-		std::string BuildFileContent(const File& file)
-		std::string BuildFileSummary(const File& file)
-		std::string BuildSeparator(const std::string& title)]
-
-
-File summary:
+File includes:
 	Libraries included:  [2]
-		<chrono>
-		<sstream>
+		 1] <chrono>
+		 2] <sstream>
 
 	Files included:  [2]
-		DataStructures
-		Tools
+		 1] DataStructures
+		 2] Tools
+
+
+File content:
+	Class `GeneratorTxt` {
+		Class Fields:
+			1] const std::string separator_;
+			2] const std::string targetPath_;
+			3] std::vector<File> data_;
+
+		Class Operations:
+			1] explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data)
+			2] std::string buildFile()
+			3] std::string BuildHeader()
+			4] std::string BuildDate()
+			5] std::string BuildTableOfContents()
+			6] std::string BuildFile(const File& file)
+			7] std::string BuildFileContent(const File& file)
+			8] std::string BuildFileSummary(const File& file)
+			9] std::string BuildSeparator(const std::string& title)
+	};
 
 
 
 
 ### ../source/PathInitializer.ut.cpp #######################################
 ############################################################################
-File content:
-[	TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {
-		Has 0 instructions
-		Has 0 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Files included:  [2]
-		PathInitializer.ut.hpp
-		plugins/catch.hpp
+		 1] PathInitializer.ut.hpp
+		 2] plugins/catch.hpp
+
+
+File content:
+	TEST_CASE("PathInitializer: static operations", "[CutoutName], [CutoutFormat], [AppendConditionalSlash]") {
 
 
 
 
 ### ../source/Program.hpp ##################################################
 ############################################################################
-File content:
-[	Class `Program` 
-
-	Class Fields:
-		const ProgramInitializer flagSupport_;
-		const std::string targetPath_;
-		const std::string outputPath_;
-
-	Class Operations:
-		public: explicit Program(const ProgramInitializer& target)
-		void execute()
-		private: void initializeIgnoreFiles()]
-
-
-File summary:
+File includes:
 	Libraries included:  [1]
-		<iostream>
+		 1] <iostream>
 
 	Files included:  [4]
-		GeneratorTxt.hpp
-		ProgramInitializer.hpp
-		ProjectBuilder.hpp
-		Tools
+		 1] GeneratorTxt.hpp
+		 2] ProgramInitializer.hpp
+		 3] ProjectBuilder.hpp
+		 4] Tools
+
+
+File content:
+	Class `Program` {
+		Class Fields:
+			1] const ProgramInitializer flagSupport_;
+			2] const std::string targetPath_;
+			3] const std::string outputPath_;
+
+		Class Operations:
+			1] explicit Program(const ProgramInitializer& target)
+			2] void execute()
+			3] void initializeIgnoreFiles()
+	};
 
 
 
 
 ### ../source/ProgramInitializer.hpp #######################################
 ############################################################################
-File content:
-[	Class `ProgramInitializer` 
-
-	Class Fields:
-		const std::string path_;
-
-	Class Operations:
-		public: explicit ProgramInitializer(const int& argc, const char* const * const argv)
-		std::string getPath()
-		std::string getDefaultPath()
-		private: std::string GenPath(const int& argc, const char* const * const argv)]
-
-
-File summary:
+File includes:
 	Libraries included:  [1]
-		<string>
+		 1] <string>
 
 	Files included:  [1]
-		Tools
+		 1] Tools
+
+
+File content:
+	Class `ProgramInitializer` {
+		Class Fields:
+			1] const std::string path_;
+
+		Class Operations:
+			1] explicit ProgramInitializer(const int& argc, const char* const * const argv)
+			2] std::string getPath()
+			3] std::string getDefaultPath()
+			4] std::string GenPath(const int& argc, const char* const * const argv)
+	};
 
 
 
 
 ### ../source/ProjectBuilder.hpp ###########################################
 ############################################################################
-File content:
-[	Class `ProjectBuilder` 
-
-	Class Fields:
-		const std::string initPath_;
-		const Project product_;
-
-	Class Operations:
-		public: explicit ProjectBuilder(const std::string& initPath)
-		Project getProduct()
-		private: Project BuildProduct()
-		Project UpdateProjectWithData(Project& project)
-		Project BuildProductStructure()
-		std::vector<File> BuildRecursive(const std::string& targetPath, int depth)
-		Project FlatenRecursive(const File& root)
-		static bool SortCriterion_CatalogLast(const File& f, const File& s)
-		static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s)]
-
-
-File summary:
+File includes:
 	Libraries included:  [2]
-		<algorithm>
-		<string>
+		 1] <algorithm>
+		 2] <string>
 
 	Files included:  [4]
-		DataStructures
-		FileBuilder.hpp
-		FileDataBuilder.hpp
-		Tools
+		 1] DataStructures
+		 2] FileBuilder.hpp
+		 3] FileDataBuilder.hpp
+		 4] Tools
+
+
+File content:
+	Class `ProjectBuilder` {
+		Class Fields:
+			1] const std::string initPath_;
+			2] const Project product_;
+
+		Class Operations:
+			1] explicit ProjectBuilder(const std::string& initPath)
+			2] Project getProduct()
+			3] Project BuildProduct()
+			4] Project UpdateProjectWithData(Project& project)
+			5] Project BuildProductStructure()
+			6] std::vector<File> BuildRecursive(const std::string& targetPath, int depth)
+			7] Project FlatenRecursive(const File& root)
+			8] static bool SortCriterion_CatalogLast(const File& f, const File& s)
+			9] static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s)
+	};
 
 
 
 
 ### ../source/Tools ########################################################
 ############################################################################
-File content:
-[	namespace Tools {
-		Has 0 instructions
-		Has 0 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Files included:  [3]
-		tools/Converter.hpp
-		tools/FileIO.hpp
-		tools/IgnoreFiles.hpp
+		 1] tools/Converter.hpp
+		 2] tools/FileIO.hpp
+		 3] tools/IgnoreFiles.hpp
+
+
+File content:
+	namespace Tools {
 
 
 
 
 ### ../source/catch_main.cpp ###############################################
 ############################################################################
-File content:
-
-
-File summary:
+File includes:
 	Files included:  [1]
-		plugins/catch.hpp
+		 1] plugins/catch.hpp
+
+
+File content:
 
 
 
 
 ### ../source/iSyntaxBuilder.hpp ###########################################
 ############################################################################
-File content:
-[	Class `iSyntaxBuilder` 
-
-	Class Fields:
-
-	Class Operations:
-		public: static BlockSyntax buildBlock(std::string syntaxData)
-		static Syntax buildInstruction(const std::string& syntaxData)
-		private: static std::string CutOutTemplate(std::string& syntaxData)]
-
-
-File summary:
+File includes:
 	Libraries included:  [1]
-		<memory>
+		 1] <memory>
 
 	Files included:  [2]
-		DataStructures
-		Tools
+		 1] DataStructures
+		 2] Tools
+
+
+File content:
+	Class `iSyntaxBuilder` {
+		Class Fields:
+
+		Class Operations:
+			1] static BlockSyntax buildBlock(std::string syntaxData)
+			2] static Syntax buildInstruction(const std::string& syntaxData)
+			3] static std::string CutOutTemplate(std::string& syntaxData)
+	};
 
 
 
 
 ### ../source/main.cpp #####################################################
 ############################################################################
-File content:
-[	int main(int argc, char* argv[]) {
-		Has 0 instructions
-		Has 0 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Libraries included:  [1]
-		<iostream>
+		 1] <iostream>
 
 	Files included:  [2]
-		Program.hpp
-		ProgramInitializer.hpp
+		 1] Program.hpp
+		 2] ProgramInitializer.hpp
+
+
+File content:
+	int main(int argc, char* argv[]) {
 
 
 
 
 ### ../source/data parsers/CommentParser.ut.cpp ############################
 ############################################################################
-File content:
-[	FileParserComments_UnitTest testObject;]
-[	TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") {
-		Has 0 instructions
-		Has 0 classes
-		Has 0 blocks]
-[	TEST_CASE("FileParserComments: RemoveOneLine operations", "[RemoveOnelineComments], [RemoveAllOnelineComments]") {
-		Has 0 instructions
-		Has 0 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Libraries included:  [2]
-		<algorithm>
-		<numeric>
+		 1] <algorithm>
+		 2] <numeric>
 
 	Files included:  [2]
-		CommentsParser.ut.hpp
-		plugins/catch.hpp
+		 1] CommentsParser.ut.hpp
+		 2] plugins/catch.hpp
+
+
+File content:
+	TEST_CASE("FileParserComments: base operations", "[IsInsideString], [IsAlreadyCommentedByOneline]") {
+	TEST_CASE("FileParserComments: RemoveOneLine operations", "[RemoveOnelineComments], [RemoveAllOnelineComments]") {
 
 
 
 
 ### ../source/data parsers/CommentParser.ut.hpp ############################
 ############################################################################
-File content:
-[	Class `CommentParser_UnitTest : CommentParser` 
-
-	Class Fields:
-
-	Class Operations:
-		public: CommentParser_UnitTest()
-		bool IsInsideString(const Line& line)
-		bool IsAlreadyCommentedByOneline(const Line& subline)
-		Line RemoveOnelineComments(const Line& line)
-		Data RemoveAllOnelineComments(const Data& data)
-		Line Multiline_ClearLine(const Line& line, bool& isCommented)]
-
-
-File summary:
+File includes:
 	Files included:  [1]
-		CommentParser.hpp
+		 1] CommentParser.hpp
+
+
+File content:
+	Class `CommentParser_UnitTest : CommentParser` {
+		Class Fields:
+
+		Class Operations:
+			1] CommentParser_UnitTest()
+			2] bool IsInsideString(const Line& line)
+			3] bool IsAlreadyCommentedByOneline(const Line& subline)
+			4] Line RemoveOnelineComments(const Line& line)
+			5] Data RemoveAllOnelineComments(const Data& data)
+			6] Line Multiline_ClearLine(const Line& line, bool& isCommented)
+	};
 
 
 
 
 ### ../source/data parsers/CommentParser.hpp ###############################
 ############################################################################
+File includes:
+
 File content:
-[	/* TODO:
+	/* TODO:
 - fix multiline comments
 ex: abcd *
 namespace DataParsers {
-		Has 0 instructions
-		Has 1 classes
-		Has 0 blocks]
 
-
-File summary:
 
 
 
 ### ../source/data parsers/DirectiveParser.hpp #############################
 ############################################################################
-File content:
-[	namespace DataParsers {
-		Has 0 instructions
-		Has 1 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Files included:  [2]
-		../DataStructures
-		../Tools
+		 1] ../DataStructures
+		 2] ../Tools
+
+
+File content:
+	namespace DataParsers {
 
 
 
 
 ### ../source/data parsers/IncludeParser.hpp ###############################
 ############################################################################
-File content:
-[	namespace DataParsers {
-		Has 0 instructions
-		Has 1 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Files included:  [2]
-		)
-		../DataStructures
+		 1] )
+		 2] ../DataStructures
+
+
+File content:
+	namespace DataParsers {
 
 
 
 
 ### ../source/data parsers/SyntaxParser.hpp ################################
 ############################################################################
-File content:
-[	namespace DataParsers {
-		Has 0 instructions
-		Has 1 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Libraries included:  [3]
-		<algorithm>
-		<iostream>
-		<stack>
+		 1] <algorithm>
+		 2] <iostream>
+		 3] <stack>
 
 	Files included:  [2]
-		../DataStructures
-		../iSyntaxBuilder.hpp
+		 1] ../DataStructures
+		 2] ../iSyntaxBuilder.hpp
+
+
+File content:
+	namespace DataParsers {
 
 
 
 
 ### ../source/data structures/Block.hpp ####################################
 ############################################################################
-File content:
-[	Class `Block : public iSyntax` 
-
-	Class Fields:
-		protected:
-std::string template_;
-		std::string header_;
-		std::vector<std::shared_ptr<iSyntax>> subElements_;
-		std::vector<std::shared_ptr<iSyntax>> subClasses_;
-		std::vector<std::shared_ptr<iSyntax>> subOperations_;
-		std::vector<std::shared_ptr<iSyntax>> fields_;
-
-	Class Operations:
-		public: Block(const std::string& tem, const std::string& data)
-		std::string getResult()
-		std::string getResult(size_t tabs)
-		void emplace_back(const std::shared_ptr<iSyntax>& subElement)
-		Type getSyntaxType()
-		protected: size_t CountInstructions()
-		size_t CountBlocks()
-		size_t CountClasses()]
-
-
-File summary:
+File includes:
 	Libraries included:  [2]
-		<numeric>
-		<string>
+		 1] <numeric>
+		 2] <string>
 
 	Files included:  [1]
-		iSyntax.hpp
+		 1] iSyntax.hpp
+
+
+File content:
+	Class `Block : public iSyntax` {
+		Class Fields:
+			1] protected:
+std::string template_;
+			2] std::string header_;
+			3] std::vector<std::shared_ptr<iSyntax>> subElements_;
+			4] std::vector<std::shared_ptr<iSyntax>> subClasses_;
+			5] std::vector<std::shared_ptr<iSyntax>> subOperations_;
+			6] std::vector<std::shared_ptr<iSyntax>> fields_;
+
+		Class Operations:
+			1] Block(const std::string& tem, const std::string& data)
+			2] std::string getResult()
+			3] std::string getResult(size_t tabs)
+			4] void emplace_back(const std::shared_ptr<iSyntax>& subElement)
+			5] Type getSyntaxType()
+			6] size_t CountInstructions()
+			7] size_t CountBlocks()
+			8] size_t CountClasses()
+	};
 
 
 
 
 ### ../source/data structures/Class.hpp ####################################
 ############################################################################
-File content:
-[	Class `Class : public Block` 
-
-	Class Fields:
-		std::string className_;
-		return result.str();
-		}
-
-	Class Operations:
-		std::string getResult()
-		std::string getResult(size_t tabs)
-		Type getSyntaxType()
-		private: std::string BuildClassName(std::string header)
-		std::string BuildOperations(const std::string& tab)]
-[	std::string BuildOperation(std::string data) const {
-		Has 0 instructions
-		Has 0 classes
-		Has 0 blocks]
-[	};]
-
-
-File summary:
+File includes:
 	Libraries included:  [3]
-		<numeric>
-		<sstream>
-		<string>
+		 1] <numeric>
+		 2] <sstream>
+		 3] <string>
 
 	Files included:  [3]
-		../Tools
-		Block.hpp
-		iSyntax.hpp
+		 1] ../Tools
+		 2] Block.hpp
+		 3] iSyntax.hpp
+
+
+File content:
+	Class `Class : public Block` {
+		Class Fields:
+			1] std::string className_;
+
+		Class Operations:
+			1] std::string getResult()
+			2] std::string getResult(size_t tabs)
+			3] Type getSyntaxType()
+			4] std::string BuildClassName(std::string header)
+			5] std::string BuildOperations(const std::string& tab)
+			6] std::string BuildOperation(std::string data)
+			7] std::string RemoveLabel(std::string data)
+	};
 
 
 
 
 ### ../source/data structures/File.hpp #####################################
 ############################################################################
-File content:
-[	Class `File` 
-
-	Class Fields:
-		size_t depth_;
-		size_t countRecursive_;
-		std::string initPath_;
-		std::string path_;
-		std::string name_;
-		std::string format_;
-		std::vector<File> subFiles_;
-		FileData data_;
-
-	Class Operations:
-		public: File( const size_t depth, const size_t countRecursive, const std::string& initPath, const std::string& path, const std::string& name, const std::string& format, const std::vector<File>& subFiles )
-		std::string getInitPath()
-		std::string getPath()
-		std::string getName()
-		std::string getFormat()
-		std::string getFile()
-		std::vector<File> getSubFiles()
-		bool isCatalog()
-		size_t getDepth()
-		size_t countSubFiles()
-		size_t countSubFilesRecursive()
-		void setData(const FileData& data)
-		FileData getData()]
-
-
-File summary:
+File includes:
 	Libraries included:  [2]
-		<string>
-		<vector>
+		 1] <string>
+		 2] <vector>
 
 	Files included:  [1]
-		FileData.hpp
+		 1] FileData.hpp
+
+
+File content:
+	Class `File` {
+		Class Fields:
+			1] size_t depth_;
+			2] size_t countRecursive_;
+			3] std::string initPath_;
+			4] std::string path_;
+			5] std::string name_;
+			6] std::string format_;
+			7] std::vector<File> subFiles_;
+			8] FileData data_;
+
+		Class Operations:
+			1] File( const size_t depth, const size_t countRecursive, const std::string& initPath, const std::string& path, const std::string& name, const std::string& format, const std::vector<File>& subFiles )
+			2] std::string getInitPath()
+			3] std::string getPath()
+			4] std::string getName()
+			5] std::string getFormat()
+			6] std::string getFile()
+			7] std::vector<File> getSubFiles()
+			8] bool isCatalog()
+			9] size_t getDepth()
+			10] size_t countSubFiles()
+			11] size_t countSubFilesRecursive()
+			12] void setData(const FileData& data)
+			13] FileData getData()
+	};
 
 
 
 
 ### ../source/data structures/FileData.hpp #################################
 ############################################################################
-File content:
-[	Class `FileData` 
-
-	Class Fields:
-		std::vector<std::string> libIncludes_;
-		std::vector<std::string> projIncludes_;
-		std::vector<std::shared_ptr<iSyntax>> data_;
-
-	Class Operations:
-		public: FileData()
-		FileData( const std::vector<std::string>& libIncludes, const std::vector<std::string>& projIncludes, const std::vector<std::shared_ptr<iSyntax>>& data )
-		std::vector<std::string> getLibIncludes()
-		std::vector<std::string> getProjIncludes()
-		std::vector<std::shared_ptr<iSyntax>> getData()
-		size_t CountInstructions()
-		size_t CountClasses()]
-
-
-File summary:
+File includes:
 	Libraries included:  [3]
-		<numeric>
-		<string>
-		<vector>
+		 1] <numeric>
+		 2] <string>
+		 3] <vector>
 
 	Files included:  [2]
-		SyntaxTypes
-		iSyntax.hpp
+		 1] SyntaxTypes
+		 2] iSyntax.hpp
+
+
+File content:
+	Class `FileData` {
+		Class Fields:
+			1] std::vector<std::string> libIncludes_;
+			2] std::vector<std::string> projIncludes_;
+			3] std::vector<std::shared_ptr<iSyntax>> data_;
+
+		Class Operations:
+			1] FileData()
+			2] FileData( const std::vector<std::string>& libIncludes, const std::vector<std::string>& projIncludes, const std::vector<std::shared_ptr<iSyntax>>& data )
+			3] std::vector<std::string> getLibIncludes()
+			4] std::vector<std::string> getProjIncludes()
+			5] std::vector<std::shared_ptr<iSyntax>> getData()
+			6] size_t CountInstructions()
+			7] size_t CountClasses()
+	};
 
 
 
 
 ### ../source/data structures/Instruction.hpp ##############################
 ############################################################################
-File content:
-[	Class `Instruction : public iSyntax` 
-
-	Class Fields:
-		std::string rawData_;
-
-	Class Operations:
-		public: Instruction(const std::string& data)
-		std::string getResult()
-		std::string getResult(size_t tabs)
-		Type getSyntaxType()]
-
-
-File summary:
+File includes:
 	Libraries included:  [1]
-		<string>
+		 1] <string>
 
 	Files included:  [1]
-		iSyntax.hpp
+		 1] iSyntax.hpp
+
+
+File content:
+	Class `Instruction : public iSyntax` {
+		Class Fields:
+			1] std::string rawData_;
+
+		Class Operations:
+			1] Instruction(const std::string& data)
+			2] std::string getResult()
+			3] std::string getResult(size_t tabs)
+			4] Type getSyntaxType()
+	};
 
 
 
 
 ### ../source/data structures/SyntaxTypes ##################################
 ############################################################################
+File includes:
+
 File content:
-[	namespace SyntaxTypes {
-		Has 0 instructions
-		Has 0 classes
-		Has 0 blocks]
+	namespace SyntaxTypes {
 
-
-File summary:
 
 
 
 ### ../source/data structures/iSyntax.hpp ##################################
 ############################################################################
-File content:
-[	Class `iSyntax` 
-
-	Class Fields:
-		virtual std::string getResult() const = 0;
-		virtual std::string getResult(size_t) const = 0;
-		virtual Type getSyntaxType() const = 0;
-
-	Class Operations:
-		public: virtual ~iSyntax()]
-
-
-File summary:
+File includes:
 	Files included:  [1]
-		SyntaxTypes
+		 1] SyntaxTypes
+
+
+File content:
+	Class `iSyntax` {
+		Class Fields:
+			1] virtual std::string getResult() const = 0;
+			2] virtual std::string getResult(size_t) const = 0;
+			3] virtual Type getSyntaxType() const = 0;
+
+		Class Operations:
+			1] virtual ~iSyntax()
+	};
 
 
 
 
 ### ../source/tools/Converter.hpp ##########################################
 ############################################################################
-File content:
-[	namespace Tools {
-		Has 0 instructions
-		Has 1 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Libraries included:  [4]
-		<algorithm>
-		<set>
-		<sstream>
-		<vector>
+		 1] <algorithm>
+		 2] <set>
+		 3] <sstream>
+		 4] <vector>
+
+
+File content:
+	namespace Tools {
 
 
 
 
 ### ../source/tools/FileIO.hpp #############################################
 ############################################################################
-File content:
-[	namespace Tools {
-		Has 0 instructions
-		Has 1 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Libraries included:  [5]
-		<dirent.h>
-		<exception>
-		<fstream>
-		<string>
-		<vector>
+		 1] <dirent.h>
+		 2] <exception>
+		 3] <fstream>
+		 4] <string>
+		 5] <vector>
 
 	Files included:  [1]
-		IgnoreFiles.hpp
+		 1] IgnoreFiles.hpp
+
+
+File content:
+	namespace Tools {
 
 
 
 
 ### ../source/tools/IgnoreFiles.cpp ########################################
 ############################################################################
-File content:
-[	namespace Tools {
-		Has 0 instructions
-		Has 0 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Libraries included:  [2]
-		<string>
-		<vector>
+		 1] <string>
+		 2] <vector>
 
 	Files included:  [1]
-		IgnoreFiles.hpp
+		 1] IgnoreFiles.hpp
+
+
+File content:
+	namespace Tools {
 
 
 
 
 ### ../source/tools/IgnoreFiles.hpp ########################################
 ############################################################################
-File content:
-[	namespace Tools {
-		Has 0 instructions
-		Has 1 classes
-		Has 0 blocks]
-
-
-File summary:
+File includes:
 	Libraries included:  [4]
-		<algorithm>
-		<set>
-		<string>
-		<vector>
+		 1] <algorithm>
+		 2] <set>
+		 3] <string>
+		 4] <vector>
+
+
+File content:
+	namespace Tools {
 
 
 

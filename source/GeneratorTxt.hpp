@@ -79,9 +79,9 @@ private:
         std::stringstream result;       
 
         result << BuildSeparator("### " + file.getFile() + " ");
-        result << BuildFileContent(file);
-        result << "\n\n";
         result << BuildFileSummary(file);
+        result << "\n\n";
+        result << BuildFileContent(file);
 
         return result.str();
     }
@@ -90,24 +90,30 @@ private:
         std::stringstream result;       
         result << "File content:\n";
         for (const auto& ptr : file.getData().getData()) {
-            result << "[" << ptr->getResult(1) << "]\n";
+            if (ptr->getSyntaxType() == SyntaxTypes::Type::Instruction) {
+                continue;
+            }
+            
+            result << ptr->getResult(1) << "\n";
         }
         return result.str();
     }
 
     std::string BuildFileSummary(const File& file) {
         std::stringstream result;       
-        result << "File summary:";
+        result << "File includes:";
         if (!file.getData().getLibIncludes().empty()) {
             result << "\n\tLibraries included:  [" << file.getData().getLibIncludes().size() << "]\n";;
+            size_t count = 0;
             for (const auto& line : file.getData().getLibIncludes()) {
-                result << "\t\t<" << line << ">\n"; 
+                result << "\t\t " << ++count << "] <" << line << ">\n"; 
             }
         }
         if (!file.getData().getProjIncludes().empty()) {
             result << "\n\tFiles included:  [" << file.getData().getProjIncludes().size() << "]\n";
+            size_t count = 0;
             for (const auto& line : file.getData().getProjIncludes()) {
-                result << "\t\t" << line << "\n";
+                result << "\t\t " << ++count << "] " << line << "\n";
             }
         }
         return result.str();
