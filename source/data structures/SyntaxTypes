@@ -7,3 +7,4 @@ namespace SyntaxTypes {
     enum Scope { Public, Private, Protected };
 }
 
+

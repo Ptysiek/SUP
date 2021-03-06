@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../DataStructures"
-#include "../iSyntaxBuilder.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -14,6 +13,9 @@ class SyntaxParser {
     using Data = DataStructures::Data;
     using Line = DataStructures::Line;
     using Syntaxes = DataStructures::Syntaxes;
+    
+    using Syntax = DataStructures::Syntax;
+    using BlockSyntax = DataStructures::BlockSyntax;
     
     struct Workspace {
         Syntaxes result_;
@@ -80,22 +82,22 @@ protected:
     //#######################################################################################################
     void AddInstruction(Workspace& w) {
         if (w.hierarchy_.empty()) {
-            w.result_.emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
+            w.result_.emplace_back(buildInstruction(w.syntaxData_));
             return;
         }
-        w.hierarchy_.top()->emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
+        w.hierarchy_.top()->emplace_back(buildInstruction(w.syntaxData_));
     }
     
     void AddBlockOpen(Workspace& w) {
-        w.hierarchy_.push(iSyntaxBuilder::buildBlock(w.syntaxData_));
+        w.hierarchy_.push(buildBlock(w.syntaxData_));
     }
     
     void AddBlockClose(Workspace& w) {
         if (w.hierarchy_.size() == 0) {
-            w.result_.emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
+            w.result_.emplace_back(buildInstruction(w.syntaxData_));
             return;
         }
-        w.hierarchy_.top()->emplace_back(iSyntaxBuilder::buildInstruction(w.syntaxData_));
+        w.hierarchy_.top()->emplace_back(buildInstruction(w.syntaxData_));
 
         if (w.hierarchy_.size() == 1) {
             w.result_.emplace_back(w.hierarchy_.top());
@@ -140,6 +142,47 @@ protected:
     }
 
     //#######################################################################################################
+    BlockSyntax buildBlock(std::string syntaxData) {
+        auto temp = CutOutTemplate(syntaxData);      
+
+        if (auto i = syntaxData.find("namespace"); i != std::string::npos) {
+            return std::make_shared<Namespace>(temp, syntaxData);
+        }
+        if (syntaxData.find("class") != std::string::npos) {
+            return std::make_shared<Class>(temp, syntaxData);
+        }
+        if (syntaxData.find("struct") != std::string::npos) {
+            //return std::make_shared<Struct>(temp, syntaxData);
+        }
+        if (syntaxData.find("(") != std::string::npos) {
+            //return BuildOperation(syntaxData); 
+        }
+
+        return std::make_shared<Operation>(temp, syntaxData);
+    }
+
+    Syntax buildInstruction(const std::string& syntaxData) {
+        return std::make_shared<Instruction>(syntaxData);
+    }
+
+
+private:
+    static std::string CutOutTemplate(std::string& syntaxData) {
+        auto begin = syntaxData.find("template");
+        if (begin == std::string::npos) {
+            return std::string();
+        }
+        auto end =  syntaxData.find(">", begin);
+        if (end == std::string::npos) {
+            return std::string();
+        }
+        std::string result = syntaxData.substr(begin, end - begin);
+        std::string tmp = syntaxData.substr(end + 1);
+        syntaxData = syntaxData.substr(0, begin) + " " + tmp; 
+        Converter::removeWhitespaces(result);
+        Converter::removeWhitespaces(syntaxData);
+        return result;
+    }
 };
 } // namespace DataParsers
 
