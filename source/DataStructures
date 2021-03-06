@@ -12,6 +12,7 @@
 #include "data structures/Block.hpp"
 #include "data structures/SyntaxTypes"
 #include "data structures/Namespace.hpp"
+#include "data structures/Operation.hpp"
 
 
 namespace DataStructures {

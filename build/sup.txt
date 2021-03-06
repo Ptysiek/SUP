@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Sat Mar  6 02:54:18 2021
+File generation date:  Sat Mar  6 03:23:29 2021
 
 
 ### Table Of Contents: #####################################################
@@ -35,6 +35,7 @@ File generation date:  Sat Mar  6 02:54:18 2021
 			FileData.hpp
 			Instruction.hpp
 			Namespace.hpp
+			Operation.hpp
 			SyntaxTypes
 			iSyntax.hpp
 
@@ -83,8 +84,9 @@ File includes:
 		 4] data structures/FileData.hpp
 		 5] data structures/Instruction.hpp
 		 6] data structures/Namespace.hpp
-		 7] data structures/SyntaxTypes
-		 8] data structures/iSyntax.hpp
+		 7] data structures/Operation.hpp
+		 8] data structures/SyntaxTypes
+		 9] data structures/iSyntax.hpp
 
 
 File content:
@@ -503,13 +505,11 @@ File content:
 
 		Class Operations:
 			1] Block(const std::string& tem, const std::string& data)
-			2] std::string getResult()
-			3] std::string getResult(size_t tabs)
-			4] void emplace_back(const std::shared_ptr<iSyntax>& subElement)
-			5] Type getSyntaxType()
-			6] size_t CountInstructions()
-			7] size_t CountBlocks()
-			8] size_t CountClasses()
+			2] void emplace_back(const std::shared_ptr<iSyntax>& subElement)
+			3] Type getSyntaxType()
+			4] size_t CountInstructions()
+			5] size_t CountBlocks()
+			6] size_t CountClasses()
 	};
 
 
@@ -535,13 +535,12 @@ File content:
 			1] std::string className_;
 
 		Class Operations:
-			1] std::string getResult()
-			2] std::string getResult(size_t tabs)
-			3] Type getSyntaxType()
-			4] std::string BuildClassName(std::string header)
-			5] std::string BuildOperations(const std::string& tab)
-			6] std::string BuildOperation(std::string data)
-			7] std::string RemoveLabel(std::string data)
+			1] std::string getResult(size_t tabs = 0)
+			2] Type getSyntaxType()
+			3] std::string BuildClassName(std::string header)
+			4] std::string BuildOperations(const std::string& tab)
+			5] std::string BuildOperation(std::string data)
+			6] std::string RemoveLabel(std::string data)
 	};
 
 
@@ -639,9 +638,8 @@ File content:
 
 		Class Operations:
 			1] Instruction(const std::string& data)
-			2] std::string getResult()
-			3] std::string getResult(size_t tabs)
-			4] Type getSyntaxType()
+			2] std::string getResult(size_t tabs = 0)
+			3] Type getSyntaxType()
 	};
 
 
@@ -680,6 +678,32 @@ std::string BuildHeaderName(std::string header) const {
 
 
 
+### ../source/data structures/Operation.hpp ################################
+############################################################################
+File includes:
+	Libraries included:
+		 1] <numeric>
+		 2] <string>
+
+	Files included:
+		 1] Block.hpp
+		 2] iSyntax.hpp
+
+
+File content:
+	Class `Operation : public Block` {
+		Class Fields:
+			This class has no Fields
+
+		Class Operations:
+			1] Operation(const std::string& templateData, const std::string& headerData)
+			2] std::string getResult(size_t tabs = 0)
+			3] Type getSyntaxType()
+	};
+
+
+
+
 ### ../source/data structures/SyntaxTypes ##################################
 ############################################################################
 File includes:
@@ -688,6 +712,7 @@ File content:
 	Namespace `SyntaxTypes` {
 		enum Type {
 		enum Memory {
+		enum Scope {
 	};
 
 
@@ -703,9 +728,8 @@ File includes:
 File content:
 	Class `iSyntax` {
 		Class Fields:
-			1] virtual std::string getResult() const = 0;
-			2] virtual std::string getResult(size_t) const = 0;
-			3] virtual Type getSyntaxType() const = 0;
+			1] virtual std::string getResult(size_t = 0) const = 0;
+			2] virtual Type getSyntaxType() const = 0;
 
 		Class Operations:
 			1] virtual ~iSyntax()

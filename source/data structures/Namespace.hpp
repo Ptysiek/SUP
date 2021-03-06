@@ -21,6 +21,7 @@ public:
 
     Type getSyntaxType() const override { return Type::Namespace; }
     
+    
     std::string getResult(size_t tabs = 0) const override {
         std::stringstream result;
         const std::string tab = std::string(tabs, '\t');

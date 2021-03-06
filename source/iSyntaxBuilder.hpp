@@ -29,7 +29,7 @@ public:
             //return BuildOperation(syntaxData); 
         }
 
-        return std::make_shared<Block>(temp, syntaxData);
+        return std::make_shared<Operation>(temp, syntaxData);
     }
 
     static Syntax buildInstruction(const std::string& syntaxData) {

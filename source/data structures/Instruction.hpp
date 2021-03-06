@@ -13,16 +13,9 @@ public:
     Instruction(const std::string& data): rawData_(data) {}
 
     
-    std::string getResult() const override {
-        return rawData_;   
-    }
-    std::string getResult(size_t tabs) const override {
+    std::string getResult(size_t tabs = 0) const override {
         return std::string(tabs, '\t') + rawData_;   
     }
     
-    //enum Type { Instruction, Function, Operation, Class, Structure };
-    //enum Memory { Global, Component, Static }; 
-
     Type getSyntaxType() const override { return Type::Instruction; }
-    //Memory getMemoryType() const override { return Memory::  ; } 
 };

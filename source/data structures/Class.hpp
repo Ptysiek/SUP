@@ -18,21 +18,12 @@ public:
         Block(templateData, headerData),
         className_(BuildClassName(headerData))
     {}
-    //enum Type { Instruction, Function, Operation, Class, Structure };
-    //enum Memory { Global, Component, Static }; 
 
-    std::string getResult() const override {
-        return getResult(0);
-    }
-    std::string getResult(size_t tabs) const override {
+    std::string getResult(size_t tabs = 0) const override {
         std::stringstream result;
         const std::string tab = std::string(tabs, '\t');
         
         result << tab << "Class `" << className_ << "` {";
-        //result << std::string(tabs, '\t') << header_ << "  " << className_;
-        //result << "\n" << std::string(tabs + 1, '\t') + "Has " + std::to_string(CountInstructions()) + " instructions"
-        //result << "\n" << std::string(tabs + 1, '\t') + "Has " + std::to_string(CountClasses()) + " classes"
-        //result << "\n" << std::string(tabs + 1, '\t') + "Has " + std::to_string(CountBlocks()) + " blocks";
         
         result << "\n" << tab << '\t' << "Class Fields:";
         result << BuildFields(tab + "\t\t");
@@ -40,23 +31,12 @@ public:
         result << BuildOperations(tab + "\t\t");
 
         result << "\n" << tab << "};";
-
-        /*
-        if (!subClasses_.empty()) {
-            result += "\n\n";
-        }
-        for (const auto& element : subOperations_) {
-            result += '\t' + element->getResult() + "\n";
-        }
-        for (const auto& element : subClasses_) {
-            result += '\t' + element->getResult() + "\n\n";
-        }
-        */
         return result.str();
     }
     
     Type getSyntaxType() const override { return Type::Class; }
-    //Memory getMemoryType() const override { return Memory::  ; } 
+
+
 private:
     std::string BuildClassName(std::string header) const {
         if (auto i = header.find('{'); i != std::string::npos) {
