@@ -11,12 +11,14 @@
 
 class Class : public Block {
     using Converter = Tools::Converter;
+    using Scope = SyntaxTypes::Scope;
+    
     std::string className_;
 
 public:
     Class(const Scope& scope, const std::string& templateData, const std::string& headerData): 
         Block(scope, templateData, headerData),
-        className_(BuildClassName(headerData))
+        className_(BuildHeaderName(headerData, "class"))
     {}
 
     std::string getResult(size_t tabs = 0) const override {
@@ -25,10 +27,19 @@ public:
         
         result << tab << "Class `" << className_ << "` {";
         
-        result << "\n" << tab << '\t' << "Class Fields:";
-        result << BuildFields(tab + "\t\t");
-        result << "\n\n" << tab << '\t' << "Class Operations:";
-        result << BuildOperations(tab + "\t\t");
+        result << "\n" << tab << '\t' << "Class Private Fields:";
+        result << BuildFields(tab + "\t\t", SyntaxTypes::Scope::Private);
+        result << "\n" << tab << '\t' << "Class Protected Fields:";
+        result << BuildFields(tab + "\t\t", SyntaxTypes::Scope::Protected);
+        result << "\n" << tab << '\t' << "Class Public Fields:";
+        result << BuildFields(tab + "\t\t", SyntaxTypes::Scope::Public);
+
+        result << "\n\n" << tab << '\t' << "Class Public Operations:";
+        result << BuildOperations(tab + "\t\t", SyntaxTypes::Scope::Public);
+        result << "\n" << tab << '\t' << "Class Protected Operations:";
+        result << BuildOperations(tab + "\t\t", SyntaxTypes::Scope::Protected);
+        result << "\n" << tab << '\t' << "Class Private Operations:";
+        result << BuildOperations(tab + "\t\t", SyntaxTypes::Scope::Private);
 
         result << "\n" << tab << "};";
         return result.str();
@@ -48,10 +59,10 @@ private:
         return Converter::removeWhitespaces(header);
     }
 
-    std::string BuildFields(const std::string& tab) const {
+    std::string BuildFields(const std::string& tab, const Scope scope) const {
         std::stringstream result;
         size_t count = 0;
-        for (const auto& element : fields_) {
+        for (const auto& element : GetSyntaxesWithinScope(scope, fields_)) {
             std::string data = RemoveScope(element->getResult());
             if (data.find("using") != std::string::npos) {
                 continue;
@@ -63,16 +74,21 @@ private:
             result << "\n" << tab << ++count << "] " << data;
         }
         if (count == 0) {
-            result << "\n" << tab << "This class has no Fields";
+            result << "\n" << tab << "This class has no Fields within that AccessSpecifier";
         }
         return result.str();
     }
-
-    std::string BuildOperations(const std::string& tab) const {
+    
+    std::string BuildOperations(const std::string& tab, const Scope scope) const {
         std::stringstream result;
         size_t count = 0;
-        for (const auto& element : subOperations_) {
-            result << "\n" << tab << ++count << "] " << BuildOperation(element->getResult());
+        for (const auto& element : GetSyntaxesWithinScope(scope, subOperations_)) {
+            if (element->getSyntaxScope() == scope) {
+                result << "\n" << tab << ++count << "] " << BuildOperation(element->getResult());
+            }
+        }
+        if (count == 0) {
+            result << "\n" << tab << "This class has no Operations within that AccessSpecifier";
         }
         return result.str();
     }

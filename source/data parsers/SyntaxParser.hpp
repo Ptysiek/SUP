@@ -17,6 +17,8 @@ class SyntaxParser {
     using Syntax = DataStructures::Syntax;
     using BlockSyntax = DataStructures::BlockSyntax;
     
+    using Scope = SyntaxTypes::Scope;
+
     struct Workspace {
         Syntaxes result_;
         std::stack<std::shared_ptr<Block>> hierarchy_;
@@ -57,6 +59,9 @@ protected:
             w.syntaxData_ = w.draft_.substr(0, i + 1);
             w.syntaxData_ = RemoveNewLineCharacter(w.syntaxData_);
             w.draft_ = w.draft_.substr(i + 1);
+            if (auto scope = IndicateCurrentScope(w); scope != Scope::None) {
+                currentScope_ = scope; 
+            }
             BuildSingleSyntax(w);
 
             i = ClosestSemicolonOrParenthesis(w.draft_);
@@ -112,6 +117,27 @@ protected:
         w.hierarchy_.pop();
         w.hierarchy_.top()->emplace_back(oldTop);
     }
+    
+    SyntaxTypes::Scope IndicateCurrentScope(Workspace& w) {
+        if (auto i = w.syntaxData_.find("public:"); i != std::string::npos) {
+            w.syntaxData_ = w.syntaxData_.substr(i + 7);
+            w.syntaxData_ = RemoveNewLineCharacter(w.syntaxData_);
+            return SyntaxTypes::Scope::Public;
+        }
+        if (auto i = w.syntaxData_.find("private:"); i != std::string::npos) {
+            w.syntaxData_ = w.syntaxData_.substr(i + 8);
+            w.syntaxData_ = RemoveNewLineCharacter(w.syntaxData_);
+            return SyntaxTypes::Scope::Private;
+        }
+        if (auto i = w.syntaxData_.find("protected:"); i != std::string::npos) {
+            w.syntaxData_ = w.syntaxData_.substr(i + 10);
+            w.syntaxData_ = RemoveNewLineCharacter(w.syntaxData_);
+            return SyntaxTypes::Scope::Protected;
+        }
+        return SyntaxTypes::Scope::None;
+    }
+
+
 
     //#######################################################################################################
     bool LastCharEquals(const char ch, const std::string& str) {  

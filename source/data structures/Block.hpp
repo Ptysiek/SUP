@@ -9,17 +9,21 @@
 
 
 class Block : public iSyntax {
+    using iSyntaxes = std::vector<std::shared_ptr<iSyntax>>; 
+
 protected:
+    using Converter = Tools::Converter;
     const Scope scope_;
     
     
     std::string template_;
 
     std::string header_;
-    std::vector<std::shared_ptr<iSyntax>> subElements_;
-    std::vector<std::shared_ptr<iSyntax>> subClasses_;
-    std::vector<std::shared_ptr<iSyntax>> subOperations_;
-    std::vector<std::shared_ptr<iSyntax>> fields_;
+    iSyntaxes subElements_;
+    iSyntaxes subClasses_;
+    iSyntaxes subOperations_;
+    iSyntaxes fields_;
+
 
 public:
     Block(const Scope& scope, const std::string& tem, const std::string& data): 
@@ -53,6 +57,13 @@ public:
 
 
 protected:
+    iSyntaxes GetSyntaxesWithinScope(const Scope scope, const iSyntaxes& source) const {
+        iSyntaxes result;
+        std::copy_if(source.begin(), source.end(), std::back_inserter(result),
+            [scope](auto element){ return (element->getSyntaxScope() == scope); });
+        return result;
+    }
+
     size_t CountInstructions() const {
         return std::accumulate(subElements_.begin(), subElements_.end(), 0, 
             [](int sum, auto e){ return (e->getSyntaxType() == Type::Instruction)? sum + 1 : sum; });
@@ -67,5 +78,14 @@ protected:
         return subClasses_.size();
     }
 
+    std::string BuildHeaderName(std::string header, const std::string& key) const {
+        if (auto i = header.find('{'); i != std::string::npos) {
+            header = header.substr(0, i);
+        }
+        if (auto i = header.find(key); i != std::string::npos) {
+            header = header.substr(i + key.size());
+        }
+        return Converter::removeWhitespaces(header);
+    }
 
 };

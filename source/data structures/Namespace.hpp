@@ -16,7 +16,7 @@ class Namespace : public Block {
 public:
     Namespace(const Scope& scope, const std::string& templateData, const std::string& headerData): 
         Block(scope, templateData, headerData),
-        header_(BuildHeaderName(headerData))
+        header_(BuildHeaderName(headerData, "namespace"))
     {}
 
     Type getSyntaxType() const override { return Type::Namespace; }
@@ -45,13 +45,4 @@ public:
     
 
 private:
-    std::string BuildHeaderName(std::string header) const {
-        if (auto i = header.find('{'); i != std::string::npos) {
-            header = header.substr(0, i);
-        }
-        if (auto i = header.find("namespace"); i != std::string::npos) {
-            header = header.substr(i + 9);
-        }
-        return Converter::removeWhitespaces(header);
-    }
 };

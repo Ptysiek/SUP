@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Sun Mar  7 19:13:53 2021
+File generation date:  Sun Mar  7 22:29:04 2021
 
 
 ### Table Of Contents: #####################################################
@@ -110,22 +110,29 @@ File includes:
 
 File content:
 	Class `FileBuilder` {
-		Class Fields:
+		Class Private Fields:
 			1] const std::string initPath_;
 			2] const std::string path_;
 			3] const std::string name_;
 			4] const std::string format_;
 			5] const File product_;
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] explicit FileBuilder( const std::string& initPath, const std::string& path, const std::string& fullName, const std::vector<File>& subfiles, const size_t depth )
 			2] File getProduct()
 			3] static File buildRoot(const std::string& initPath, const std::vector<File>& subFiles)
-			4] File BuildProduct(const std::vector<File>& subFiles, size_t depth)
-			5] static size_t CountRecursive(const std::vector<File>& subFiles)
-			6] std::string BuildName(const std::string& str, const bool isEmpty)
-			7] std::string CutoutName(const std::string& str)
-			8] std::string CutoutFormat(const std::string& str)
+		Class Protected Operations:
+			1] File BuildProduct(const std::vector<File>& subFiles, size_t depth)
+			2] static size_t CountRecursive(const std::vector<File>& subFiles)
+			3] std::string BuildName(const std::string& str, const bool isEmpty)
+			4] std::string CutoutName(const std::string& str)
+			5] std::string CutoutFormat(const std::string& str)
+		Class Private Operations:
+			This class has no Operations within that AccessSpecifier
 	};
 
 
@@ -142,21 +149,28 @@ File includes:
 
 File content:
 	Class `FileDataBuilder` {
-		Class Fields:
+		Class Private Fields:
 			1] bool productExist_;
 			2] Data rawData_;
 			3] const File& fileHeader_;
 			4] const FileData product_;
 			5] std::vector<std::string> libIncludes_;
 			6] std::vector<std::string> projIncludes_;
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] FileDataBuilder(const File& file)
 			2] bool dataExist()
 			3] FileData getProduct()
-			4] FileData BuildProduct()
-			5] FileData BuildEmptyData()
-			6] Data PrepareData(Data rawData)
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			1] FileData BuildProduct()
+			2] FileData BuildEmptyData()
+			3] Data PrepareData(Data rawData)
 	};
 
 
@@ -176,21 +190,28 @@ File includes:
 
 File content:
 	Class `GeneratorTxt` {
-		Class Fields:
+		Class Private Fields:
 			1] const std::string separator_;
 			2] const std::string targetPath_;
 			3] std::vector<File> data_;
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data)
 			2] std::string buildFile()
-			3] std::string BuildHeader()
-			4] std::string BuildDate()
-			5] std::string BuildTableOfContents()
-			6] std::string BuildFile(const File& file)
-			7] std::string BuildFileContent(const File& file)
-			8] std::string BuildFileSummary(const File& file)
-			9] std::string BuildSeparator(const std::string& title)
+			3] std::string BuildFileSummary(const File& file)
+			4] std::string BuildSeparator(const std::string& title)
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			1] std::string BuildHeader()
+			2] std::string BuildDate()
+			3] std::string BuildTableOfContents()
+			4] std::string BuildFile(const File& file)
+			5] std::string BuildFileContent(const File& file)
 	};
 
 
@@ -211,15 +232,22 @@ File includes:
 
 File content:
 	Class `Program` {
-		Class Fields:
+		Class Private Fields:
 			1] const ProgramInitializer flagSupport_;
 			2] const std::string targetPath_;
 			3] const std::string outputPath_;
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] explicit Program(const ProgramInitializer& target)
 			2] void execute()
-			3] void initializeIgnoreFiles()
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			1] void initializeIgnoreFiles()
 	};
 
 
@@ -237,14 +265,21 @@ File includes:
 
 File content:
 	Class `ProgramInitializer` {
-		Class Fields:
+		Class Private Fields:
 			1] const std::string path_;
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] explicit ProgramInitializer(const int& argc, const char* const * const argv)
 			2] std::string getPath()
 			3] std::string getDefaultPath()
-			4] std::string GenPath(const int& argc, const char* const * const argv)
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			1] std::string GenPath(const int& argc, const char* const * const argv)
 	};
 
 
@@ -266,20 +301,27 @@ File includes:
 
 File content:
 	Class `ProjectBuilder` {
-		Class Fields:
+		Class Private Fields:
 			1] const std::string initPath_;
 			2] const Project product_;
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] explicit ProjectBuilder(const std::string& initPath)
 			2] Project getProduct()
-			3] Project BuildProduct()
-			4] Project UpdateProjectWithData(Project& project)
-			5] Project BuildProductStructure()
-			6] std::vector<File> BuildRecursive(const std::string& targetPath, int depth)
-			7] Project FlatenRecursive(const File& root)
-			8] static bool SortCriterion_CatalogLast(const File& f, const File& s)
-			9] static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s)
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			1] Project BuildProduct()
+			2] Project UpdateProjectWithData(Project& project)
+			3] Project BuildProductStructure()
+			4] std::vector<File> BuildRecursive(const std::string& targetPath, int depth)
+			5] Project FlatenRecursive(const File& root)
+			6] static bool SortCriterion_CatalogLast(const File& f, const File& s)
+			7] static bool SortCriterion_Alphabetical(const std::string& f, const std::string& s)
 	};
 
 
@@ -328,19 +370,26 @@ File includes:
 File content:
 	Namespace `DataParsers` {
 		Class `CommentParser` {
-			Class Fields:
-				This class has no Fields
+			Class Private Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Protected Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Public Fields:
+				This class has no Fields within that AccessSpecifier
 
-			Class Operations:
+			Class Public Operations:
+				1] static Data removeComments(Data data)
+			Class Protected Operations:
 				1] CommentParser()
-				2] static Data removeComments(Data data)
-				3] static Data RemoveAllOnelineComments(Data data)
-				4] static Line RemoveOnelineComments(const Line& line)
-				5] static Data RemoveMultilineComments(Data data)
-				6] static Line Multiline_ClearLine(Line line, bool& isCommented)
-				7] static Line Multiline_FindClosing(Line line, bool& isCommented, const size_t begin)
-				8] static bool IsInsideString(const Line& subline)
-				9] static bool IsAlreadyCommentedByOneline(const Line& subline)
+				2] static Data RemoveAllOnelineComments(Data data)
+				3] static Line RemoveOnelineComments(const Line& line)
+				4] static Data RemoveMultilineComments(Data data)
+				5] static Line Multiline_ClearLine(Line line, bool& isCommented)
+				6] static Line Multiline_FindClosing(Line line, bool& isCommented, const size_t begin)
+				7] static bool IsInsideString(const Line& subline)
+				8] static bool IsAlreadyCommentedByOneline(const Line& subline)
+			Class Private Operations:
+				This class has no Operations within that AccessSpecifier
 		};
 	};
 
@@ -358,12 +407,19 @@ File includes:
 File content:
 	Namespace `DataParsers` {
 		Class `DirectiveParser` {
-			Class Fields:
-				This class has no Fields
+			Class Private Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Protected Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Public Fields:
+				This class has no Fields within that AccessSpecifier
 
-			Class Operations:
+			Class Public Operations:
+				1] static Data removeDirectives(Data data)
+			Class Protected Operations:
 				1] DirectiveParser()
-				2] static Data removeDirectives(Data data)
+			Class Private Operations:
+				This class has no Operations within that AccessSpecifier
 		};
 	};
 
@@ -381,18 +437,25 @@ File includes:
 File content:
 	Namespace `DataParsers` {
 		Class `IncludeParser` {
-			Class Fields:
+			Class Private Fields:
 				1] Data data_;
 				2] Data libIncludes_;
 				3] Data projIncludes_;
+			Class Protected Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Public Fields:
+				This class has no Fields within that AccessSpecifier
 
-			Class Operations:
+			Class Public Operations:
 				1] IncludeParser(const Data& data)
 				2] Data getLibIncludes()
 				3] Data getProjIncludes()
 				4] Data getData()
-				5] void BuildIncludes()
-				6] Data CutoutIncludes()
+			Class Protected Operations:
+				1] void BuildIncludes()
+				2] Data CutoutIncludes()
+			Class Private Operations:
+				This class has no Operations within that AccessSpecifier
 		};
 	};
 
@@ -414,29 +477,36 @@ File includes:
 File content:
 	Namespace `DataParsers` {
 		Class `SyntaxParser` {
-			Class Fields:
+			Class Private Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Protected Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Public Fields:
 				1] SyntaxTypes::Scope currentScope_;
 				2] const std::string rawData_;
 				3] Syntaxes product_;
 
-			Class Operations:
+			Class Public Operations:
 				1] struct Workspace {
 				2] SyntaxParser(const Data& data)
 				3] std::string getData()
 				4] Syntaxes getProduct()
-				5] Syntaxes BuildProduct()
-				6] void BuildSingleSyntax(Workspace& w)
-				7] void AddInstruction(Workspace& w)
-				8] void AddBlockOpen(Workspace& w)
-				9] void AddBlockClose(Workspace& w)
-				10] bool LastCharEquals(const char ch, const std::string& str)
-				11] size_t ClosestSemicolonOrParenthesis(const Line& line)
-				12] std::string MergeRawData(const Data& data)
-				13] void AppendSemicolon(std::string& syntaxData, std::string& draft)
-				14] std::string RemoveNewLineCharacter( const std::string& line)
-				15] BlockSyntax buildBlock(std::string syntaxData)
-				16] Syntax buildInstruction(const std::string& syntaxData)
-				17] static std::string CutOutTemplate(std::string& syntaxData)
+				5] void AddInstruction(Workspace& w)
+				6] void AddBlockOpen(Workspace& w)
+				7] void AddBlockClose(Workspace& w)
+				8] SyntaxTypes::Scope IndicateCurrentScope(Workspace& w)
+				9] Syntax buildInstruction(const std::string& syntaxData)
+			Class Protected Operations:
+				1] Syntaxes BuildProduct()
+				2] void BuildSingleSyntax(Workspace& w)
+				3] bool LastCharEquals(const char ch, const std::string& str)
+				4] size_t ClosestSemicolonOrParenthesis(const Line& line)
+				5] std::string MergeRawData(const Data& data)
+				6] void AppendSemicolon(std::string& syntaxData, std::string& draft)
+				7] std::string RemoveNewLineCharacter( const std::string& line)
+				8] BlockSyntax buildBlock(std::string syntaxData)
+			Class Private Operations:
+				1] static std::string CutOutTemplate(std::string& syntaxData)
 		};
 	};
 
@@ -457,16 +527,20 @@ File includes:
 
 File content:
 	Class `Block : public iSyntax` {
-		Class Fields:
+		Class Private Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Protected Fields:
 			1] const Scope scope_;
 			2] std::string template_;
 			3] std::string header_;
-			4] std::vector<std::shared_ptr<iSyntax>> subElements_;
-			5] std::vector<std::shared_ptr<iSyntax>> subClasses_;
-			6] std::vector<std::shared_ptr<iSyntax>> subOperations_;
-			7] std::vector<std::shared_ptr<iSyntax>> fields_;
+			4] iSyntaxes subElements_;
+			5] iSyntaxes subClasses_;
+			6] iSyntaxes subOperations_;
+			7] iSyntaxes fields_;
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] Block(const Scope& scope, const std::string& tem, const std::string& data)
 			2] void emplace_back(const std::shared_ptr<iSyntax>& subElement)
 			3] Type getSyntaxType()
@@ -474,6 +548,11 @@ File content:
 			5] size_t CountInstructions()
 			6] size_t CountBlocks()
 			7] size_t CountClasses()
+			8] std::string BuildHeaderName(std::string header, const std::string& key)
+		Class Protected Operations:
+			1] iSyntaxes GetSyntaxesWithinScope(const Scope scope, const iSyntaxes& source)
+		Class Private Operations:
+			This class has no Operations within that AccessSpecifier
 	};
 
 
@@ -495,14 +574,22 @@ File includes:
 
 File content:
 	Class `Class : public Block` {
-		Class Fields:
+		Class Private Fields:
 			1] std::string className_;
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
 			1] std::string getResult(size_t tabs = 0)
 			2] Type getSyntaxType()
 			3] std::string BuildClassName(std::string header)
-			4] std::string BuildOperations(const std::string& tab)
+			4] std::string BuildOperations(const std::string& tab, const Scope scope)
 			5] std::string BuildOperation(std::string data)
 			6] std::string RemoveScope(std::string data)
 	};
@@ -523,7 +610,7 @@ File includes:
 
 File content:
 	Class `File` {
-		Class Fields:
+		Class Private Fields:
 			1] size_t depth_;
 			2] size_t countRecursive_;
 			3] std::string initPath_;
@@ -532,8 +619,12 @@ File content:
 			6] std::string format_;
 			7] std::vector<File> subFiles_;
 			8] FileData data_;
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] File( const size_t depth, const size_t countRecursive, const std::string& initPath, const std::string& path, const std::string& name, const std::string& format, const std::vector<File>& subFiles )
 			2] std::string getInitPath()
 			3] std::string getPath()
@@ -547,6 +638,10 @@ File content:
 			11] size_t countSubFilesRecursive()
 			12] void setData(const FileData& data)
 			13] FileData getData()
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			This class has no Operations within that AccessSpecifier
 	};
 
 
@@ -567,12 +662,16 @@ File includes:
 
 File content:
 	Class `FileData` {
-		Class Fields:
+		Class Private Fields:
 			1] std::vector<std::string> libIncludes_;
 			2] std::vector<std::string> projIncludes_;
 			3] std::vector<std::shared_ptr<iSyntax>> data_;
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] FileData()
 			2] FileData( const std::vector<std::string>& libIncludes, const std::vector<std::string>& projIncludes, const std::vector<std::shared_ptr<iSyntax>>& data )
 			3] std::vector<std::string> getLibIncludes()
@@ -580,6 +679,10 @@ File content:
 			5] std::vector<std::shared_ptr<iSyntax>> getData()
 			6] size_t CountInstructions()
 			7] size_t CountClasses()
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			This class has no Operations within that AccessSpecifier
 	};
 
 
@@ -597,15 +700,23 @@ File includes:
 
 File content:
 	Class `Instruction : public iSyntax` {
-		Class Fields:
+		Class Private Fields:
 			1] const Scope scope_;
 			2] std::string rawData_;
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] Instruction(const Scope scope, const std::string& data)
 			2] std::string getResult(size_t tabs = 0)
 			3] Type getSyntaxType()
 			4] Scope getSyntaxScope()
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			This class has no Operations within that AccessSpecifier
 	};
 
 
@@ -627,19 +738,23 @@ File includes:
 
 File content:
 	Class `Namespace : public Block` {
-		Class Fields:
+		Class Private Fields:
 			1] std::string header_;
-			2] ";
-			3] return result.str();
-			4] }
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			1] ";
+			2] return result.str();
+			3] }
 
-		Class Operations:
-			1] Namespace(const Scope& scope, const std::string& templateData, const std::string& headerData)
-			2] Type getSyntaxType()
-			3] std::string getResult(size_t tabs = 0)
+		Class Public Operations:
+			1] Type getSyntaxType()
+			2] std::string getResult(size_t tabs = 0)
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			This class has no Operations within that AccessSpecifier
 	};
-	private:
-std::string BuildHeaderName(std::string header) const {
 
 
 
@@ -658,13 +773,21 @@ File includes:
 
 File content:
 	Class `Operation : public Block` {
-		Class Fields:
-			This class has no Fields
+		Class Private Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
+			This class has no Fields within that AccessSpecifier
 
-		Class Operations:
+		Class Public Operations:
 			1] Operation(const Scope& scope, const std::string& templateData, const std::string& headerData)
 			2] std::string getResult(size_t tabs = 0)
 			3] Type getSyntaxType()
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			This class has no Operations within that AccessSpecifier
 	};
 
 
@@ -693,13 +816,21 @@ File includes:
 
 File content:
 	Class `iSyntax` {
-		Class Fields:
+		Class Private Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Protected Fields:
+			This class has no Fields within that AccessSpecifier
+		Class Public Fields:
 			1] virtual std::string getResult(size_t = 0) const = 0;
 			2] virtual Type getSyntaxType() const = 0;
 			3] virtual Scope getSyntaxScope() const = 0;
 
-		Class Operations:
+		Class Public Operations:
 			1] virtual ~iSyntax()
+		Class Protected Operations:
+			This class has no Operations within that AccessSpecifier
+		Class Private Operations:
+			This class has no Operations within that AccessSpecifier
 	};
 
 
@@ -718,10 +849,14 @@ File includes:
 File content:
 	Namespace `Tools` {
 		Class `Converter` {
-			Class Fields:
-				This class has no Fields
+			Class Private Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Protected Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Public Fields:
+				This class has no Fields within that AccessSpecifier
 
-			Class Operations:
+			Class Public Operations:
 				1] static std::set<T> to_set(const std::vector<T>& data)
 				2] static std::string to_fileData(const std::set<std::string>& data)
 				3] static std::string to_string(const std::vector<std::string>& data2)
@@ -729,10 +864,13 @@ File content:
 				5] static std::vector<std::string> removeWhitespaces(std::vector<std::string> data)
 				6] static std::string removeWhitespaces(std::string data)
 				7] static std::vector<std::string> removeEmptyLines(const std::vector<std::string>& data)
-				8] static std::string RemoveSpecialChars(const std::string& data)
-				9] static std::string RemoveFromBegin(const std::string& data)
-				10] static std::string RemoveFromEnd(const std::string& data)
-				11] static std::string RemoveAdjacentSpaces(const std::string& data)
+			Class Protected Operations:
+				This class has no Operations within that AccessSpecifier
+			Class Private Operations:
+				1] static std::string RemoveSpecialChars(const std::string& data)
+				2] static std::string RemoveFromBegin(const std::string& data)
+				3] static std::string RemoveFromEnd(const std::string& data)
+				4] static std::string RemoveAdjacentSpaces(const std::string& data)
 		};
 	};
 
@@ -756,15 +894,22 @@ File includes:
 File content:
 	Namespace `Tools` {
 		Class `FileIO` {
-			Class Fields:
-				This class has no Fields
+			Class Private Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Protected Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Public Fields:
+				This class has no Fields within that AccessSpecifier
 
-			Class Operations:
+			Class Public Operations:
+				1] static bool fileExist(const std::string& path)
+				2] static std::vector<std::string> readPaths(const std::string& targetPath)
+				3] static std::vector<std::string> readFile(const std::string& path)
+				4] static void saveToFile(const std::string& path, const std::string& data)
+			Class Protected Operations:
+				This class has no Operations within that AccessSpecifier
+			Class Private Operations:
 				1] explicit FileIO()
-				2] static bool fileExist(const std::string& path)
-				3] static std::vector<std::string> readPaths(const std::string& targetPath)
-				4] static std::vector<std::string> readFile(const std::string& path)
-				5] static void saveToFile(const std::string& path, const std::string& data)
 		};
 	};
 
@@ -806,22 +951,29 @@ File includes:
 File content:
 	Namespace `Tools` {
 		Class `IgnoreFiles` {
-			Class Fields:
+			Class Private Fields:
 				1] const static std::string filename_;
 				2] const static std::set<std::string> alwaysIgnores_;
 				3] const static std::set<std::string> formatIgnores_;
 				4] static std::set<std::string> defaultIgnores_;
 				5] static std::set<std::string> ignored_;
+			Class Protected Fields:
+				This class has no Fields within that AccessSpecifier
+			Class Public Fields:
+				This class has no Fields within that AccessSpecifier
 
-			Class Operations:
+			Class Public Operations:
+				1] static void setIgnoreFiles(const std::set<std::string>& data)
+				2] static std::string getIgnoreFileName()
+				3] static std::set<std::string> getDefaultIgnoreFiles()
+				4] static bool isAlwaysIgnored(const std::string& value)
+				5] static bool isFormatIgnored(const std::string& format)
+				6] static bool isIgnored(const std::string& value)
+				7] static std::vector<std::string> pickoutAlwaysIgnored(const std::vector<std::string>& vctr)
+			Class Protected Operations:
+				This class has no Operations within that AccessSpecifier
+			Class Private Operations:
 				1] explicit IgnoreFiles()
-				2] static void setIgnoreFiles(const std::set<std::string>& data)
-				3] static std::string getIgnoreFileName()
-				4] static std::set<std::string> getDefaultIgnoreFiles()
-				5] static bool isAlwaysIgnored(const std::string& value)
-				6] static bool isFormatIgnored(const std::string& format)
-				7] static bool isIgnored(const std::string& value)
-				8] static std::vector<std::string> pickoutAlwaysIgnored(const std::vector<std::string>& vctr)
 		};
 	};
 
