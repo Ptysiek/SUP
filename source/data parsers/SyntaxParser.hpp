@@ -10,14 +10,13 @@
 namespace DataParsers {
 class SyntaxParser {
     using Converter = Tools::Converter;
+    using Access = SyntaxTypes::Access;
+    
     using Data = DataStructures::Data;
     using Line = DataStructures::Line;
-    using Syntaxes = DataStructures::Syntaxes;
- 
     using Syntax = DataStructures::Syntax;
+    using Syntaxes = DataStructures::Syntaxes;
     using BlockSyntax = DataStructures::BlockSyntax;
-    
-    using Scope = SyntaxTypes::Scope;
 
     struct Workspace {
         Syntaxes result_;
@@ -33,34 +32,32 @@ class SyntaxParser {
         {}
     };
 
-    SyntaxTypes::Scope currentScope_;
+    SyntaxTypes::Access currentAccess_;
     const std::string rawData_;
-    Syntaxes product_;
+    const Syntaxes product_;
 
 
 public:
     SyntaxParser(const Data& data):
-        currentScope_(SyntaxTypes::Scope::None),
+        currentAccess_(SyntaxTypes::Access::None),
         rawData_(MergeRawData(data)),
         product_(BuildProduct())
     {}
 
-    std::string getData() const { return rawData_; }
     Syntaxes getProduct() const { return product_; }
 
 
-protected:
+private:
     //#######################################################################################################
     Syntaxes BuildProduct() {
         Workspace w(rawData_);
-
         size_t i = ClosestSemicolonOrParenthesis(w.draft_);
         while(i != std::string::npos) {
             w.syntaxData_ = w.draft_.substr(0, i + 1);
             w.syntaxData_ = RemoveNewLineCharacter(w.syntaxData_);
             w.draft_ = w.draft_.substr(i + 1);
-            if (auto scope = IndicateCurrentScope(w); scope != Scope::None) {
-                currentScope_ = scope; 
+            if (auto scope = IndicateCurrentAccess(w); scope != Access::None) {
+                currentAccess_ = scope; 
             }
             BuildSingleSyntax(w);
 
@@ -118,81 +115,57 @@ protected:
         w.hierarchy_.top()->emplace_back(oldTop);
     }
     
-    SyntaxTypes::Scope IndicateCurrentScope(Workspace& w) {
+    //#######################################################################################################
+    Syntax buildInstruction(const std::string& syntaxData) {
+        return std::make_shared<Instruction>(currentAccess_, syntaxData);
+    }
+
+    BlockSyntax buildBlock(std::string syntaxData) {
+        auto temp = CutOutTemplate(syntaxData);      
+
+        if (auto i = syntaxData.find("namespace"); i != std::string::npos) {
+            return std::make_shared<Namespace>(currentAccess_, temp, syntaxData);
+        }
+        if (syntaxData.find("class") != std::string::npos) {
+            currentAccess_ = SyntaxTypes::Access::Private;
+            return std::make_shared<ClassStruct>(currentAccess_, temp, syntaxData);
+        }
+        if (syntaxData.find("struct") != std::string::npos) {
+            currentAccess_ = SyntaxTypes::Access::Public;
+            return std::make_shared<ClassStruct>(currentAccess_, temp, syntaxData);
+        }
+        return std::make_shared<Operation>(currentAccess_, temp, syntaxData);
+    }
+
+    SyntaxTypes::Access IndicateCurrentAccess(Workspace& w) {
         if (auto i = w.syntaxData_.find("public:"); i != std::string::npos) {
             w.syntaxData_ = w.syntaxData_.substr(i + 7);
             w.syntaxData_ = RemoveNewLineCharacter(w.syntaxData_);
-            return SyntaxTypes::Scope::Public;
+            return SyntaxTypes::Access::Public;
         }
         if (auto i = w.syntaxData_.find("private:"); i != std::string::npos) {
             w.syntaxData_ = w.syntaxData_.substr(i + 8);
             w.syntaxData_ = RemoveNewLineCharacter(w.syntaxData_);
-            return SyntaxTypes::Scope::Private;
+            return SyntaxTypes::Access::Private;
         }
         if (auto i = w.syntaxData_.find("protected:"); i != std::string::npos) {
             w.syntaxData_ = w.syntaxData_.substr(i + 10);
             w.syntaxData_ = RemoveNewLineCharacter(w.syntaxData_);
-            return SyntaxTypes::Scope::Protected;
+            return SyntaxTypes::Access::Protected;
         }
-        return SyntaxTypes::Scope::None;
+        return SyntaxTypes::Access::None;
     }
-
-
 
     //#######################################################################################################
     bool LastCharEquals(const char ch, const std::string& str) {  
         return (str[str.size() - 1] == ch); 
     }
-    
+
     size_t ClosestSemicolonOrParenthesis(const Line& line) {
         return std::min(std::min(line.find(';'), line.find('{')), line.find('}'));
     }
 
     //#######################################################################################################
-    std::string MergeRawData(const Data& data) const {
-        return Converter::to_string(data);
-    }
-    
-    void AppendSemicolon(std::string& syntaxData, std::string& draft) {
-        if (!draft.empty()) {
-            if (draft[0] == ';') {
-                syntaxData += ';';
-                draft = draft.substr(1);
-            }
-        }
-    }
-    
-    std::string RemoveNewLineCharacter( const std::string& line) { 
-        if (line.empty()) {
-            return line;
-        }
-        return (line[0] == '\n')? line.substr(1) : line;
-    }
-
-    //#######################################################################################################
-    BlockSyntax buildBlock(std::string syntaxData) {
-        auto temp = CutOutTemplate(syntaxData);      
-
-        if (auto i = syntaxData.find("namespace"); i != std::string::npos) {
-            return std::make_shared<Namespace>(currentScope_, temp, syntaxData);
-        }
-        if (syntaxData.find("class") != std::string::npos) {
-            currentScope_ = SyntaxTypes::Scope::Private;
-            return std::make_shared<ClassStruct>(currentScope_, temp, syntaxData);
-        }
-        if (syntaxData.find("struct") != std::string::npos) {
-            currentScope_ = SyntaxTypes::Scope::Public;
-            return std::make_shared<ClassStruct>(currentScope_, temp, syntaxData);
-        }
-        return std::make_shared<Operation>(currentScope_, temp, syntaxData);
-    }
-
-    Syntax buildInstruction(const std::string& syntaxData) {
-        return std::make_shared<Instruction>(currentScope_, syntaxData);
-    }
-
-
-private:
     static std::string CutOutTemplate(std::string& syntaxData) {
         auto begin = syntaxData.find("template");
         if (begin == std::string::npos) {
@@ -208,6 +181,26 @@ private:
         Converter::removeWhitespaces(result);
         Converter::removeWhitespaces(syntaxData);
         return result;
+    }
+  
+    std::string MergeRawData(const Data& data) const {
+        return Converter::to_string(data);
+    }
+
+    void AppendSemicolon(std::string& syntaxData, std::string& draft) {
+        if (!draft.empty()) {
+            if (draft[0] == ';') {
+                syntaxData += ';';
+                draft = draft.substr(1);
+            }
+        }
+    }
+
+    std::string RemoveNewLineCharacter( const std::string& line) { 
+        if (line.empty()) {
+            return line;
+        }
+        return (line[0] == '\n')? line.substr(1) : line;
     }
 };
 } // namespace DataParsers

@@ -5,11 +5,8 @@
 #include "Tools"
 
 /* TODO:
-    - napisz obsługę flag. -md -markdown -txt -text
-
-    - flag supprot
+    - create flag support  -md -markdown -txt -text
 */
-
 
 
 class ProgramInitializer {

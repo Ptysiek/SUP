@@ -28,14 +28,8 @@ public:
         auto project = builder.getProduct();
         
         for (const auto& file : project) {
-            std::cout 
-                << file.getDepth() << "\t"
-                << file.countSubFiles() << "\t"
-                << file.countSubFilesRecursive() << "\t"
-                << file.getInitPath() << "\t\t" 
-                << file.getPath() << "\t\t" 
-                << file.getName() << "   \t\t" 
-                << file.getFormat() << "\n";  
+            const std::string tab(file.getDepth() * 3, ' '); 
+            std::cout << tab << file.getFile() << "\n"; 
         }
         GeneratorTxt generator(targetPath_, project);
         Tools::FileIO::saveToFile(outputPath_, generator.buildFile());

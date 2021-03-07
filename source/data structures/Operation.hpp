@@ -8,21 +8,20 @@
 
 
 class Operation : public Block {
-    
     const std::string header_;
 
 
 public:
-    Operation(const Scope& scope, const std::string& templateData, const std::string& headerData): 
-        Block(scope, templateData),
-        header_(headerData)// headerData)
+    Operation(const Access& access, const std::string& templateData, const std::string& headerData): 
+        Block(access, templateData),
+        header_(headerData)
     {}
     
+    Type getSyntaxType() const override { return Type::Operation; }
     
     std::string getResult(size_t tabs = 0) const override {
         return std::string(tabs, '\t') + header_; 
     }
-
-    Type getSyntaxType() const override { return Type::Operation; }
-
 };
+
+

@@ -11,7 +11,7 @@
 
 class ClassStruct : public Block {
     using Converter = Tools::Converter;
-    using Scope = SyntaxTypes::Scope;
+    using Access = SyntaxTypes::Access;
     using SyntaxData = std::vector<std::string>;
     
     const std::string typeName_;
@@ -19,9 +19,9 @@ class ClassStruct : public Block {
 
 
 public:
-    ClassStruct(const Scope& scope, const std::string& templateData, const std::string& headerData): 
-        Block(scope, templateData), 
-        typeName_((scope == Scope::Public)? "struct" : "class"),
+    ClassStruct(const Access& access, const std::string& templateData, const std::string& headerData): 
+        Block(access, templateData), 
+        typeName_((access == Access::Public)? "struct" : "class"),
         headerName_(BuildHeaderName(headerData, typeName_))
     {}
     
@@ -34,6 +34,7 @@ public:
         result << tab << typeName_ << " `" << headerName_ << "` {";
         result << EnlistFields(tab);
         result << EnlistOperations(tab);
+        result << EnlistSubClasses(tabs);
 
         result << "\n" << tab << "};";
         return result.str();
@@ -41,30 +42,38 @@ public:
  
 
 private:
+    std::string EnlistSubClasses(const size_t tabs) const {
+        std::stringstream result;
+        for (const auto& element : Block::subClasses_) {
+            result << "\n\n" << element->getResult(tabs + 1);
+        }
+        return result.str();
+    }
+    
     std::string EnlistFields(const std::string& tab) const {
         std::stringstream result;
-        result << BuildEnlistedData(Scope::Private, fields_, tab, typeName_ + " private fields:");
-        result << BuildEnlistedData(Scope::Protected, fields_, tab, typeName_ + " protected fields:");
-        result << BuildEnlistedData(Scope::Public, fields_, tab, typeName_ + " public fields:");
+        result << BuildEnlistedData(Access::Private, Block::fields_, tab, typeName_ + " private fields:");
+        result << BuildEnlistedData(Access::Protected, Block::fields_, tab, typeName_ + " protected fields:");
+        result << BuildEnlistedData(Access::Public, Block::fields_, tab, typeName_ + " public fields:");
         return result.str();
     }
 
     std::string EnlistOperations(const std::string& tab) const {
         std::stringstream result;
-        result << BuildEnlistedData(Scope::Public, subOperations_, tab, typeName_ + " public operations:");
-        result << BuildEnlistedData(Scope::Protected, subOperations_, tab, typeName_ + " protected operations:");
-        result << BuildEnlistedData(Scope::Private, subOperations_, tab, typeName_ + " private operations:");
+        result << BuildEnlistedData(Access::Public, Block::operations_, tab, typeName_ + " public operations:");
+        result << BuildEnlistedData(Access::Protected, Block::operations_, tab, typeName_ + " protected operations:");
+        result << BuildEnlistedData(Access::Private, Block::operations_, tab, typeName_ + " private operations:");
         return result.str();
     }
 
     std::string BuildEnlistedData(
-            const Scope scope, 
+            const Access access, 
             const iSyntaxes& syntaxes, 
             const std::string& tab,
             const std::string& title) const 
     {
         std::stringstream result;
-        auto group = Block::GetSyntaxesWithinScope(scope, syntaxes); 
+        auto group = Block::GetSyntaxesWithinAccess(access, syntaxes); 
         auto data = ClearSyntaxData(group);
         if (!data.empty()) {
             result << "\n\n" << tab << '\t' << title;

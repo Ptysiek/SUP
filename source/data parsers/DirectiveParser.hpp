@@ -3,6 +3,7 @@
 #include "../Tools"
 #include "../DataStructures"
 
+
 namespace DataParsers {
 class DirectiveParser {
 protected:

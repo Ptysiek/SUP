@@ -1,15 +1,9 @@
 #pragma once
 
 
-/* TODO:
-- fix multiline comments
-ex:   abcd  *//* */ /* *** */  /* */ /* abcdc */
-
-
 namespace DataParsers {
 class CommentParser {
 protected:
- 
     using Data = DataStructures::Data;
     using Line = DataStructures::Line;
 
@@ -60,6 +54,7 @@ protected:
         }
         return data;
     }
+    
     static Line Multiline_ClearLine(Line line, bool& isCommented) {
         auto end = line.find("*/");
         
@@ -75,6 +70,7 @@ protected:
         isCommented = false;
         return line.substr(end + 2);
     }
+    
     static Line Multiline_FindClosing(Line line, bool& isCommented, const size_t begin) {
         auto end = line.find("*/", begin);
         

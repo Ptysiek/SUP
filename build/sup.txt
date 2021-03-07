@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Mon Mar  8 00:04:19 2021
+File generation date:  Mon Mar  8 00:54:45 2021
 
 
 ### Table Of Contents: #####################################################
@@ -120,12 +120,12 @@ File content:
 			6] const std::string format_;
 			7] const File product_;
 
-		class Public Operations:
+		class public operations:
 			1] explicit FileBuilder( const std::string& initPath, const std::string& path, const std::string& fullName, const std::vector<File>& subfiles, const size_t depth )
 			2] File getProduct()
 			3] static File buildRoot(const std::string& initPath, const std::vector<File>& subFiles)
 
-		class Protected Operations:
+		class protected operations:
 			1] File BuildProduct(const std::vector<File>& subFiles, size_t depth)
 			2] static size_t CountRecursive(const std::vector<File>& subFiles)
 			3] std::string BuildName(const std::string& str, const bool isEmpty)
@@ -159,12 +159,12 @@ File content:
 			8] std::vector<std::string> libIncludes_;
 			9] std::vector<std::string> projIncludes_;
 
-		class Public Operations:
+		class public operations:
 			1] FileDataBuilder(const File& file)
 			2] bool dataExist()
 			3] FileData getProduct()
 
-		class Private Operations:
+		class private operations:
 			1] FileData BuildProduct()
 			2] FileData BuildEmptyData()
 			3] Data PrepareData(Data rawData)
@@ -194,13 +194,13 @@ File content:
 			3] const std::string targetPath_;
 			4] std::vector<File> data_;
 
-		class Public Operations:
+		class public operations:
 			1] explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data)
 			2] std::string buildFile()
 			3] std::string BuildFileSummary(const File& file)
 			4] std::string BuildSeparator(const std::string& title)
 
-		class Private Operations:
+		class private operations:
 			1] std::string BuildHeader()
 			2] std::string BuildDate()
 			3] std::string BuildTableOfContents()
@@ -232,11 +232,11 @@ File content:
 			2] const std::string targetPath_;
 			3] const std::string outputPath_;
 
-		class Public Operations:
+		class public operations:
 			1] explicit Program(const ProgramInitializer& target)
 			2] void execute()
 
-		class Private Operations:
+		class private operations:
 			1] void initializeIgnoreFiles()
 	};
 
@@ -261,12 +261,12 @@ File content:
 			2] using Converter = Tools::Converter;
 			3] const std::string path_;
 
-		class Public Operations:
+		class public operations:
 			1] explicit ProgramInitializer(const int& argc, const char* const * const argv)
 			2] std::string getPath()
 			3] std::string getDefaultPath()
 
-		class Private Operations:
+		class private operations:
 			1] std::string GenPath(const int& argc, const char* const * const argv)
 	};
 
@@ -295,11 +295,11 @@ File content:
 			2] const std::string initPath_;
 			3] const Project product_;
 
-		class Public Operations:
+		class public operations:
 			1] explicit ProjectBuilder(const std::string& initPath)
 			2] Project getProduct()
 
-		class Private Operations:
+		class private operations:
 			1] Project BuildProduct()
 			2] Project UpdateProjectWithData(Project& project)
 			3] Project BuildProductStructure()
@@ -360,10 +360,10 @@ File content:
 				1] using Data = DataStructures::Data;
 				2] using Line = DataStructures::Line;
 
-			class Public Operations:
+			class public operations:
 				1] static Data removeComments(Data data)
 
-			class Protected Operations:
+			class protected operations:
 				1] CommentParser()
 				2] static Data RemoveAllOnelineComments(Data data)
 				3] static Line RemoveOnelineComments(const Line& line)
@@ -395,10 +395,10 @@ File content:
 				2] using Data = DataStructures::Data;
 				3] using Line = DataStructures::Line;
 
-			class Public Operations:
+			class public operations:
 				1] static Data removeDirectives(Data data)
 
-			class Protected Operations:
+			class protected operations:
 				1] DirectiveParser()
 		};
 	};
@@ -426,13 +426,13 @@ File content:
 				5] Data libIncludes_;
 				6] Data projIncludes_;
 
-			class Public Operations:
+			class public operations:
 				1] IncludeParser(const Data& data)
 				2] Data getLibIncludes()
 				3] Data getProjIncludes()
 				4] Data getData()
 
-			class Protected Operations:
+			class protected operations:
 				1] void BuildIncludes()
 				2] Data CutoutIncludes()
 		};
@@ -459,38 +459,66 @@ File content:
 
 			class private fields:
 				1] using Converter = Tools::Converter;
-				2] using Data = DataStructures::Data;
-				3] using Line = DataStructures::Line;
-				4] using Syntaxes = DataStructures::Syntaxes;
+				2] using Access = SyntaxTypes::Access;
+				3] using Data = DataStructures::Data;
+				4] using Line = DataStructures::Line;
 				5] using Syntax = DataStructures::Syntax;
-				6] using BlockSyntax = DataStructures::BlockSyntax;
-				7] using Scope = SyntaxTypes::Scope;
+				6] using Syntaxes = DataStructures::Syntaxes;
+				7] using BlockSyntax = DataStructures::BlockSyntax;
 
 			class public fields:
-				1] SyntaxTypes::Scope currentScope_;
+				1] SyntaxTypes::Access currentAccess_;
 				2] const std::string rawData_;
-				3] Syntaxes product_;
+				3] const Syntaxes product_;
 
-			class Public Operations:
+			class public operations:
 				1] SyntaxParser(const Data& data)
-				2] std::string getData()
-				3] Syntaxes getProduct()
-				4] void AddBlockOpen(Workspace& w)
-				5] void AddBlockClose(Workspace& w)
-				6] SyntaxTypes::Scope IndicateCurrentScope(Workspace& w)
+				2] Syntaxes getProduct()
+				3] void AddBlockOpen(Workspace& w)
+				4] void AddBlockClose(Workspace& w)
+				5] BlockSyntax buildBlock(std::string syntaxData)
+				6] SyntaxTypes::Access IndicateCurrentAccess(Workspace& w)
 
-			class Protected Operations:
+			class protected operations:
+				1] bool LastCharEquals(const char ch, const std::string& str)
+				2] size_t ClosestSemicolonOrParenthesis(const Line& line)
+				3] static std::string CutOutTemplate(std::string& syntaxData)
+				4] std::string MergeRawData(const Data& data)
+				5] void AppendSemicolon(std::string& syntaxData, std::string& draft)
+				6] std::string RemoveNewLineCharacter( const std::string& line)
+
+			class private operations:
 				1] Syntaxes BuildProduct()
 				2] void BuildSingleSyntax(Workspace& w)
-				3] bool LastCharEquals(const char ch, const std::string& str)
-				4] size_t ClosestSemicolonOrParenthesis(const Line& line)
-				5] std::string MergeRawData(const Data& data)
-				6] void AppendSemicolon(std::string& syntaxData, std::string& draft)
-				7] std::string RemoveNewLineCharacter( const std::string& line)
-				8] BlockSyntax buildBlock(std::string syntaxData)
 
-			class Private Operations:
-				1] static std::string CutOutTemplate(std::string& syntaxData)
+			struct `Workspace` {
+
+				struct public fields:
+					1] Syntaxes result_;
+					2] std::stack<std::shared_ptr<Block>> hierarchy_;
+					3] std::string draft_;
+					4] std::string syntaxData_;
+
+				struct public operations:
+					1] Workspace(const std::string& rawData)
+			};
+
+			struct `ion(Workspace& w)` {
+
+				struct public fields:
+					1] w.hierarchy_.top()
+					2] }
+
+				struct public operations:
+					1] if (w.hierarchy_.empty()
+			};
+
+			struct `ion(const std::string& syntaxData)` {
+
+				struct public fields:
+					1] return std::make_shared<Instruction>(currentAccess_, syntaxData)
+					2] }
+			};
 		};
 	};
 
@@ -513,26 +541,25 @@ File content:
 	class `Block : public iSyntax` {
 
 		class protected fields:
-			1] using iSyntaxes = std::vector<std::shared_ptr<iSyntax>>;
-			2] using Converter = Tools::Converter;
-			3] const Scope scope_;
-			4] std::string template_;
-			5] iSyntaxes subElements_;
+			1] using SyntaxPtr = std::shared_ptr<iSyntax>;
+			2] using iSyntaxes = std::vector<std::shared_ptr<iSyntax>>;
+			3] using Converter = Tools::Converter;
+			4] const Access access_;
+			5] std::string template_;
 			6] iSyntaxes subClasses_;
-			7] iSyntaxes subOperations_;
-			8] iSyntaxes fields_;
+			7] iSyntaxes fields_;
+			8] iSyntaxes operations_;
+			9] iSyntaxes elements_;
 
-		class Public Operations:
-			1] Block(const Scope& scope, const std::string& tem)
-			2] void emplace_back(const std::shared_ptr<iSyntax>& subElement)
-			3] Type getSyntaxType()
-			4] Scope getSyntaxScope()
-			5] size_t CountBlocks()
-			6] size_t CountClasses()
-			7] std::string BuildHeaderName(std::string header, const std::string& key)
+		class public operations:
+			1] Block(const Access& access, const std::string& tem)
+			2] Type getSyntaxType()
+			3] Access getSyntaxAccess()
+			4] void emplace_back(const SyntaxPtr& subElement)
 
-		class Protected Operations:
-			1] iSyntaxes GetSyntaxesWithinScope(const Scope scope, const iSyntaxes& source)
+		class protected operations:
+			1] iSyntaxes GetSyntaxesWithinAccess(const Access access, const iSyntaxes& source)
+			2] std::string BuildHeaderName(std::string header, const std::string& key)
 	};
 
 
@@ -557,20 +584,27 @@ File content:
 
 		class private fields:
 			1] using Converter = Tools::Converter;
-			2] using Scope = SyntaxTypes::Scope;
+			2] using Access = SyntaxTypes::Access;
 			3] using SyntaxData = std::vector<std::string>;
 			4] const std::string typeName_;
 			5] const std::string headerName_;
 			6] return result;
 			7] }
 
-		class Private Operations:
+		class private operations:
 			1] Type getSyntaxType()
 			2] std::string getResult(size_t tabs = 0)
-			3] std::string EnlistFields(const std::string& tab)
-			4] std::string EnlistOperations(const std::string& tab)
-			5] std::string BuildEnlistedData( const Scope scope, const iSyntaxes& syntaxes, const std::string& tab, const std::string& title)
-			6] SyntaxData ClearSyntaxData(const iSyntaxes& syntaxes)
+			3] std::string EnlistSubClasses(const size_t tabs)
+			4] std::string EnlistFields(const std::string& tab)
+			5] std::string EnlistOperations(const std::string& tab)
+			6] std::string BuildEnlistedData( const Access access, const iSyntaxes& syntaxes, const std::string& tab, const std::string& title)
+			7] SyntaxData ClearSyntaxData(const iSyntaxes& syntaxes)
+
+		class `"), headerName_(BuildHeaderName(headerData, typeName_))` {
+
+			class private fields:
+				1] }
+		};
 	};
 	std::string EnlistSyntaxes(const SyntaxData& syntaxes, const std::string& tab) const {
 	std::string BuildOperation(std::string data) const {
@@ -602,7 +636,7 @@ File content:
 			7] std::vector<File> subFiles_;
 			8] FileData data_;
 
-		class Public Operations:
+		class public operations:
 			1] File( const size_t depth, const size_t countRecursive, const std::string& initPath, const std::string& path, const std::string& name, const std::string& format, const std::vector<File>& subFiles )
 			2] std::string getInitPath()
 			3] std::string getPath()
@@ -643,13 +677,23 @@ File content:
 			3] std::vector<std::string> projIncludes_;
 			4] std::vector<std::shared_ptr<iSyntax>> data_;
 
-		class Public Operations:
+		class public operations:
 			1] FileData()
 			2] FileData( const std::vector<std::string>& libIncludes, const std::vector<std::string>& projIncludes, const std::vector<std::shared_ptr<iSyntax>>& data )
 			3] std::vector<std::string> getLibIncludes()
 			4] std::vector<std::string> getProjIncludes()
 			5] std::vector<std::shared_ptr<iSyntax>> getData()
 			6] size_t CountClasses()
+
+		struct `ions() const` {
+
+			struct public fields:
+				1] )
+				2] }
+
+			struct public operations:
+				1] return std::accumulate(data_.begin()
+		};
 	};
 
 
@@ -669,13 +713,19 @@ File content:
 	class `Instruction : public iSyntax` {
 
 		class private fields:
-			1] const Scope scope_;
-			2] std::string rawData_;
+			1] const Access access_;
+			2] const std::string rawData_;
 
-		class Public Operations:
-			1] std::string getResult(size_t tabs = 0)
-			2] Type getSyntaxType()
-			3] Scope getSyntaxScope()
+		class public operations:
+			1] Type getSyntaxType()
+			2] Access getSyntaxAccess()
+			3] std::string getResult(size_t tabs = 0)
+
+		struct `ion(const Access access, const std::string& data): access_(access), rawData_(data)` {
+
+			struct public fields:
+				1] }
+		};
 	};
 
 
@@ -699,14 +749,14 @@ File content:
 	class `Namespace : public Block` {
 
 		class private fields:
-			1] std::string header_;
+			1] const std::string header_;
 
 		class public fields:
 			1] ";
 			2] return result.str()
 			3] }
 
-		class Public Operations:
+		class public operations:
 			1] Type getSyntaxType()
 			2] std::string getResult(size_t tabs = 0)
 	};
@@ -732,10 +782,10 @@ File content:
 		class private fields:
 			1] const std::string header_;
 
-		class Public Operations:
-			1] Operation(const Scope& scope, const std::string& templateData, const std::string& headerData)
-			2] std::string getResult(size_t tabs = 0)
-			3] Type getSyntaxType()
+		class public operations:
+			1] Operation(const Access& access, const std::string& templateData, const std::string& headerData)
+			2] Type getSyntaxType()
+			3] std::string getResult(size_t tabs = 0)
 	};
 
 
@@ -748,8 +798,7 @@ File includes:
 File content:
 	Namespace `SyntaxTypes` {
 		enum Type {
-		enum Memory {
-		enum Scope {
+		enum Access {
 	};
 
 
@@ -767,14 +816,14 @@ File content:
 
 		class protected fields:
 			1] using Type = SyntaxTypes::Type;
-			2] using Scope = SyntaxTypes::Scope;
+			2] using Access = SyntaxTypes::Access;
 
 		class public fields:
-			1] virtual std::string getResult(size_t = 0)
-			2] virtual Type getSyntaxType()
-			3] virtual Scope getSyntaxScope()
+			1] virtual Type getSyntaxType()
+			2] virtual Access getSyntaxAccess()
+			3] virtual std::string getResult(size_t = 0)
 
-		class Public Operations:
+		class public operations:
 			1] virtual ~iSyntax()
 	};
 
@@ -795,7 +844,7 @@ File content:
 	Namespace `Tools` {
 		class `Converter` {
 
-			class Public Operations:
+			class public operations:
 				1] static std::set<T> to_set(const std::vector<T>& data)
 				2] static std::string to_fileData(const std::set<std::string>& data)
 				3] static std::string to_string(const std::vector<std::string>& data2)
@@ -804,7 +853,7 @@ File content:
 				6] static std::string removeWhitespaces(std::string data)
 				7] static std::vector<std::string> removeEmptyLines(const std::vector<std::string>& data)
 
-			class Private Operations:
+			class private operations:
 				1] static std::string RemoveSpecialChars(const std::string& data)
 				2] static std::string RemoveFromBegin(const std::string& data)
 				3] static std::string RemoveFromEnd(const std::string& data)
@@ -833,13 +882,13 @@ File content:
 	Namespace `Tools` {
 		class `FileIO` {
 
-			class Public Operations:
+			class public operations:
 				1] static bool fileExist(const std::string& path)
 				2] static std::vector<std::string> readPaths(const std::string& targetPath)
 				3] static std::vector<std::string> readFile(const std::string& path)
 				4] static void saveToFile(const std::string& path, const std::string& data)
 
-			class Private Operations:
+			class private operations:
 				1] explicit FileIO()
 		};
 	};
@@ -890,7 +939,7 @@ File content:
 				4] static std::set<std::string> defaultIgnores_;
 				5] static std::set<std::string> ignored_;
 
-			class Public Operations:
+			class public operations:
 				1] static void setIgnoreFiles(const std::set<std::string>& data)
 				2] static std::string getIgnoreFileName()
 				3] static std::set<std::string> getDefaultIgnoreFiles()
@@ -899,7 +948,7 @@ File content:
 				6] static bool isIgnored(const std::string& value)
 				7] static std::vector<std::string> pickoutAlwaysIgnored(const std::vector<std::string>& vctr)
 
-			class Private Operations:
+			class private operations:
 				1] explicit IgnoreFiles()
 		};
 	};
