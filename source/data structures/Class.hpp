@@ -1,6 +1,5 @@
 #pragma once
 
-#include <numeric>
 #include <string>
 #include <sstream>
 
@@ -12,106 +11,94 @@
 class Class : public Block {
     using Converter = Tools::Converter;
     using Scope = SyntaxTypes::Scope;
+    using SyntaxData = std::vector<std::string>;
     
     std::string className_;
+
 
 public:
     Class(const Scope& scope, const std::string& templateData, const std::string& headerData): 
         Block(scope, templateData, headerData),
         className_(BuildHeaderName(headerData, "class"))
     {}
+    
+    Type getSyntaxType() const override { return Type::Class; }
 
     std::string getResult(size_t tabs = 0) const override {
         std::stringstream result;
         const std::string tab = std::string(tabs, '\t');
         
         result << tab << "Class `" << className_ << "` {";
-        
-        result << "\n" << tab << '\t' << "Class Private Fields:";
-        result << BuildFields(tab + "\t\t", SyntaxTypes::Scope::Private);
-        result << "\n" << tab << '\t' << "Class Protected Fields:";
-        result << BuildFields(tab + "\t\t", SyntaxTypes::Scope::Protected);
-        result << "\n" << tab << '\t' << "Class Public Fields:";
-        result << BuildFields(tab + "\t\t", SyntaxTypes::Scope::Public);
-
-        result << "\n\n" << tab << '\t' << "Class Public Operations:";
-        result << BuildOperations(tab + "\t\t", SyntaxTypes::Scope::Public);
-        result << "\n" << tab << '\t' << "Class Protected Operations:";
-        result << BuildOperations(tab + "\t\t", SyntaxTypes::Scope::Protected);
-        result << "\n" << tab << '\t' << "Class Private Operations:";
-        result << BuildOperations(tab + "\t\t", SyntaxTypes::Scope::Private);
+        result << EnlistFields(tab);
+        result << EnlistOperations(tab);
 
         result << "\n" << tab << "};";
         return result.str();
     }
-    
-    Type getSyntaxType() const override { return Type::Class; }
-
+ 
 
 private:
-    std::string BuildClassName(std::string header) const {
-        if (auto i = header.find('{'); i != std::string::npos) {
-            header = header.substr(0, i);
-        }
-        if (auto i = header.find("class"); i != std::string::npos) {
-            header = header.substr(i + 5);
-        }
-        return Converter::removeWhitespaces(header);
+    std::string EnlistFields(const std::string& tab) const {
+        std::stringstream result;
+        result << BuildEnlistedData(Scope::Private, fields_, tab, "Class Private Fields:");
+        result << BuildEnlistedData(Scope::Protected, fields_, tab, "Class Protected Fields:");
+        result << BuildEnlistedData(Scope::Public, fields_, tab, "Class Public Fields:");
+        return result.str();
     }
 
-    std::string BuildFields(const std::string& tab, const Scope scope) const {
+    std::string EnlistOperations(const std::string& tab) const {
         std::stringstream result;
-        size_t count = 0;
-        for (const auto& element : GetSyntaxesWithinScope(scope, fields_)) {
-            std::string data = RemoveScope(element->getResult());
-            if (data.find("using") != std::string::npos) {
-                continue;
-            }
+        result << BuildEnlistedData(Scope::Public, subOperations_, tab, "Class Public Operations:");
+        result << BuildEnlistedData(Scope::Protected, subOperations_, tab, "Class Protected Operations:");
+        result << BuildEnlistedData(Scope::Private, subOperations_, tab, "Class Private Operations:");
+        return result.str();
+    }
+
+    std::string BuildEnlistedData(
+            const Scope scope, 
+            const iSyntaxes& syntaxes, 
+            const std::string& tab,
+            const std::string& title) const 
+    {
+        std::stringstream result;
+        auto group = Block::GetSyntaxesWithinScope(scope, syntaxes); 
+        auto data = ClearSyntaxData(group);
+        if (!data.empty()) {
+            result << "\n\n" << tab << '\t' << title;
+            result << EnlistSyntaxes(data,  tab + "\t\t"); 
+        }
+        return result.str();
+    }
+
+    SyntaxData ClearSyntaxData(const iSyntaxes& syntaxes) const {
+        SyntaxData result;
+        for (const auto& element : syntaxes) {
+            std::string data = element->getResult();
             if (data.find("};") != std::string::npos) {
                 continue;
             }
             data = Converter::removeWhitespaces(data);
-            result << "\n" << tab << ++count << "] " << data;
+            data = BuildOperation(data);
+            result.emplace_back(data);
         }
-        if (count == 0) {
-            result << "\n" << tab << "This class has no Fields within that AccessSpecifier";
-        }
-        return result.str();
+        return result;
     }
     
-    std::string BuildOperations(const std::string& tab, const Scope scope) const {
+    std::string EnlistSyntaxes(const SyntaxData& syntaxes, const std::string& tab) const {
         std::stringstream result;
-        size_t count = 0;
-        for (const auto& element : GetSyntaxesWithinScope(scope, subOperations_)) {
-            if (element->getSyntaxScope() == scope) {
-                result << "\n" << tab << ++count << "] " << BuildOperation(element->getResult());
-            }
-        }
-        if (count == 0) {
-            result << "\n" << tab << "This class has no Operations within that AccessSpecifier";
+        for (size_t i = 0; i < syntaxes.size(); ++i) {
+            result << "\n" << tab << (i + 1) << "] " << syntaxes[i];
         }
         return result.str();
     }
 
     std::string BuildOperation(std::string data) const {
-        data = RemoveScope(data);
         if (auto i = data.find(')'); i != std::string::npos) {
             data = data.substr(0, i + 1);
         }
         return Converter::removeWhitespaces(data);
     }
-
-    std::string RemoveScope(std::string data) const {
-        if (auto i = data.find("public:"); i != std::string::npos) {
-            data = data.substr(i + 7);
-        }
-        if (auto i = data.find("private:"); i != std::string::npos) {
-            data = data.substr(i + 8);
-        }
-        if (auto i = data.find("protected:"); i != std::string::npos) {
-            data = data.substr(i + 10);
-        }
-        return data;
-    }
-
 };
+
+
+

@@ -9,9 +9,9 @@
 
 
 class Block : public iSyntax {
-    using iSyntaxes = std::vector<std::shared_ptr<iSyntax>>; 
 
 protected:
+    using iSyntaxes = std::vector<std::shared_ptr<iSyntax>>; 
     using Converter = Tools::Converter;
     const Scope scope_;
     
