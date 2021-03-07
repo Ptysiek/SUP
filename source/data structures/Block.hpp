@@ -18,7 +18,7 @@ protected:
     
     std::string template_;
 
-    std::string header_;
+    //std::string header_;
     iSyntaxes subElements_;
     iSyntaxes subClasses_;
     iSyntaxes subOperations_;
@@ -26,10 +26,10 @@ protected:
 
 
 public:
-    Block(const Scope& scope, const std::string& tem, const std::string& data): 
+    Block(const Scope& scope, const std::string& tem): // const std::string& data): 
         scope_(scope),
         template_(tem),
-        header_(data),
+      //  header_(data),
         subElements_(),
         subClasses_(),
         subOperations_(),

@@ -6,20 +6,23 @@
 #include "Block.hpp"
 #include "iSyntax.hpp"
 #include "../Tools"
+#include "SyntaxTypes"
 
 
-class Class : public Block {
+class ClassStruct : public Block {
     using Converter = Tools::Converter;
     using Scope = SyntaxTypes::Scope;
     using SyntaxData = std::vector<std::string>;
     
-    std::string className_;
+    const std::string typeName_;
+    const std::string headerName_;
 
 
 public:
-    Class(const Scope& scope, const std::string& templateData, const std::string& headerData): 
-        Block(scope, templateData, headerData),
-        className_(BuildHeaderName(headerData, "class"))
+    ClassStruct(const Scope& scope, const std::string& templateData, const std::string& headerData): 
+        Block(scope, templateData), 
+        typeName_((scope == Scope::Public)? "struct" : "class"),
+        headerName_(BuildHeaderName(headerData, typeName_))
     {}
     
     Type getSyntaxType() const override { return Type::Class; }
@@ -28,7 +31,7 @@ public:
         std::stringstream result;
         const std::string tab = std::string(tabs, '\t');
         
-        result << tab << "Class `" << className_ << "` {";
+        result << tab << typeName_ << " `" << headerName_ << "` {";
         result << EnlistFields(tab);
         result << EnlistOperations(tab);
 
@@ -40,17 +43,17 @@ public:
 private:
     std::string EnlistFields(const std::string& tab) const {
         std::stringstream result;
-        result << BuildEnlistedData(Scope::Private, fields_, tab, "Class Private Fields:");
-        result << BuildEnlistedData(Scope::Protected, fields_, tab, "Class Protected Fields:");
-        result << BuildEnlistedData(Scope::Public, fields_, tab, "Class Public Fields:");
+        result << BuildEnlistedData(Scope::Private, fields_, tab, typeName_ + " private fields:");
+        result << BuildEnlistedData(Scope::Protected, fields_, tab, typeName_ + " protected fields:");
+        result << BuildEnlistedData(Scope::Public, fields_, tab, typeName_ + " public fields:");
         return result.str();
     }
 
     std::string EnlistOperations(const std::string& tab) const {
         std::stringstream result;
-        result << BuildEnlistedData(Scope::Public, subOperations_, tab, "Class Public Operations:");
-        result << BuildEnlistedData(Scope::Protected, subOperations_, tab, "Class Protected Operations:");
-        result << BuildEnlistedData(Scope::Private, subOperations_, tab, "Class Private Operations:");
+        result << BuildEnlistedData(Scope::Public, subOperations_, tab, typeName_ + " public operations:");
+        result << BuildEnlistedData(Scope::Protected, subOperations_, tab, typeName_ + " protected operations:");
+        result << BuildEnlistedData(Scope::Private, subOperations_, tab, typeName_ + " private operations:");
         return result.str();
     }
 

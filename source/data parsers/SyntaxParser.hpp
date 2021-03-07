@@ -178,16 +178,12 @@ protected:
         }
         if (syntaxData.find("class") != std::string::npos) {
             currentScope_ = SyntaxTypes::Scope::Private;
-            return std::make_shared<Class>(currentScope_, temp, syntaxData);
+            return std::make_shared<ClassStruct>(currentScope_, temp, syntaxData);
         }
         if (syntaxData.find("struct") != std::string::npos) {
             currentScope_ = SyntaxTypes::Scope::Public;
-            //return std::make_shared<Struct>(temp, syntaxData);
+            return std::make_shared<ClassStruct>(currentScope_, temp, syntaxData);
         }
-        if (syntaxData.find("(") != std::string::npos) {
-            //return BuildOperation(syntaxData); 
-        }
-
         return std::make_shared<Operation>(currentScope_, temp, syntaxData);
     }
 

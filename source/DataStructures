@@ -8,7 +8,7 @@
 #include "data structures/FileData.hpp"
 #include "data structures/iSyntax.hpp"
 #include "data structures/Instruction.hpp"
-#include "data structures/Class.hpp"
+#include "data structures/ClassStruct.hpp"
 #include "data structures/Block.hpp"
 #include "data structures/SyntaxTypes"
 #include "data structures/Namespace.hpp"
