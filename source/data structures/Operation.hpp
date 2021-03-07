@@ -10,8 +10,8 @@
 class Operation : public Block {
 
 public:
-    Operation(const std::string& templateData, const std::string& headerData): 
-        Block(templateData, headerData)
+    Operation(const Scope& scope, const std::string& templateData, const std::string& headerData): 
+        Block(scope, templateData, headerData)
     {}
     
     

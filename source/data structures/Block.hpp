@@ -4,11 +4,15 @@
 #include <string>
 
 #include "iSyntax.hpp"
+#include "SyntaxTypes"
+
 
 
 class Block : public iSyntax {
-
 protected:
+    const Scope scope_;
+    
+    
     std::string template_;
 
     std::string header_;
@@ -18,7 +22,8 @@ protected:
     std::vector<std::shared_ptr<iSyntax>> fields_;
 
 public:
-    Block(const std::string& tem, const std::string& data): 
+    Block(const Scope& scope, const std::string& tem, const std::string& data): 
+        scope_(scope),
         template_(tem),
         header_(data),
         subElements_(),
@@ -44,6 +49,7 @@ public:
     }
 
     Type getSyntaxType() const override { return Type::Block; }
+    Scope getSyntaxScope() const override { return scope_; }    
 
 
 protected:

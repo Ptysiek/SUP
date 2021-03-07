@@ -6,11 +6,14 @@
 
 
 class Instruction : public iSyntax {
-
+    const Scope scope_;    
     std::string rawData_;
     
 public:
-    Instruction(const std::string& data): rawData_(data) {}
+    Instruction(const Scope scope, const std::string& data): 
+        scope_(scope),        
+        rawData_(data) 
+    {}
 
     
     std::string getResult(size_t tabs = 0) const override {
@@ -18,4 +21,5 @@ public:
     }
     
     Type getSyntaxType() const override { return Type::Instruction; }
+    Scope getSyntaxScope() const override { return scope_; } 
 };

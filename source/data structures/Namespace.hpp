@@ -14,8 +14,8 @@ class Namespace : public Block {
     std::string header_;
 
 public:
-    Namespace(const std::string& templateData, const std::string& headerData): 
-        Block(templateData, headerData),
+    Namespace(const Scope& scope, const std::string& templateData, const std::string& headerData): 
+        Block(scope, templateData, headerData),
         header_(BuildHeaderName(headerData))
     {}
 

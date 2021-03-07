@@ -13,7 +13,7 @@ class SyntaxParser {
     using Data = DataStructures::Data;
     using Line = DataStructures::Line;
     using Syntaxes = DataStructures::Syntaxes;
-    
+ 
     using Syntax = DataStructures::Syntax;
     using BlockSyntax = DataStructures::BlockSyntax;
     
@@ -31,12 +31,14 @@ class SyntaxParser {
         {}
     };
 
+    SyntaxTypes::Scope currentScope_;
     const std::string rawData_;
     Syntaxes product_;
 
 
 public:
     SyntaxParser(const Data& data):
+        currentScope_(SyntaxTypes::Scope::None),
         rawData_(MergeRawData(data)),
         product_(BuildProduct())
     {}
@@ -146,23 +148,25 @@ protected:
         auto temp = CutOutTemplate(syntaxData);      
 
         if (auto i = syntaxData.find("namespace"); i != std::string::npos) {
-            return std::make_shared<Namespace>(temp, syntaxData);
+            return std::make_shared<Namespace>(currentScope_, temp, syntaxData);
         }
         if (syntaxData.find("class") != std::string::npos) {
-            return std::make_shared<Class>(temp, syntaxData);
+            currentScope_ = SyntaxTypes::Scope::Private;
+            return std::make_shared<Class>(currentScope_, temp, syntaxData);
         }
         if (syntaxData.find("struct") != std::string::npos) {
+            currentScope_ = SyntaxTypes::Scope::Public;
             //return std::make_shared<Struct>(temp, syntaxData);
         }
         if (syntaxData.find("(") != std::string::npos) {
             //return BuildOperation(syntaxData); 
         }
 
-        return std::make_shared<Operation>(temp, syntaxData);
+        return std::make_shared<Operation>(currentScope_, temp, syntaxData);
     }
 
     Syntax buildInstruction(const std::string& syntaxData) {
-        return std::make_shared<Instruction>(syntaxData);
+        return std::make_shared<Instruction>(currentScope_, syntaxData);
     }
 
 

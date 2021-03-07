@@ -14,8 +14,8 @@ class Class : public Block {
     std::string className_;
 
 public:
-    Class(const std::string& templateData, const std::string& headerData): 
-        Block(templateData, headerData),
+    Class(const Scope& scope, const std::string& templateData, const std::string& headerData): 
+        Block(scope, templateData, headerData),
         className_(BuildClassName(headerData))
     {}
 
@@ -52,7 +52,7 @@ private:
         std::stringstream result;
         size_t count = 0;
         for (const auto& element : fields_) {
-            std::string data = RemoveLabel(element->getResult());
+            std::string data = RemoveScope(element->getResult());
             if (data.find("using") != std::string::npos) {
                 continue;
             }
@@ -78,14 +78,14 @@ private:
     }
 
     std::string BuildOperation(std::string data) const {
-        data = RemoveLabel(data);
+        data = RemoveScope(data);
         if (auto i = data.find(')'); i != std::string::npos) {
             data = data.substr(0, i + 1);
         }
         return Converter::removeWhitespaces(data);
     }
 
-    std::string RemoveLabel(std::string data) const {
+    std::string RemoveScope(std::string data) const {
         if (auto i = data.find("public:"); i != std::string::npos) {
             data = data.substr(i + 7);
         }
