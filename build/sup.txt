@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Sun Mar  7 19:09:29 2021
+File generation date:  Sun Mar  7 19:13:53 2021
 
 
 ### Table Of Contents: #####################################################
@@ -11,17 +11,13 @@ File generation date:  Sun Mar  7 19:09:29 2021
 		FileBuilder.hpp
 		FileDataBuilder.hpp
 		GeneratorTxt.hpp
-		PathInitializer.ut.cpp
 		Program.hpp
 		ProgramInitializer.hpp
 		ProjectBuilder.hpp
 		Tools
-		catch_main.cpp
 		main.cpp
 
 		[source/data parsers/]
-			CommentParser.ut.cpp
-			CommentParser.ut.hpp
 			CommentParser.hpp
 			DirectiveParser.hpp
 			IncludeParser.hpp
@@ -304,18 +300,6 @@ File content:
 		class FileIO;
 		class IgnoreFiles;
 	};
-
-
-
-
-### ../source/catch_main.cpp ###############################################
-############################################################################
-File includes:
-	Files included:
-		 1] plugins/catch.hpp
-
-
-File content:
 
 
 
