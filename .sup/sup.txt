@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Mon Mar  8 00:59:17 2021
+File generation date:  Mon Mar  8 01:03:34 2021
 
 
 ### Table Of Contents: #####################################################
@@ -490,8 +490,8 @@ File content:
 				3] void AddInstruction(Workspace& w)
 				4] void AddBlockOpen(Workspace& w)
 				5] void AddBlockClose(Workspace& w)
-				6] Syntax buildInstruction(const std::string& syntaxData)
-				7] BlockSyntax buildBlock(std::string syntaxData)
+				6] Syntax BuildInstruction(const std::string& syntaxData)
+				7] BlockSyntax BuildBlock(std::string syntaxData)
 
 			struct `Workspace` {
 
@@ -725,8 +725,9 @@ File content:
 			3] }
 
 		class public operations:
-			1] Type getSyntaxType()
-			2] std::string getResult(size_t tabs = 0)
+			1] Namespace(const Access& access, const std::string& templateData, const std::string& headerData)
+			2] Type getSyntaxType()
+			3] std::string getResult(size_t tabs = 0)
 	};
 
 

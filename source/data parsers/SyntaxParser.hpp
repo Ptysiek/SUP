@@ -86,22 +86,22 @@ private:
     //#######################################################################################################
     void AddInstruction(Workspace& w) {
         if (w.hierarchy_.empty()) {
-            w.result_.emplace_back(buildInstruction(w.syntaxData_));
+            w.result_.emplace_back(BuildInstruction(w.syntaxData_));
             return;
         }
-        w.hierarchy_.top()->emplace_back(buildInstruction(w.syntaxData_));
+        w.hierarchy_.top()->emplace_back(BuildInstruction(w.syntaxData_));
     }
     
     void AddBlockOpen(Workspace& w) {
-        w.hierarchy_.push(buildBlock(w.syntaxData_));
+        w.hierarchy_.push(BuildBlock(w.syntaxData_));
     }
     
     void AddBlockClose(Workspace& w) {
         if (w.hierarchy_.size() == 0) {
-            w.result_.emplace_back(buildInstruction(w.syntaxData_));
+            w.result_.emplace_back(BuildInstruction(w.syntaxData_));
             return;
         }
-        w.hierarchy_.top()->emplace_back(buildInstruction(w.syntaxData_));
+        w.hierarchy_.top()->emplace_back(BuildInstruction(w.syntaxData_));
 
         if (w.hierarchy_.size() == 1) {
             w.result_.emplace_back(w.hierarchy_.top());
@@ -116,11 +116,11 @@ private:
     }
     
     //#######################################################################################################
-    Syntax buildInstruction(const std::string& syntaxData) {
+    Syntax BuildInstruction(const std::string& syntaxData) {
         return std::make_shared<Instruction>(currentAccess_, syntaxData);
     }
 
-    BlockSyntax buildBlock(std::string syntaxData) {
+    BlockSyntax BuildBlock(std::string syntaxData) {
         auto temp = CutOutTemplate(syntaxData);      
 
         if (auto i = syntaxData.find("namespace "); i != std::string::npos) {
