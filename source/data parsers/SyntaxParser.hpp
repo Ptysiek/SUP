@@ -123,14 +123,14 @@ private:
     BlockSyntax buildBlock(std::string syntaxData) {
         auto temp = CutOutTemplate(syntaxData);      
 
-        if (auto i = syntaxData.find("namespace"); i != std::string::npos) {
+        if (auto i = syntaxData.find("namespace "); i != std::string::npos) {
             return std::make_shared<Namespace>(currentAccess_, temp, syntaxData);
         }
-        if (syntaxData.find("class") != std::string::npos) {
+        if (syntaxData.find("class ") != std::string::npos) {
             currentAccess_ = SyntaxTypes::Access::Private;
             return std::make_shared<ClassStruct>(currentAccess_, temp, syntaxData);
         }
-        if (syntaxData.find("struct") != std::string::npos) {
+        if (syntaxData.find("struct ") != std::string::npos) {
             currentAccess_ = SyntaxTypes::Access::Public;
             return std::make_shared<ClassStruct>(currentAccess_, temp, syntaxData);
         }

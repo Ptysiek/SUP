@@ -1,5 +1,5 @@
 Author of SUP-SeeYourPoint: Kacu Kacper Kaleta [https://github.com/Ptysiek]
-File generation date:  Mon Mar  8 00:54:45 2021
+File generation date:  Mon Mar  8 00:59:17 2021
 
 
 ### Table Of Contents: #####################################################
@@ -197,8 +197,6 @@ File content:
 		class public operations:
 			1] explicit GeneratorTxt(const std::string& targetPath, const std::vector<File>& data)
 			2] std::string buildFile()
-			3] std::string BuildFileSummary(const File& file)
-			4] std::string BuildSeparator(const std::string& title)
 
 		class private operations:
 			1] std::string BuildHeader()
@@ -206,6 +204,8 @@ File content:
 			3] std::string BuildTableOfContents()
 			4] std::string BuildFile(const File& file)
 			5] std::string BuildFileContent(const File& file)
+			6] std::string BuildFileSummary(const File& file)
+			7] std::string BuildSeparator(const std::string& title)
 	};
 
 
@@ -474,10 +474,7 @@ File content:
 			class public operations:
 				1] SyntaxParser(const Data& data)
 				2] Syntaxes getProduct()
-				3] void AddBlockOpen(Workspace& w)
-				4] void AddBlockClose(Workspace& w)
-				5] BlockSyntax buildBlock(std::string syntaxData)
-				6] SyntaxTypes::Access IndicateCurrentAccess(Workspace& w)
+				3] SyntaxTypes::Access IndicateCurrentAccess(Workspace& w)
 
 			class protected operations:
 				1] bool LastCharEquals(const char ch, const std::string& str)
@@ -490,6 +487,11 @@ File content:
 			class private operations:
 				1] Syntaxes BuildProduct()
 				2] void BuildSingleSyntax(Workspace& w)
+				3] void AddInstruction(Workspace& w)
+				4] void AddBlockOpen(Workspace& w)
+				5] void AddBlockClose(Workspace& w)
+				6] Syntax buildInstruction(const std::string& syntaxData)
+				7] BlockSyntax buildBlock(std::string syntaxData)
 
 			struct `Workspace` {
 
@@ -501,23 +503,6 @@ File content:
 
 				struct public operations:
 					1] Workspace(const std::string& rawData)
-			};
-
-			struct `ion(Workspace& w)` {
-
-				struct public fields:
-					1] w.hierarchy_.top()
-					2] }
-
-				struct public operations:
-					1] if (w.hierarchy_.empty()
-			};
-
-			struct `ion(const std::string& syntaxData)` {
-
-				struct public fields:
-					1] return std::make_shared<Instruction>(currentAccess_, syntaxData)
-					2] }
 			};
 		};
 	};
@@ -591,20 +576,17 @@ File content:
 			6] return result;
 			7] }
 
+		class public operations:
+			1] ClassStruct(const Access& access, const std::string& templateData, const std::string& headerData)
+			2] Type getSyntaxType()
+			3] std::string getResult(size_t tabs = 0)
+
 		class private operations:
-			1] Type getSyntaxType()
-			2] std::string getResult(size_t tabs = 0)
-			3] std::string EnlistSubClasses(const size_t tabs)
-			4] std::string EnlistFields(const std::string& tab)
-			5] std::string EnlistOperations(const std::string& tab)
-			6] std::string BuildEnlistedData( const Access access, const iSyntaxes& syntaxes, const std::string& tab, const std::string& title)
-			7] SyntaxData ClearSyntaxData(const iSyntaxes& syntaxes)
-
-		class `"), headerName_(BuildHeaderName(headerData, typeName_))` {
-
-			class private fields:
-				1] }
-		};
+			1] std::string EnlistSubClasses(const size_t tabs)
+			2] std::string EnlistFields(const std::string& tab)
+			3] std::string EnlistOperations(const std::string& tab)
+			4] std::string BuildEnlistedData( const Access access, const iSyntaxes& syntaxes, const std::string& tab, const std::string& title)
+			5] SyntaxData ClearSyntaxData(const iSyntaxes& syntaxes)
 	};
 	std::string EnlistSyntaxes(const SyntaxData& syntaxes, const std::string& tab) const {
 	std::string BuildOperation(std::string data) const {
@@ -683,17 +665,8 @@ File content:
 			3] std::vector<std::string> getLibIncludes()
 			4] std::vector<std::string> getProjIncludes()
 			5] std::vector<std::shared_ptr<iSyntax>> getData()
-			6] size_t CountClasses()
-
-		struct `ions() const` {
-
-			struct public fields:
-				1] )
-				2] }
-
-			struct public operations:
-				1] return std::accumulate(data_.begin()
-		};
+			6] size_t CountInstructions()
+			7] size_t CountClasses()
 	};
 
 
@@ -717,15 +690,10 @@ File content:
 			2] const std::string rawData_;
 
 		class public operations:
-			1] Type getSyntaxType()
-			2] Access getSyntaxAccess()
-			3] std::string getResult(size_t tabs = 0)
-
-		struct `ion(const Access access, const std::string& data): access_(access), rawData_(data)` {
-
-			struct public fields:
-				1] }
-		};
+			1] Instruction(const Access access, const std::string& data)
+			2] Type getSyntaxType()
+			3] Access getSyntaxAccess()
+			4] std::string getResult(size_t tabs = 0)
 	};
 
 
